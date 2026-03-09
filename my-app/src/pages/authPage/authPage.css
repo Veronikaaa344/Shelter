@@ -1,0 +1,116 @@
+:root {
+    --auth-bg: #F8F9FA;
+    --auth-surface: #FFFFFF;
+    --auth-primary: #1A2B48;
+    --auth-accent: #5C6BC0;
+    --auth-text-muted: #6C757D;
+    --auth-border: #E9ECEF;
+}
+
+.dr-auth-container {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--auth-bg);
+    font-family: 'Inter', sans-serif;
+    padding: 20px;
+}
+
+.dr-auth-card {
+    background: var(--auth-surface);
+    width: 100%;
+    max-width: 440px;
+    padding: 48px;
+    border-radius: 32px;
+    box-shadow: 0 20px 60px rgba(26, 43, 72, 0.05);
+    border: 1px solid var(--auth-border);
+}
+
+.dr-auth-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.dr-auth-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 16px;
+}
+
+.dr-auth-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--auth-primary);
+    margin-bottom: 8px;
+}
+
+.dr-auth-subtitle {
+    color: var(--auth-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.dr-auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dr-auth-input {
+    width: 100%;
+    padding: 16px 20px;
+    background: #F1F3F5;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.dr-auth-input:focus {
+    outline: none;
+    background: #FFF;
+    border-color: var(--auth-accent);
+    box-shadow: 0 0 0 4px rgba(92, 107, 192, 0.1);
+}
+
+.dr-auth-submit-btn {
+    margin-top: 8px;
+    padding: 16px;
+    background: var(--auth-primary);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dr-auth-submit-btn:hover {
+    background: var(--auth-accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(92, 107, 192, 0.2);
+}
+
+.dr-auth-footer {
+    margin-top: 32px;
+    text-align: center;
+}
+
+.dr-auth-toggle-btn {
+    background: none;
+    border: none;
+    color: var(--auth-accent);
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.dr-auth-toggle-btn:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}

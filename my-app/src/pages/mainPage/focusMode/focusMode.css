@@ -1,0 +1,258 @@
+:root {
+	--focus-bg: rgba(18, 28, 48, 0.98);
+	--focus-accent: #bcedf3;
+	--focus-primary: #5c6bc0;
+	--focus-white: #ffffff;
+	--focus-text: rgba(255, 255, 255, 0.9);
+}
+
+.dr-focus-layout {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	background: var(--focus-bg);
+	backdrop-filter: blur(20px);
+	z-index: 2000;
+	display: flex;
+	flex-direction: column;
+	color: var(--focus-white);
+	animation: dr-focus-fade-in 0.4s ease-out;
+}
+
+.dr-focus-content-area {
+	max-width: 800px;
+	margin: 0 auto;
+	width: 100%;
+	overflow-y: auto;
+	padding: 0 20px 100px 20px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	scrollbar-width: none;
+}
+
+.dr-focus-content-area::-webkit-scrollbar {
+	display: none;
+}
+
+.dr-focus-header {
+	padding: 30px;
+	display: flex;
+	justify-content: flex-end;
+}
+
+.dr-focus-close-btn {
+	background: rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	color: white;
+	padding: 10px 20px;
+	border-radius: 30px;
+	cursor: pointer;
+	font-weight: 600;
+	transition: 0.3s;
+}
+
+.dr-focus-close-btn:hover {
+	background: rgba(255, 255, 255, 0.2);
+	transform: translateY(-2px);
+}
+
+.dr-focus-main-title {
+	font-size: 2.2rem;
+	font-weight: 800;
+	margin-bottom: 40px;
+	text-align: center;
+	line-height: 1.2;
+}
+
+.dr-focus-reader-mode {
+	width: 100%;
+}
+
+.dr-focus-article-body {
+	width: 100%;
+	font-size: 1.25rem;
+	line-height: 1.8;
+	color: var(--focus-text);
+	white-space: pre-wrap;
+	word-wrap: break-word;
+	overflow-wrap: break-word;
+	text-align: left;
+	background: rgba(22, 23, 34, 0.6);
+	border-radius: 24px;
+	padding: 30px;
+	border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.dr-focus-video-container {
+	width: 100%;
+	position: relative;
+	border-radius: 24px;
+	overflow: hidden;
+	background: #000;
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+}
+
+.dr-real-video-player {
+	width: 100%;
+	aspect-ratio: 16/9;
+	cursor: pointer;
+}
+
+.dr-focus-text-box {
+	width: 100%;
+	margin-top: 30px;
+	background: rgba(255, 255, 255, 0.05);
+	padding: 30px;
+	border-radius: 20px;
+	box-sizing: border-box;
+}
+
+.dr-audio-card {
+	background: rgba(255, 255, 255, 0.05);
+	padding: 40px;
+	border-radius: 30px;
+	width: 100%;
+	text-align: center;
+}
+
+.dr-focus-visualizer {
+	display: flex;
+	gap: 6px;
+	height: 40px;
+	justify-content: center;
+	margin-bottom: 25px;
+}
+
+.dr-focus-bar {
+	width: 4px;
+	height: 15px;
+	background: var(--focus-accent);
+	border-radius: 2px;
+}
+
+.dr-focus-visualizer.active .dr-focus-bar {
+	animation: dr-audio-wave 1s ease-in-out infinite;
+}
+
+.dr-play-circle-real {
+	width: 70px;
+	height: 70px;
+	border-radius: 50%;
+	background: white;
+	color: var(--focus-primary);
+	border: none;
+	font-size: 1.5rem;
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+.dr-play-circle-real:hover {
+	transform: scale(1.1);
+	box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.dr-focus-footer {
+	width: 100%;
+	margin-top: 50px;
+}
+
+.dr-focus-finish-btn {
+	background: var(--focus-primary);
+	color: white;
+	padding: 20px 40px;
+	border-radius: 16px;
+	font-weight: 700;
+	font-size: 1.1rem;
+	border: none;
+	width: 100%;
+	cursor: pointer;
+	transition: 0.3s;
+	box-shadow: 0 4px 15px rgba(92, 107, 192, 0.4);
+}
+
+.dr-focus-finish-btn:hover {
+	background: #4a59a7;
+	transform: translateY(-2px);
+	box-shadow: 0 6px 20px rgba(92, 107, 192, 0.5);
+}
+
+.dr-focus-feedback-group {
+	display: flex;
+	gap: 15px;
+	width: 100%;
+	margin-top: 20px;
+}
+
+.dr-focus-feedback-btn {
+	flex: 1;
+	background: rgba(255, 255, 255, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.2);
+	color: white;
+	padding: 18px 25px;
+	border-radius: 16px;
+	cursor: pointer;
+	font-weight: 700;
+	font-size: 1rem;
+	text-align: center;
+	transition: 0.3s;
+}
+
+.dr-focus-feedback-btn:hover {
+	background: rgba(255, 255, 255, 0.2);
+	border-color: var(--focus-accent);
+	transform: translateY(-2px);
+}
+
+.dr-focus-feedback-btn:active {
+	transform: scale(0.98);
+}
+
+@keyframes dr-focus-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes dr-audio-wave {
+	0%,
+	100% {
+		height: 15px;
+	}
+	50% {
+		height: 40px;
+	}
+}
+
+.dr-sos-fab {
+	position: fixed;
+	bottom: 40px;
+	right: 40px;
+	width: 80px;
+	height: 80px;
+	background: #e53935;
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 8px 25px rgba(229, 57, 53, 0.4);
+	z-index: 1000;
+	transition: 0.3s;
+}
+
+.dr-sos-fab:hover {
+	transform: scale(1.1) rotate(10deg);
+}
+
+.dr-sos-text {
+	color: white;
+	font-weight: 900;
+	font-size: 1.2rem;
+}

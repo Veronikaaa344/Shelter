@@ -1,0 +1,84 @@
+:root {
+	--dr-bg: #f8f9fa;
+	--dr-surface: #ffffff;
+	--dr-text-main: #1a2b48;
+	--dr-text-muted: #6c757d;
+	--dr-primary: #5c6bc0;
+	--dr-primary-hover: #3f51b5;
+	--dr-border: #e9ecef;
+	--dr-danger: #e53935;
+	--dr-shadow: 0 4px 20px rgba(26, 43, 72, 0.04);
+}
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	margin: 0;
+	font-family:
+		'Inter',
+		-apple-system,
+		system-ui,
+		sans-serif;
+	background-color: var(--dr-bg);
+	color: var(--dr-text-main);
+	-webkit-font-smoothing: antialiased;
+}
+
+.dr-loader {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 200px;
+	font-weight: 700;
+	color: var(--dr-primary);
+}
+
+.dr-sos-fab {
+	position: fixed;
+	bottom: 40px;
+	right: 40px;
+	width: 80px;
+	height: 80px;
+	background: var(--dr-danger);
+	border: none;
+	border-radius: 50%;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: 0 8px 25px rgba(229, 57, 53, 0.4);
+	z-index: 1000;
+	transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.dr-sos-fab:hover {
+	transform: scale(1.05) rotate(5deg);
+}
+
+.dr-sos-text {
+	color: white;
+	font-weight: 900;
+	font-size: 1.2rem;
+	letter-spacing: 1px;
+}
+
+.dr-back-btn {
+	background: var(--dr-surface);
+	border: 1px solid var(--dr-border);
+	padding: 10px 24px;
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--dr-text-main);
+	border-radius: 40px;
+	cursor: pointer;
+	transition: all 0.2s ease;
+}
+
+.dr-back-btn:hover {
+	border-color: var(--dr-primary);
+	color: var(--dr-primary);
+}
