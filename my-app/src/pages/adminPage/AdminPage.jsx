@@ -53,23 +53,6 @@ const SAMPLE_SCENARIO_JSON = JSON.stringify({
     }
 }, null, 2);
 
-const SAMPLE_FIND_DIFFERENCES_JSON = JSON.stringify({
-    type: "find-differences",
-    name: "Знайди відмінності: Приклад",
-    scenarioId: "find-differences-sample",
-    category: "general",
-    duration: "10 хв",
-    difficulty: 60,
-    levels: [
-        {
-            image: "/images/find/039516a68526e8db5506bd47cf8c211b.jpg",
-            differences: [
-                { x: 100, y: 150, radius: 30 },
-                { x: 300, y: 200, radius: 40 },
-            ],
-        },
-    ],
-}, null, 2);
 
 const tinyMceConfig = {
     height: 400,
@@ -139,9 +122,7 @@ export default function AdminPage() {
     const [scenarioDifficulty, setScenarioDifficulty] = useState(50);
     const [scenarioType, setScenarioType] = useState("dialogue");
     const [showTypeSelector, setShowTypeSelector] = useState(false);
-    const [scenarioImage, setScenarioImage] = useState("");
-    const [scenarioDescription, setScenarioDescription] = useState("");
-    const [videoUrl, setVideoUrl] = useState("");
+        const [videoUrl, setVideoUrl] = useState("");
     const [videoTranscript, setVideoTranscript] = useState("");
     const [nodes, setNodes] = useState([
         {
@@ -158,11 +139,11 @@ export default function AdminPage() {
     const [imageZoom, setImageZoom] = useState(1);
     const [draggingMarker, setDraggingMarker] = useState(null);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-
+        
     useEffect(() => {
         console.log("AdminPage mounted, activeTab:", activeTab);
         loadData();
-    }, [activeTab]);
+    }, [activeTab, loadData]);
 
     useEffect(() => {
         const handleMouseMove = (e) => {

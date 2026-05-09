@@ -17,8 +17,8 @@ export default function QuestsPage() {
     const [completedScenarios, setCompletedScenarios] = useState([]);
     const [completedMaterials, setCompletedMaterials] = useState([]);
     const [userResilience, setUserResilience] = useState(50);
-    const [quests, setQuests] = useState([]);
     const [currentDay, setCurrentDay] = useState(1);
+    const [quests, setQuests] = useState([]);
 
     const thoughts = [
         "Кожна велика подорож починається з одного вдиху.",
@@ -130,7 +130,7 @@ export default function QuestsPage() {
         });
 
         loadUserProfile();
-    }, []);
+    }, [createMixedQuests, loadUserProfile, thoughts]);
 
     // Оновлюємо статуси квестів при кожному поверненні на сторінку
     useEffect(() => {
@@ -140,7 +140,7 @@ export default function QuestsPage() {
 
         window.addEventListener('focus', handleFocus);
         return () => window.removeEventListener('focus', handleFocus);
-    }, []);
+    }, [loadUserProfile]);
 
     const loadUserProfile = () => {
         const userId = localStorage.getItem("userId");

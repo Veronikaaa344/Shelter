@@ -190,14 +190,7 @@ export default function MainPage() {
     setFilteredMaterials(list);
   }, [allMaterials, isPersonalized, activeFilter, pageType]);
 
-  const handleSosClick = async () => {
-    const userId = localStorage.getItem("userId");
-    if (userId) {
-      await api.updateResilience(userId, 5, "sos", "Кнопка SOS");
-    }
-    navigate("/sos");
-  };
-
+  
   const getStateLabel = () => {
     switch(pageType) {
       case "anxiety": return "Тривога";
@@ -207,14 +200,7 @@ export default function MainPage() {
     }
   };
 
-  const getCtaTitle = () => {
-    switch(pageType) {
-      case "anxiety": return "Час заспокоїтись";
-      case "apathy": return "Знайдемо ресурс?";
-      default: return "РОЗГУБИЛИСЯ У МАТЕРІАЛАХ?";
-    }
-  };
-
+  
   const getFilterLabel = (f) => {
     const labels = { all: "Усі", text: "Статті", video: "Відео", audio: "Аудіо" };
     return labels[f] || f;

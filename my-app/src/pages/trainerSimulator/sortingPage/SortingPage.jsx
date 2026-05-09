@@ -11,13 +11,13 @@ export default function SortingPage() {
     const [loading, setLoading] = useState(true);
     const [items, setItems] = useState([]);
     const [boxes, setBoxes] = useState([]);
-    const [isFinished, setIsFinished] = useState(false);
     const [draggedItem, setDraggedItem] = useState(null);
     const [sortedCount, setSortedCount] = useState(0);
-    const [wrongAttempts, setWrongAttempts] = useState({});
-    const [showCompanion, setShowCompanion] = useState(false);
     const [highlightedBox, setHighlightedBox] = useState(null);
     const [showCompletionMenu, setShowCompletionMenu] = useState(false);
+    const [isFinished, setIsFinished] = useState(false);
+    const [wrongAttempts, setWrongAttempts] = useState({});
+    const [showCompanion, setShowCompanion] = useState(false);
     const companionRef = useRef(null);
 
     const generateItems = () => {
