@@ -109,12 +109,14 @@ export default function SortingPage() {
 
     return (
         <div className="dr-new-layout dr-sorting-page">
-            <button className="dr-show-all-btn dr-sorting-back" onClick={() => navigate("/quests")}>
-                ← Повернутися до квестів
-            </button>
-            
-            <div className="dr-sorting-top-counter">
-                Залишилось {15 - sortedCount}
+            <div className="dr-sorting-header">
+                <button className="dr-show-all-btn dr-sorting-back" onClick={() => navigate("/quests")}>
+                    ← Повернутися до квестів
+                </button>
+                
+                <div className="dr-sorting-top-counter">
+                    Залишилось {15 - sortedCount}
+                </div>
             </div>
 
             <aside className="dr-sorting-sidebar">
@@ -142,6 +144,10 @@ export default function SortingPage() {
                             <div
                                 key={box.id}
                                 className={`dr-sorting-box ${highlightedBox === box.id ? 'highlight-correct' : ''}`}
+                                style={{
+                                    borderColor: box.color,
+                                    outlineColor: box.color + '40'
+                                }}
                                 onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }}
                                 onDragLeave={(e) => e.currentTarget.classList.remove('drag-over')}
                                 onDrop={(e) => handleBoxDrop(e, box.id)}

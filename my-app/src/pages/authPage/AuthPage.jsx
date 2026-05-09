@@ -6,33 +6,48 @@ import './authPage.css';
 export default function AuthPage() {
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({ email: '', password: '', username: '' });
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        let data;
+        setError('');
+        setIsLoading(true);
         
-        if (isLogin) {
-            data = await api.login(formData);
-        } else {
-            const wasGuest = localStorage.getItem("dr_token") === "guest_mode";
-            if (wasGuest) {
-                data = await api.migrateGuest(formData);
+        try {
+            let data;
+            
+            if (isLogin) {
+                data = await api.login(formData);
             } else {
-                data = await api.register(formData);
+                const wasGuest = localStorage.getItem("dr_token") === "guest_mode";
+                if (wasGuest) {
+                    data = await api.migrateGuest(formData);
+                } else {
+                    data = await api.register(formData);
+                }
             }
-        }
-        
-        if (data.user) {
-            localStorage.setItem("dr_token", data.token);
-            localStorage.setItem("userId", data.user.id);
-            navigate('/main');
-        } else {
-            alert(data.message || "Помилка авторизації");
+            
+            if (data.user) {
+                localStorage.setItem("dr_token", data.token);
+                localStorage.setItem("userId", data.user.id);
+                navigate('/main');
+            } else {
+                setError(data.message || "Помилка авторизації");
+            }
+        } catch (err) {
+            console.error('Auth error:', err);
+            setError(err.message || "Помилка з'єднання з сервером");
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleGuestLogin = async () => {
+        setError('');
+        setIsLoading(true);
+        
         try {
             const data = await api.loginAsGuest();
             if (data.user) {
@@ -40,10 +55,13 @@ export default function AuthPage() {
                 localStorage.setItem("userId", data.user.id);
                 navigate('/main');
             } else {
-                alert(data.message || "Помилка входу як гість");
+                setError(data.message || "Помилка входу як гість");
             }
         } catch (err) {
-            alert("Помилка входу як гість");
+            console.error('Guest login error:', err);
+            setError(err.message || "Помилка входу як гість");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -70,6 +88,13 @@ export default function AuthPage() {
                         🛡️
                     </div>
                     <h1 className="dr-status-title">{isLogin ? 'Вхід' : 'Реєстрація'}</h1>
+                    
+                    {error && (
+                        <div className="dr-auth-error">
+                            <span className="dr-auth-error-icon">⚠️</span>
+                            <span className="dr-auth-error-text">{error}</span>
+                        </div>
+                    )}
                     
                     <form className="dr-auth-form" onSubmit={handleSubmit}>
                         {!isLogin && (
@@ -102,8 +127,15 @@ export default function AuthPage() {
                             />
                         </div>
                         
-                        <button type="submit" className="dr-trainer-btn dr-auth-submit">
-                            {isLogin ? 'Увійти' : 'Створити акаунт'}
+                        <button type="submit" className="dr-trainer-btn dr-auth-submit" disabled={isLoading}>
+                            {isLoading ? (
+                                <span className="dr-auth-loading">
+                                    <span className="dr-auth-spinner">⟳</span>
+                                    {isLogin ? 'Вхід...' : 'Створення...'}
+                                </span>
+                            ) : (
+                                isLogin ? 'Увійти' : 'Створити акаунт'
+                            )}
                         </button>
                     </form>
 
@@ -115,8 +147,15 @@ export default function AuthPage() {
                         <span>або</span>
                     </div>
 
-                    <button className="dr-show-all-btn dr-guest-action" onClick={handleGuestLogin}>
-                        Увійти як гість
+                    <button className="dr-show-all-btn dr-guest-action" onClick={handleGuestLogin} disabled={isLoading}>
+                        {isLoading ? (
+                            <span className="dr-auth-loading">
+                                <span className="dr-auth-spinner">⟳</span>
+                                Вхід як гість...
+                            </span>
+                        ) : (
+                            'Увійти як гість'
+                        )}
                     </button>
                 </div>
             </main>

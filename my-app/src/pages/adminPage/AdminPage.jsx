@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Editor } from "@tinymce/tinymce-react";
 import { api } from "../../api/api";
 import "./adminPage.css";
 
@@ -11,6 +12,17 @@ const SAMPLE_MATERIAL_JSON = JSON.stringify({
     category: "general",
     duration: "5 хв",
     content: "Тут розміщується основний контент матеріалу..."
+}, null, 2);
+
+const SAMPLE_VIDEO_MATERIAL_JSON = JSON.stringify({
+    title: "Відео-інструкція",
+    desc: "Відео матеріал з транскрипцією для навчання",
+    type: "video",
+    icon: "🎥",
+    category: "general",
+    duration: "10 хв",
+    url: "https://example.com/video.mp4",
+    content: "<h2>Транскрипція відео</h2><p>Це приклад транскрипції відео матеріалу з форматуванням HTML.</p><ul><li>Перший пункт інструкції</li><li>Другий пункт інструкції</li></ul>"
 }, null, 2);
 
 const SAMPLE_SCENARIO_JSON = JSON.stringify({
@@ -59,6 +71,45 @@ const SAMPLE_FIND_DIFFERENCES_JSON = JSON.stringify({
     ],
 }, null, 2);
 
+const tinyMceConfig = {
+    height: 400,
+    menubar: true,
+    plugins: [
+        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+        'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+    ],
+    toolbar: 'undo redo | blocks | ' +
+        'bold italic forecolor | alignleft aligncenter ' +
+        'alignright alignjustify | bullist numlist outdent indent | ' +
+        'removeformat | help',
+    content_style: 'body { font-family:Inter,sans-serif; font-size:16px }',
+    paste_data_images: false,
+    paste_as_text: false,
+    paste_remove_spans: true,
+    paste_remove_styles: true,
+    paste_remove_styles_if_webkit: true,
+    paste_strip_class_attributes: true,
+    forced_root_block: 'p',
+    forced_root_block_attrs: {},
+    valid_elements: 'p,h1,h2,h3,h4,h5,h6,strong,em,u,ul,ol,li,a,br,span',
+    valid_children: '+p[strong|em|u|a|br|span],+h1[strong|em|u|a|br|span],+h2[strong|em|u|a|br|span],+h3[strong|em|u|a|br|span],+h4[strong|em|u|a|br|span],+h5[strong|em|u|a|br|span],+h6[strong|em|u|a|br|span],+ul[li],+ol[li]',
+    extended_valid_elements: 'p,h1,h2,h3,h4,h5,h6,strong,em,u,a,br,span,ul,ol,li',
+    invalid_elements: 'script,style,meta,link',
+    invalid_attributes: 'data-*,path-to-node,index-in-node',
+    init_instance_callback: function(editor) {
+        editor.on('GetContent', function(e) {
+            // Clean content on every get content operation
+            e.content = e.content.replace(/\s+data-[^=]*="[^"]*"/g, '')
+                                     .replace(/\s+data-[^=]*='[^']*'/g, '')
+                                     .replace(/\s+data-[^=\s>]*/g, '')
+                                     .replace(/\s+>/g, '>')
+                                     .replace(/\s+/g, ' ')
+                                     .trim();
+        });
+    }
+};
+
 export default function AdminPage() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState("content");
@@ -75,6 +126,7 @@ export default function AdminPage() {
         desc: "",
         type: "text",
         icon: "📖",
+        image: "",
         content: "",
         category: "general",
         duration: "5 хв",
@@ -87,6 +139,10 @@ export default function AdminPage() {
     const [scenarioDifficulty, setScenarioDifficulty] = useState(50);
     const [scenarioType, setScenarioType] = useState("dialogue");
     const [showTypeSelector, setShowTypeSelector] = useState(false);
+    const [scenarioImage, setScenarioImage] = useState("");
+    const [scenarioDescription, setScenarioDescription] = useState("");
+    const [videoUrl, setVideoUrl] = useState("");
+    const [videoTranscript, setVideoTranscript] = useState("");
     const [nodes, setNodes] = useState([
         {
             id: "start",
@@ -104,6 +160,7 @@ export default function AdminPage() {
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
+        console.log("AdminPage mounted, activeTab:", activeTab);
         loadData();
     }, [activeTab]);
 
@@ -142,12 +199,23 @@ export default function AdminPage() {
     }, [draggingMarker, differences, imageZoom]);
 
     const loadData = async () => {
-        const data =
-            activeTab === "content"
-                ? await api.getMaterials()
-                : await api.getScenarios();
-        if (Array.isArray(data)) {
-            activeTab === "content" ? setMaterials(data) : setScenarios(data);
+        try {
+            console.log(`Loading ${activeTab} data...`);
+            const data =
+                activeTab === "content"
+                    ? await api.getMaterials()
+                    : await api.getScenarios();
+            
+            console.log(`Loaded ${activeTab} data:`, data);
+            
+            if (Array.isArray(data)) {
+                activeTab === "content" ? setMaterials(data) : setScenarios(data);
+                console.log(`Set ${activeTab} data:`, data.length, "items");
+            } else {
+                console.error(`Invalid data format for ${activeTab}:`, data);
+            }
+        } catch (error) {
+            console.error(`Error loading ${activeTab}:`, error);
         }
     };
 
@@ -158,7 +226,7 @@ export default function AdminPage() {
             desc: item.desc,
             type: item.type,
             icon: item.icon,
-            content: item.content || item.fullText || item.url,
+            content: item.content || item.fullText || item.url || "",
             category: item.category || "general",
             duration: item.duration || "5 хв",
         });
@@ -179,6 +247,12 @@ export default function AdminPage() {
         if (item.type === "find-differences") {
             setFindImage2(item.levels?.[0]?.image || "");
             setDifferences(item.levels?.[0]?.differences || []);
+        } else if (item.type === "video") {
+            setVideoUrl(item.videoUrl || "");
+            setVideoTranscript(item.videoTranscript || "");
+        } else if (item.type === "audio") {
+            setVideoUrl(item.audioUrl || "");
+            setVideoTranscript(item.audioTranscript || "");
         } else {
             const transformedNodes = item.nodes ? Object.entries(item.nodes).map(([id, data]) => ({
                 id,
@@ -223,29 +297,17 @@ export default function AdminPage() {
         setViewMode("list");
     };
 
-    const insertFormat = (formatType, value = "") => {
-        const textarea = document.getElementById("dr-content-textarea");
-        if (!textarea) return;
-
-        const start = textarea.selectionStart;
-        const end = textarea.selectionEnd;
-        const text = materialForm.content;
-        const selectedText = text.substring(start, end);
-
-        let formattedText = "";
-        if (formatType === "bold") {
-            formattedText = `<b>${selectedText || "Текст"}</b>`;
-        } else if (formatType === "size") {
-            formattedText = `<span style="font-size: ${value}">${selectedText || "Текст"}</span>`;
-        }
-
-        const newContent = text.substring(0, start) + formattedText + text.substring(end);
-        setMaterialForm({ ...materialForm, content: newContent });
-
-        setTimeout(() => {
-            textarea.focus();
-            textarea.setSelectionRange(start, start + formattedText.length);
-        }, 0);
+    const cleanHtmlContent = (html) => {
+        if (!html) return html;
+        
+        // Remove all data-* attributes more comprehensively
+        return html
+            .replace(/\s+data-[^=]*="[^"]*"/g, '')  // Remove data-* attributes with quotes
+            .replace(/\s+data-[^=]*='[^']*'/g, '')  // Remove data-* attributes with single quotes
+            .replace(/\s+data-[^=\s>]*/g, '')     // Remove data-* attributes without quotes
+            .replace(/\s+>/g, '>')               // Clean up extra spaces before closing tags
+            .replace(/\s+/g, ' ')                // Normalize whitespace
+            .trim();
     };
 
     const handleSaveMaterial = async (e) => {
@@ -260,14 +322,23 @@ export default function AdminPage() {
                     return;
                 }
             } else {
-                payload = materialForm;
+                payload = {
+                    ...materialForm,
+                    content: cleanHtmlContent(materialForm.content)
+                };
             }
             const res = editId
                 ? await api.updateMaterial(editId, payload)
                 : await api.createMaterial(payload);
-            if (res) {
+            
+            console.log("Server response:", res);
+            
+            if (res && !res.error) {
+                alert(editId ? "Матеріал успішно оновлено!" : "Матеріал успішно створено!");
                 resetForms();
                 loadData();
+            } else {
+                alert("Помилка: " + (res?.error || res?.message || "Невідома помилка"));
             }
         } catch (err) {
             alert("Помилка при збереженні матеріалу");
@@ -315,14 +386,10 @@ export default function AdminPage() {
             };
         }
 
-        console.log("handleSaveScenario - payload:", payload);
-        console.log("handleSaveScenario - editId:", editId);
-
         try {
             const res = editId
                 ? await api.updateScenario(editId, payload)
                 : await api.createScenario(payload);
-            console.log("handleSaveScenario - response:", res);
             if (res) {
                 if (res.error || res.message) {
                     alert("Помилка сервера: " + (res.error || res.message));
@@ -334,7 +401,6 @@ export default function AdminPage() {
                 alert("Помилка: сервер не повернув відповідь");
             }
         } catch (err) {
-            console.error("handleSaveScenario - error:", err);
             alert("Помилка збереження: " + (err.message || "Невідома помилка"));
         }
     };
@@ -385,6 +451,8 @@ export default function AdminPage() {
                                     if (!isJsonMode) {
                                         if (activeTab === "content") {
                                             setJsonInput(SAMPLE_MATERIAL_JSON);
+                                        } else if (activeTab === "scenarios" && scenarioType === "video") {
+                                            setJsonInput(SAMPLE_VIDEO_MATERIAL_JSON);
                                         } else {
                                             setJsonInput(SAMPLE_SCENARIO_JSON);
                                         }
@@ -423,13 +491,30 @@ export default function AdminPage() {
                                 <div key={item._id} className="dr-list-item">
                                     <div className="dr-item-info">
                                         <span className="dr-item-icon">
-                                            {item.type === "find-differences" ? "🔍" : item.icon || "⚙️"}
+                                            {activeTab === "content" ? 
+                                                (item.type === "video" ? "🎥" : 
+                                                 item.type === "audio" ? "🎧" : 
+                                                 item.type === "text" ? "📖" : 
+                                                 item.icon || "📚") : 
+                                                (item.type === "find-differences" ? "🔍" : 
+                                                 item.type === "dialogue" ? "💬" : 
+                                                 item.type === "sorting" ? "🎯" : 
+                                                 "🎮")}
                                         </span>
                                         <div>
-                                            <h3>{item.title || item.name}</h3>
+                                            <h3>{activeTab === "content" ? item.title : item.name}</h3>
                                             <p>
-                                                {item.type === "find-differences" ? "Знайди відмінності" : item.type || "Сценарій"} • {item.category || "general"}
+                                                {activeTab === "content" ? 
+                                                    (item.type === "video" ? "Відео" : 
+                                                     item.type === "audio" ? "Аудіо" : 
+                                                     item.type === "text" ? "Текст" : 
+                                                     item.type || "Матеріал") : 
+                                                    (item.type === "find-differences" ? "Знайди відмінності" : 
+                                                     item.type === "dialogue" ? "Діалог" : 
+                                                     item.type === "sorting" ? "Сортування" : 
+                                                     "Сценарій")} • {item.category || "general"}
                                             </p>
+                                            {item.duration && <p className="dr-item-duration">⏱️ {item.duration}</p>}
                                         </div>
                                     </div>
                                     <div className="dr-item-actions">
@@ -500,6 +585,22 @@ export default function AdminPage() {
                                             })
                                         }
                                         required
+                                    />
+                                </div>
+                                <div className="dr-input-group">
+                                    <label>
+                                        <span>URL зображення</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={materialForm.image}
+                                        onChange={(e) =>
+                                            setMaterialForm({
+                                                ...materialForm,
+                                                image: e.target.value,
+                                            })
+                                        }
+                                        placeholder="https://example.com/image.jpg"
                                     />
                                 </div>
                                 <div className="dr-input-group">
@@ -584,41 +685,14 @@ export default function AdminPage() {
                                     <label>
                                         <span>Контент</span>
                                     </label>
-                                    <div className="dr-format-toolbar">
-                                        <button
-                                            type="button"
-                                            className="dr-format-btn"
-                                            onClick={() => insertFormat("bold")}
-                                        >
-                                            Жирний
-                                        </button>
-                                        <select
-                                            className="dr-format-select"
-                                            onChange={(e) => {
-                                                insertFormat("size", e.target.value);
-                                                e.target.value = "";
-                                            }}
-                                            defaultValue=""
-                                        >
-                                            <option value="" disabled>Розмір тексту</option>
-                                            <option value="12px">Маленький (12px)</option>
-                                            <option value="16px">Звичайний (16px)</option>
-                                            <option value="20px">Великий (20px)</option>
-                                            <option value="24px">Дуже великий (24px)</option>
-                                        </select>
+                                    <div className="dr-tinymce-wrapper">
+                                        <Editor
+                                            apiKey="ugi59y3zaddsfjvw0lvtkfg1dvh6xrpoxdkh80rafozm9mh7"
+                                            value={materialForm.content}
+                                            onEditorChange={(content) => setMaterialForm({ ...materialForm, content })}
+                                            init={tinyMceConfig}
+                                        />
                                     </div>
-                                    <textarea
-                                        id="dr-content-textarea"
-                                        className="dr-tall-text"
-                                        value={materialForm.content}
-                                        onChange={(e) =>
-                                            setMaterialForm({
-                                                ...materialForm,
-                                                content: e.target.value,
-                                            })
-                                        }
-                                        required
-                                    />
                                 </div>
                             </div>
                             <button type="submit" className="dr-save-btn">
@@ -788,14 +862,7 @@ export default function AdminPage() {
                                                     const scaleY = img.naturalHeight / rect.height;
                                                     const x = (e.clientX - rect.left) * scaleX;
                                                     const y = (e.clientY - rect.top) * scaleY;
-                                                    console.log("Координати натискання:", { x, y, rectWidth: rect.width, rectHeight: rect.height, scaleX, scaleY });
                                                     setDifferences([...differences, { x, y, radius: differenceRadius }]);
-                                                }}
-                                                onError={(e) => {
-                                                    console.error("Помилка завантаження зображення:", findImage2);
-                                                }}
-                                                onLoad={(e) => {
-                                                    console.log("Зображення завантажено:", findImage2);
                                                 }}
                                             />
                                             {differences.map((diff, idx) => {
@@ -891,7 +958,164 @@ export default function AdminPage() {
                                             },
                                         ],
                                     };
-                                    console.log("Збереження сценарію:", payload);
+                                    handleSaveScenario({ preventDefault: () => {} }, payload);
+                                }}
+                            >
+                                {editId ? "Оновити сценарій" : "Зберегти сценарій"}
+                            </button>
+                        </div>
+                        ) : scenarioType === "video" ? (
+                            <div className="dr-video-scenario-builder">
+                            <div className="dr-scenario-meta">
+                                <div className="dr-input-group">
+                                    <label>
+                                        <span>Назва сценарію</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={scenarioTitle}
+                                        onChange={(e) => setScenarioTitle(e.target.value)}
+                                    />
+                                </div>
+                                <div className="dr-input-group">
+                                    <label>
+                                        <span>Технічний ID</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={scenarioSlug}
+                                        onChange={(e) => setScenarioSlug(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="dr-input-group full">
+                                <label>
+                                    <span>URL відео</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={videoUrl}
+                                    onChange={(e) => setVideoUrl(e.target.value)}
+                                    placeholder="https://example.com/video.mp4"
+                                />
+                            </div>
+                            <div className="dr-input-group full">
+                                <label>
+                                    <span>Транскрипція відео</span>
+                                </label>
+                                <div className="dr-tinymce-wrapper">
+                                    <Editor
+                                        apiKey="ugi59y3zaddsfjvw0lvtkfg1dvh6xrpoxdkh80rafozm9mh7"
+                                        value={videoTranscript}
+                                        onEditorChange={(content) => setVideoTranscript(content)}
+                                        init={tinyMceConfig}
+                                    />
+                                </div>
+                            </div>
+                            <button
+                                className="dr-save-btn"
+                                onClick={() => {
+                                    if (!scenarioTitle.trim()) {
+                                        alert("Введіть назву сценарію");
+                                        return;
+                                    }
+                                    if (!scenarioSlug.trim()) {
+                                        alert("Введіть технічний ID");
+                                        return;
+                                    }
+                                    if (!videoUrl.trim()) {
+                                        alert("Введіть URL відео");
+                                        return;
+                                    }
+                                    const payload = {
+                                        name: scenarioTitle,
+                                        scenarioId: scenarioSlug,
+                                        category: scenarioCategory,
+                                        duration: scenarioDuration,
+                                        difficulty: scenarioDifficulty,
+                                        type: "video",
+                                        videoUrl: videoUrl,
+                                        videoTranscript: videoTranscript
+                                    };
+                                    handleSaveScenario({ preventDefault: () => {} }, payload);
+                                }}
+                            >
+                                {editId ? "Оновити сценарій" : "Зберегти сценарій"}
+                            </button>
+                        </div>
+                        ) : scenarioType === "audio" ? (
+                            <div className="dr-audio-scenario-builder">
+                            <div className="dr-scenario-meta">
+                                <div className="dr-input-group">
+                                    <label>
+                                        <span>Назва сценарію</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={scenarioTitle}
+                                        onChange={(e) => setScenarioTitle(e.target.value)}
+                                    />
+                                </div>
+                                <div className="dr-input-group">
+                                    <label>
+                                        <span>Технічний ID</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={scenarioSlug}
+                                        onChange={(e) => setScenarioSlug(e.target.value)}
+                                    />
+                                </div>
+                            </div>
+                            <div className="dr-input-group full">
+                                <label>
+                                    <span>URL аудіо</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    value={videoUrl}
+                                    onChange={(e) => setVideoUrl(e.target.value)}
+                                    placeholder="https://example.com/audio.mp3"
+                                />
+                            </div>
+                            <div className="dr-input-group full">
+                                <label>
+                                    <span>Транскрипція аудіо</span>
+                                </label>
+                                <div className="dr-tinymce-wrapper">
+                                    <Editor
+                                        apiKey="ugi59y3zaddsfjvw0lvtkfg1dvh6xrpoxdkh80rafozm9mh7"
+                                        value={videoTranscript}
+                                        onEditorChange={(content) => setVideoTranscript(content)}
+                                        init={tinyMceConfig}
+                                    />
+                                </div>
+                            </div>
+                            <button
+                                className="dr-save-btn"
+                                onClick={() => {
+                                    if (!scenarioTitle.trim()) {
+                                        alert("Введіть назву сценарію");
+                                        return;
+                                    }
+                                    if (!scenarioSlug.trim()) {
+                                        alert("Введіть технічний ID");
+                                        return;
+                                    }
+                                    if (!videoUrl.trim()) {
+                                        alert("Введіть URL аудіо");
+                                        return;
+                                    }
+                                    const payload = {
+                                        name: scenarioTitle,
+                                        scenarioId: scenarioSlug,
+                                        category: scenarioCategory,
+                                        duration: scenarioDuration,
+                                        difficulty: scenarioDifficulty,
+                                        type: "audio",
+                                        audioUrl: videoUrl,
+                                        audioTranscript: videoTranscript
+                                    };
                                     handleSaveScenario({ preventDefault: () => {} }, payload);
                                 }}
                             >
@@ -1136,7 +1360,7 @@ export default function AdminPage() {
                                                         setNodes(n);
                                                     }}
                                                 >
-                                                    + Додати варіант
+                                                    + Додати вариант
                                                 </button>
                                             </div>
                                         )}

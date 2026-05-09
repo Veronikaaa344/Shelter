@@ -33,16 +33,63 @@ const sendTokenResponse = (user, statusCode, res) => {
 router.post("/register", async (req, res) => {
 	try {
 		const { email, password, username } = req.body;
-		const accountExists = await Account.findOne({ email });
-		if (accountExists)
-			return res.status(400).json({ message: "Емейл зайнятий" });
+		
+		// Валідація вхідних даних
+		if (!email || !password || !username) {
+			return res.status(400).json({ 
+				message: "Всі поля обов'язкові",
+				field: "all",
+				type: "validation"
+			});
+		}
 
+		// Валідація email
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(email)) {
+			return res.status(400).json({ 
+				message: "Введіть коректний email адресу",
+				field: "email",
+				type: "validation"
+			});
+		}
+
+		// Валідація пароля
+		if (password.length < 6) {
+			return res.status(400).json({ 
+				message: "Пароль має містити мінімум 6 символів",
+				field: "password",
+				type: "validation"
+			});
+		}
+
+		// Валідація імені
+		if (username.length < 2) {
+			return res.status(400).json({ 
+				message: "Ім'я має містити мінімум 2 символи",
+				field: "username",
+				type: "validation"
+			});
+		}
+
+		// Перевірка чи існує акаунт
+		const accountExists = await Account.findOne({ email });
+		if (accountExists) {
+			return res.status(400).json({ 
+				message: "Цей email вже використовується. Спробуйте інший або увійдіть",
+				field: "email",
+				type: "exists"
+			});
+		}
+
+		// Створення профілю користувача
 		const userProfile = new User({ username });
 		const savedUser = await userProfile.save();
 
+		// Хешування пароля
 		const salt = await genSalt(10);
 		const hashedPassword = await hash(password, salt);
 
+		// Створення акаунту
 		const newAccount = new Account({
 			email,
 			password: hashedPassword,
@@ -52,22 +99,90 @@ router.post("/register", async (req, res) => {
 
 		sendTokenResponse(savedUser, 201, res);
 	} catch (err) {
-		res.status(500).json({ message: err.message });
+		console.error('Registration error:', err);
+		
+		// Обробка специфічних помилок MongoDB
+		if (err.code === 11000) {
+			const field = Object.keys(err.keyPattern)[0];
+			const fieldNames = {
+				email: 'email',
+				username: 'ім\'я'
+			};
+			return res.status(400).json({ 
+				message: `Цей ${fieldNames[field] || field} вже використовується`,
+				field: field,
+				type: "duplicate"
+			});
+		}
+
+		// Валідація помилок Mongoose
+		if (err.name === 'ValidationError') {
+			const errors = Object.values(err.errors).map(e => e.message);
+			return res.status(400).json({ 
+				message: errors[0] || "Помилка валідації даних",
+				field: "validation",
+				type: "validation",
+				details: errors
+			});
+		}
+
+		res.status(500).json({ 
+			message: "Помилка сервера. Спробуйте пізніше",
+			type: "server"
+		});
 	}
 });
 
 router.post("/login", async (req, res) => {
 	try {
 		const { email, password } = req.body;
-		const account = await Account.findOne({ email }).populate("userId");
-		if (!account) return res.status(400).json({ message: "Не знайдено" });
+		
+		// Валідація вхідних даних
+		if (!email || !password) {
+			return res.status(400).json({ 
+				message: "Email та пароль обов'язкові",
+				field: "all",
+				type: "validation"
+			});
+		}
 
+		// Валідація email
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(email)) {
+			return res.status(400).json({ 
+				message: "Введіть коректний email адресу",
+				field: "email",
+				type: "validation"
+			});
+		}
+
+		// Пошук акаунту
+		const account = await Account.findOne({ email }).populate("userId");
+		if (!account) {
+			return res.status(400).json({ 
+				message: "Користувача з таким email не знайдено. Перевірте email або зареєструйтесь",
+				field: "email",
+				type: "not_found"
+			});
+		}
+
+		// Перевірка пароля
 		const isMatch = await compare(password, account.password);
-		if (!isMatch) return res.status(400).json({ message: "Помилка" });
+		if (!isMatch) {
+			return res.status(400).json({ 
+				message: "Неправильний пароль. Спробуйте ще раз",
+				field: "password",
+				type: "invalid"
+			});
+		}
 
 		sendTokenResponse(account.userId, 200, res);
 	} catch (err) {
-		res.status(500).json({ message: err.message });
+		console.error('Login error:', err);
+		res.status(500).json({ 
+			message: "Помилка сервера. Спробуйте пізніше",
+			type: "server"
+		});
 	}
 });
 
@@ -269,10 +384,52 @@ router.post("/migrate-guest", async (req, res) => {
 		const { email, password, username } = req.body;
 		const guestCookie = req.cookies?.dr_guest;
 		
+		// Валідація вхідних даних
+		if (!email || !password || !username) {
+			return res.status(400).json({ 
+				message: "Всі поля обов'язкові",
+				field: "all",
+				type: "validation"
+			});
+		}
+
+		// Валідація email
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(email)) {
+			return res.status(400).json({ 
+				message: "Введіть коректний email адресу",
+				field: "email",
+				type: "validation"
+			});
+		}
+
+		// Валідація пароля
+		if (password.length < 6) {
+			return res.status(400).json({ 
+				message: "Пароль має містити мінімум 6 символів",
+				field: "password",
+				type: "validation"
+			});
+		}
+
+		// Валідація імені
+		if (username.length < 2) {
+			return res.status(400).json({ 
+				message: "Ім'я має містити мінімум 2 символи",
+				field: "username",
+				type: "validation"
+			});
+		}
+
 		// Check if email is taken
 		const accountExists = await Account.findOne({ email });
-		if (accountExists)
-			return res.status(400).json({ message: "Емейл зайнятий" });
+		if (accountExists) {
+			return res.status(400).json({ 
+				message: "Цей email вже використовується. Спробуйте інший або увійдіть",
+				field: "email",
+				type: "exists"
+			});
+		}
 
 		// Get guest data if exists
 		let guestData = null;
@@ -305,7 +462,37 @@ router.post("/migrate-guest", async (req, res) => {
 		// Send token response
 		sendTokenResponse(savedUser, 201, res);
 	} catch (err) {
-		res.status(500).json({ message: err.message });
+		console.error('Migration error:', err);
+		
+		// Обробка специфічних помилок MongoDB
+		if (err.code === 11000) {
+			const field = Object.keys(err.keyPattern)[0];
+			const fieldNames = {
+				email: 'email',
+				username: 'ім\'я'
+			};
+			return res.status(400).json({ 
+				message: `Цей ${fieldNames[field] || field} вже використовується`,
+				field: field,
+				type: "duplicate"
+			});
+		}
+
+		// Валідація помилок Mongoose
+		if (err.name === 'ValidationError') {
+			const errors = Object.values(err.errors).map(e => e.message);
+			return res.status(400).json({ 
+				message: errors[0] || "Помилка валідації даних",
+				field: "validation",
+				type: "validation",
+				details: errors
+			});
+		}
+
+		res.status(500).json({ 
+			message: "Помилка сервера. Спробуйте пізніше",
+			type: "server"
+		});
 	}
 });
 

@@ -1,10 +1,10 @@
-import { useEffect, useState, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { api } from "../../api/api";
-import { getDiagnosticConfig } from "../../diagnosticLogic";
 import CharacterCompanion from "../../components/characterCompanion/CharacterCompanion";
-import { Shield, Unlock, Video, BookOpen, Headphones, LifeBuoy, ArrowRight, Target, Sparkles, Heart, Phone } from 'lucide-react';
+import { getDiagnosticConfig } from "../../diagnosticLogic";
+import { LifeBuoy, Phone, Target, Shield, Sparkles, Heart, TrendingUp, Video, BookOpen, Headphones, ArrowRight, Unlock } from 'lucide-react';
 import "./mainPage.css";
 
 const typeIcons = {
@@ -159,9 +159,17 @@ export default function MainPage() {
       }
     };
 
+    const handlePhoneClick = (event) => {
+      // Prevent dropdown from closing when clicking the phone button
+      event.stopPropagation();
+      event.preventDefault();
+    };
+
     document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('click', handlePhoneClick);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('click', handlePhoneClick);
     };
   }, []);
 
@@ -253,7 +261,8 @@ export default function MainPage() {
             emoji: "💼",
             type: "текст",
             category: "stress",
-            action: "Читати"
+            action: "Читати",
+            materialId: "69ff5bcf9d4412f106947def"
           }
         );
         break;
@@ -370,7 +379,15 @@ export default function MainPage() {
 
           <div className="dr-hero-grid">
             <div className="dr-status-card">
-              <h2 className="dr-status-title">Мій стан стійкості</h2>
+              <div className="dr-card-header">
+                <div className="dr-card-icon">
+                  <TrendingUp className="w-6 h-6" strokeWidth={2} />
+                </div>
+                <div className="dr-card-info">
+                  <h2 className="dr-status-title">Мій прогрес</h2>
+                  <p className="dr-status-subtitle">Твій рівень стійкості сьогодні</p>
+                </div>
+              </div>
 
               <div className="dr-chart-container">
                 <div className="dr-chart-box">
@@ -410,13 +427,19 @@ export default function MainPage() {
               </div>
             </div>
 
-            <div className="dr-trainer-card">
-              <div className="dr-blob dr-blob-1"></div>
-              <div className="dr-blob dr-blob-2"></div>
+            <div className="dr-action-card">
+              <div className="dr-card-header">
+                <div className="dr-card-icon">
+                  <Target className="w-6 h-6" strokeWidth={2} />
+                </div>
+                <div className="dr-card-info">
+                  <h2 className="dr-status-title">Наступний крок</h2>
+                  <p className="dr-status-subtitle">Твій персональний шлях до стійкості</p>
+                </div>
+              </div>
 
-              <div className="dr-trainer-content">
-                <h2 className="dr-trainer-title">{getCtaTitle()}</h2>
-                <p className="dr-trainer-desc">
+              <div className="dr-action-content">
+                <p className="dr-action-desc">
                   Ніякого складного вибору і зайвих думок. Переходь до свого персонального квесту, де ми вже підготували наступний крок.
                 </p>
                 <button 
@@ -424,7 +447,7 @@ export default function MainPage() {
                   onClick={() => navigate('/quests')}
                 >
                   <Target className="w-6 h-6" strokeWidth={2} />
-                  Розпочати мій шлях до стійкості
+                  Розпочати мій шлях
                 </button>
               </div>
             </div>
@@ -446,7 +469,7 @@ export default function MainPage() {
 
           <div className="dr-recommendations-grid">
             {getPersonalizedRecommendations().map((item, index) => (
-              <div key={index} className="dr-recommendation-card">
+              <div key={index} className="dr-recommendation-card" onClick={() => item.materialId && navigate(`/material/${item.materialId}`)}>
                 <div className="dr-recommendation-visual" style={getCardStyle(item.category)}>
                   <div className="dr-recommendation-emoji">{item.emoji}</div>
                   <div className="dr-recommendation-badge" style={getBadgeStyle(item.category)}>
@@ -524,20 +547,29 @@ export default function MainPage() {
       )}
 
       <div className="dr-sos-section">
-        <div className="dr-sos-container" ref={sosDropdownRef}>
+        {/* Кнопка SOS для психологічної допомоги */}
+        <button 
+          className="dr-sos-btn-main"
+          onClick={() => navigate("/sos")}
+        >
+          <LifeBuoy className="w-7 h-7" strokeWidth={2.5} />
+          <span className="dr-btn-text">SOS</span>
+        </button>
+
+        {/* Кнопка телефонів для екстрених служб */}
+        <div className="dr-phone-container" ref={sosDropdownRef}>
           <button 
-            className="dr-sos-btn"
+            className="dr-phone-btn"
             onClick={() => setShowSosDropdown(!showSosDropdown)}
           >
-            <LifeBuoy className="w-6 h-6" strokeWidth={2} />
-            <span>SOS</span>
-            <Phone className={`w-4 h-4 dr-sos-arrow ${showSosDropdown ? 'open' : ''}`} strokeWidth={2} />
+            <Phone className="w-7 h-7" strokeWidth={2.5} />
+            <span className="dr-btn-text">📞</span>
           </button>
 
           {showSosDropdown && (
             <div className="dr-sos-dropdown">
               <div className="dr-sos-header">
-                <LifeBuoy className="w-5 h-5" strokeWidth={2} />
+                <Phone className="w-5 h-5" strokeWidth={2} />
                 <div>
                   <h4>Гарячі лінії допомоги</h4>
                   <p>Психологічна допомога в Україні</p>

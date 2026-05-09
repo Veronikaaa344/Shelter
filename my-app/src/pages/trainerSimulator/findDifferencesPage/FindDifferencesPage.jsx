@@ -20,14 +20,20 @@ export default function FindDifferencesPage() {
 		api
 			.getScenarioById(id)
 			.then((data) => {
+				console.log('FindDifferencesPage - scenario data:', data);
 				if (data) {
+					console.log('FindDifferencesPage - levels:', data.levels);
+					console.log('FindDifferencesPage - current level:', data.levels?.[0]);
 					setScenario(data);
 					setFoundDifferences([]);
 					setCurrentLevelIndex(0);
 				}
 				setLoading(false);
 			})
-			.catch(() => setLoading(false));
+			.catch((err) => {
+				console.error('FindDifferencesPage - error:', err);
+				setLoading(false);
+			});
 	}, [id]);
 
 	const handleImageClick = (e) => {
@@ -101,6 +107,18 @@ export default function FindDifferencesPage() {
 	if (!scenario) return <div className="dr-find-loader">Сценарій не знайдено</div>;
 
 	const currentLevel = scenario.levels?.[currentLevelIndex];
+	console.log('FindDifferencesPage - currentLevel:', currentLevel);
+	
+	if (!currentLevel) {
+		console.error('FindDifferencesPage - No current level found');
+		return <div className="dr-find-loader">Рівень не знайдено</div>;
+	}
+	
+	if (!currentLevel.image) {
+		console.error('FindDifferencesPage - No image found in current level:', currentLevel);
+		return <div className="dr-find-loader">Зображення не знайдено</div>;
+	}
+	
 	const differences = currentLevel?.differences || [];
 	const foundCount = foundDifferences.filter(id => id.startsWith(`${currentLevelIndex}-`)).length;
 

@@ -168,6 +168,100 @@
 	box-shadow: 0 10px 20px rgba(92, 107, 192, 0.1) !important;
 }
 
+.dr-tinymce-wrapper {
+    background: #f1f5f9;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 3px solid transparent;
+    transition: 0.3s;
+}
+
+.dr-tinymce-wrapper:focus-within {
+    background: #fff;
+    border-color: #5c6bc0;
+}
+
+.tox-tinymce {
+    border: none !important;
+    border-radius: 0 0 15px 15px !important;
+}
+
+.tox-toolbar {
+    background: #e2e8f0 !important;
+    border: none !important;
+    border-radius: 15px 15px 0 0 !important;
+    padding: 12px !important;
+}
+
+.tox-edit-area {
+    padding: 20px !important;
+    background: #fff !important;
+}
+
+.dr-save-btn {
+	margin-top: 40px;
+	padding: 24px;
+	background: #111d35;
+	color: white;
+	border: none;
+	border-radius: 24px;
+	font-weight: 900;
+	font-size: 1.3rem;
+	cursor: pointer;
+	width: 100%;
+}
+
+.dr-list-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 24px 30px;
+	background: #ffffff;
+	border-radius: 20px;
+	border: 3px solid #f1f5f9;
+	margin-bottom: 15px;
+	transition: 0.3s;
+}
+
+.dr-item-icon {
+	font-size: 2rem;
+	background: #f8fafc;
+	width: 60px;
+	height: 60px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 16px;
+}
+
+.dr-item-duration {
+	margin: 4px 0 0 0;
+	font-size: 0.85rem;
+	color: #64748b;
+	font-weight: 500;
+}
+
+.dr-edit-btn {
+	background: #f0f4ff;
+	color: #5c6bc0;
+	border: none;
+	padding: 12px 24px;
+	border-radius: 14px;
+	font-weight: 800;
+	cursor: pointer;
+	margin-right: 10px;
+}
+
+.dr-delete-btn {
+	background: #fff;
+	color: #e53935;
+	border: 3px solid #ffebee;
+    padding: 12px 24px;
+	border-radius: 14px;
+	font-weight: 800;
+	cursor: pointer;
+}
+
 .dr-json-area {
 	font-family: "Fira Code", "Courier New", monospace !important;
 	min-height: 500px !important;
@@ -218,58 +312,51 @@
 	letter-spacing: 1px;
 }
 
-.dr-tall-text {
-	min-height: 250px;
+.dr-format-toolbar {
+	display: flex;
+	gap: 10px;
+	margin-bottom: 10px;
 }
 
-.dr-list-item {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	padding: 24px 30px;
-	background: #ffffff;
-	border-radius: 20px;
-	border: 3px solid #f1f5f9;
-	margin-bottom: 15px;
-	transition: 0.3s;
+.dr-format-btn {
+	padding: 6px 16px;
+	background: #f3f4f6;
+	border: 1px solid #d1d5db;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 600;
+	font-size: 14px;
+	color: #374151;
+	transition: background 0.2s;
+}
+
+.dr-format-btn:hover {
+	background: #e5e7eb;
+}
+
+.dr-format-select {
+	padding: 6px 12px;
+	border: 1px solid #d1d5db;
+	border-radius: 6px;
+	cursor: pointer;
+	background: #f3f4f6;
+	font-size: 14px;
+	color: #374151;
+	outline: none;
+	transition: background 0.2s;
+}
+
+.dr-format-select:hover {
+	background: #e5e7eb;
+}
+
+.dr-tall-text {
+	min-height: 250px;
 }
 
 .dr-list-item:hover {
 	transform: scale(1.01);
 	border-color: #e2e8f0;
-}
-
-.dr-item-icon {
-	font-size: 2rem;
-	background: #f8fafc;
-	width: 60px;
-	height: 60px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 16px;
-}
-
-.dr-edit-btn,
-.dr-delete-btn {
-	padding: 12px 24px;
-	border-radius: 14px;
-	font-weight: 800;
-	cursor: pointer;
-	transition: 0.2s;
-}
-
-.dr-edit-btn {
-	background: #f0f4ff;
-	color: #5c6bc0;
-	border: none;
-	margin-right: 10px;
-}
-
-.dr-delete-btn {
-	background: #fff;
-	color: #e53935;
-	border: 3px solid #ffebee;
 }
 
 .dr-node-card {
@@ -333,7 +420,6 @@
 	align-items: center;
 }
 
-/* Оновлена сітка для ваги балів */
 .admin-score-row {
 	grid-template-columns: 1fr 140px 120px 40px !important;
 }
@@ -413,25 +499,11 @@
 	flex: 1;
 }
 
-.dr-save-btn {
-	margin-top: 40px;
-	padding: 24px;
-	background: #111d35;
-	color: white;
-	border: none;
-	border-radius: 24px;
-	font-weight: 900;
-	font-size: 1.3rem;
-	cursor: pointer;
-	width: 100%;
-}
-
 .dr-action-bar {
 	display: flex;
 	gap: 20px;
 }
 
-/* JSON Editor styles */
 .dr-json-editor {
 	display: flex;
 	flex-direction: column;
@@ -460,26 +532,6 @@
 	letter-spacing: 0.5px;
 }
 
-.dr-json-area {
-	flex: 1;
-	min-height: 400px;
-	padding: 20px;
-	border: 2px solid #e2e8f0;
-	border-radius: 16px;
-	font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
-	font-size: 0.85rem;
-	line-height: 1.6;
-	resize: vertical;
-	background: #f8fafc;
-	color: #1e293b;
-}
-
-.dr-json-area:focus {
-	outline: none;
-	border-color: #5c6bc0;
-	background: white;
-}
-
 .dr-json-example {
 	flex: 1;
 	background: #1e293b;
@@ -495,7 +547,6 @@
 	margin: 0;
 }
 
-/* Difficulty slider styles */
 .dr-difficulty-value {
 	margin-left: 12px;
 	padding: 4px 12px;
@@ -574,7 +625,6 @@
 	line-height: 1.3;
 }
 
-/* Duration select styles */
 .dr-duration-select {
 	width: 100%;
 	padding: 14px 18px;
@@ -604,35 +654,19 @@
 	box-shadow: 0 0 0 4px rgba(92, 107, 192, 0.1);
 }
 
-/* JSON Editor single column */
-.dr-json-editor {
+.dr-find-differences-builder {
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
 }
 
-.dr-json-area {
-	width: 100%;
-	min-height: 450px;
-	padding: 20px;
-	border: 2px solid #e2e8f0;
-	border-radius: 16px;
-	font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
-	font-size: 0.85rem;
-	line-height: 1.6;
-	resize: vertical;
-	background: #f8fafc;
-	color: #1e293b;
+.dr-video-scenario-builder {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
 }
 
-.dr-json-area:focus {
-	outline: none;
-	border-color: #5c6bc0;
-	background: white;
-}
-
-/* Find Differences Builder */
-.dr-find-differences-builder {
+.dr-audio-scenario-builder {
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
@@ -750,7 +784,6 @@
 	background: #dc2626;
 }
 
-/* Type Selector Modal */
 .dr-type-selector-modal {
 	position: fixed;
 	top: 0;

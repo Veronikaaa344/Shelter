@@ -195,3 +195,5 @@ export const api = {
 		}).then((res) => res.json());
 	},
 };
+
+export default api;
