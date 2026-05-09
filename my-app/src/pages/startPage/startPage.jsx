@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../api/api";
 import quizData from "../../quizData.json";
+import CharacterCompanion from "../../components/characterCompanion/CharacterCompanion";
 import "./startPage.css";
 
 export default function StartPage() {
 	const [currentQuestion, setCurrentQuestion] = useState(1);
 	const [currentlevel, setCurrentLevel] = useState(1);
 	const [answers, setAnswers] = useState([]);
+	const [stressCount, setStressCount] = useState(0);
+	const [companionContext, setCompanionContext] = useState("test");
 	const navigate = useNavigate();
 
 	const data = quizData.diagnosticTree[String(currentlevel)];
@@ -15,8 +19,25 @@ export default function StartPage() {
 	const totalLevels = 3;
 	const progress = (currentlevel / totalLevels) * 100;
 
+	// Detect stress indicators in answers (negative responses)
+	const isStressAnswer = (optionId) => {
+		const stressIndicators = ['a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1'];
+		return stressIndicators.includes(optionId);
+	};
+
 	const handleAnswerClick = (nextId, optionId) => {
 		const newAnswers = [...answers, optionId];
+		const isStress = isStressAnswer(optionId);
+
+		// Update stress count and companion context
+		if (isStress) {
+			const newStressCount = stressCount + 1;
+			setStressCount(newStressCount);
+			// Switch to stress support context after 2 stress answers
+			if (newStressCount >= 2) {
+				setCompanionContext("test-stress");
+			}
+		}
 
 		if (nextId) {
 			setCurrentQuestion(nextId);
@@ -37,7 +58,12 @@ export default function StartPage() {
 		}
 	};
 
-	const handleSosClick = () => {
+	const handleSosClick = async () => {
+		const userId = localStorage.getItem("userId");
+		// SOS button causes significant penalty (-15 resilience)
+		if (userId) {
+			await api.updateResilience(userId, -15, "sos", "Натиснута кнопка SOS");
+		}
 		navigate(`/sos/${answers.join(",")}`);
 	};
 
@@ -72,6 +98,7 @@ export default function StartPage() {
 					<span className="SOS-text">ПОТРІБНА ДОПОМОГА (SOS)</span>
 				</button>
 			</main>
+			<CharacterCompanion context={companionContext} position="bottom-right" stressCount={stressCount} />
 		</div>
 	);
 }

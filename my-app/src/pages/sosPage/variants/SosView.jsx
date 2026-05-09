@@ -29,14 +29,22 @@ export default function SosView({ answers }) {
 		if (userId) {
 			await api.updateResilience(userId, 20, "sos", "Стабілізація (Дихання)");
 		}
-		navigate("/main", { state: { answers } });
+		navigate("/main", { state: { answers, fromSOS: true } });
+	};
+
+	const handleSortingExercise = async () => {
+		const userId = localStorage.getItem("userId");
+		if (userId) {
+			await api.updateResilience(userId, 5, "sos", "Початок вправи сортування");
+		}
+		navigate("/trainer/sorting/chaos-unloading");
 	};
 
 	return (
 		<div className="sos-immersive-layout breathing-theme">
 			<button
 				className="exit-btn"
-				onClick={() => navigate("/main", { state: { answers } })}
+				onClick={() => navigate("/main", { state: { answers, fromSOS: true } })}
 			>
 				Вийти
 			</button>
@@ -58,7 +66,7 @@ export default function SosView({ answers }) {
 								</button>
 								<button
 									className="btn-no"
-									onClick={() => setStatusCheck(false)}
+									onClick={handleSortingExercise}
 								>
 									Ні
 								</button>

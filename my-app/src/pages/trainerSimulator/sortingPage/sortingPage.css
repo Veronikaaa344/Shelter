@@ -1,0 +1,158 @@
+.dr-sorting-page {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.dr-sorting-back {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+}
+
+/* Лічильник зверху по центру */
+.dr-sorting-top-counter {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1a2b48;
+  z-index: 30;
+  letter-spacing: -1px;
+}
+
+/* Бокова панель з текстом зліва */
+.dr-sorting-sidebar {
+  position: absolute;
+  top: 4rem;
+  left: 3rem;
+  max-width: 300px;
+  z-index: 30;
+}
+
+.dr-sorting-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #1a2b48;
+  line-height: 1.1;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.dr-sorting-desc {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1a2b48;
+  opacity: 0.8;
+  line-height: 1.3;
+}
+
+.dr-game-area {
+  flex: 1;
+  position: relative;
+}
+
+.dr-items-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+
+.dr-sorting-item {
+  position: absolute;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  cursor: grab;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: 2px solid white;
+}
+
+.dr-item-dragging {
+  opacity: 0 !important;
+}
+
+/* Док як на малюнку */
+.dr-sorting-dock {
+  position: absolute;
+  bottom: 2rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 20;
+}
+
+.dr-dock-tray {
+  background: white;
+  padding: 1rem;
+  border-radius: 24px;
+  display: flex;
+  gap: 1rem;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+  border: 1px solid #f0f4f8;
+}
+
+.dr-sorting-box {
+  width: 80px;
+  height: 100px;
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 1.5px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+
+.dr-sorting-box.drag-over {
+  transform: scale(1.05);
+  border-color: #42A5F5;
+}
+
+.dr-box-label {
+  height: 6px;
+  width: 25px;
+  margin: 8px auto 4px;
+  border-radius: 10px;
+}
+
+.dr-box-content {
+  flex: 1;
+  padding: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 3px;
+}
+
+.dr-sorted-mini-item {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.highlight-correct {
+  animation: flash-border 0.5s infinite alternate;
+}
+
+@keyframes flash-border {
+  from { border-color: #e2e8f0; }
+  to { border-color: #42A5F5; box-shadow: 0 0 10px rgba(66, 165, 245, 0.3); }
+}
+
+.dr-completion-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 43, 72, 0.3);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}

@@ -44,6 +44,7 @@
 	letter-spacing: 2px;
 	font-size: 0.85rem;
 	margin-bottom: 20px;
+	font-family: 'Quicksand', sans-serif;
 }
 
 .question {
@@ -54,6 +55,7 @@
 	line-height: 1.3;
 	text-align: center;
 	max-width: 800px;
+	font-family: 'Comfortaa', cursive;
 }
 
 /* Кнопки в ряд */
@@ -81,6 +83,7 @@
 	flex: 1;
 	max-width: 300px;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+	font-family: 'Quicksand', sans-serif;
 }
 
 .answer-button:hover {
@@ -102,6 +105,7 @@
 	box-shadow: 0 15px 35px rgba(229, 57, 53, 0.3);
 	transition: 0.3s;
 	letter-spacing: 1px;
+	font-family: 'Comfortaa', cursive;
 }
 
 .SOS-button-large:hover {

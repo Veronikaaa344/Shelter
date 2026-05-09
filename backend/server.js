@@ -1,3 +1,4 @@
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import "dotenv/config";
 import express from "express";
@@ -29,6 +30,7 @@ app.use(
 );
 
 app.use(express.json());
+app.use(cookieParser());
 
 const dbURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/shelter_db";
 

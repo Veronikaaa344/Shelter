@@ -1,0 +1,371 @@
+.dr-quest-layout {
+    min-height: 100vh;
+    background-color: #f0f7ff;
+    font-family: system-ui, -apple-system, sans-serif;
+    color: #0f172a;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.dr-quest-header {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.dr-quest-header-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+}
+
+.dr-quest-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dr-quest-logo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  cursor: pointer;
+  transition: scale 0.2s ease;
+  will-change: scale;
+}
+
+.dr-quest-logo:hover {
+  scale: 1.02;
+}
+
+.dr-quest-logo-icon-box {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #42A5F5, #1E88E5);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dr-quest-logo-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.dr-quest-logo-text {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin: 0;
+    font-family: 'Comfortaa', cursive;
+}
+
+.dr-quest-nav-center {
+    display: flex;
+    gap: 8px;
+}
+
+.dr-quest-nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 2px solid #e2e8f0;
+    color: #2196f3;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all 0.2s;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.dr-quest-nav-link:hover {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+}
+
+.dr-quest-icon-sm {
+    width: 18px;
+    height: 18px;
+}
+
+.dr-quest-user-section {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.dr-quest-state-badge {
+    background: #f1f5f9;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+    font-family: 'Quicksand', sans-serif;
+}
+
+.dr-quest-state-value {
+    color: #0f172a;
+    font-weight: 700;
+    margin-left: 4px;
+}
+
+.dr-quest-profile-btn {
+    background: white;
+    border: 2px solid #e2e8f0;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.dr-quest-profile-btn:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+}
+
+.dr-quest-main {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 60px 24px;
+}
+
+.dr-quest-page-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.dr-quest-page-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.02em;
+    font-family: 'Comfortaa', cursive;
+}
+
+.dr-quest-page-subtitle {
+    font-size: 1.1rem;
+    color: #64748b;
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+}
+
+.dr-quest-timeline {
+    position: relative;
+    padding-left: 48px;
+}
+
+.dr-quest-timeline::before {
+    content: '';
+    position: absolute;
+    top: 24px;
+    bottom: 24px;
+    left: 22px;
+    width: 4px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+.dr-quest-step {
+    position: relative;
+    margin-bottom: 40px;
+}
+
+.dr-quest-step:last-child {
+    margin-bottom: 0;
+}
+
+.dr-quest-marker-wrapper {
+    position: absolute;
+    left: -48px;
+    top: 16px;
+    z-index: 2;
+}
+
+.dr-quest-marker {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 4px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.dr-quest-marker.completed {
+    border-color: #4caf50;
+    background: #4caf50;
+    color: white;
+}
+
+.dr-quest-marker.current {
+    border-color: #2196f3;
+    background: #2196f3;
+    color: white;
+    box-shadow: 0 0 0 6px rgba(33, 150, 243, 0.2);
+}
+
+.dr-quest-marker.locked {
+    border-color: #e2e8f0;
+    background: #f8fafc;
+    color: #94a3b8;
+}
+
+.dr-quest-fox {
+    position: absolute;
+    left: -30px;
+    top: -24px;
+    font-size: 32px;
+    animation: dr-quest-bounce 2s infinite ease-in-out;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+    z-index: 10;
+}
+
+@keyframes dr-quest-bounce {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-8px) rotate(5deg); }
+}
+
+.dr-quest-card {
+    background: white;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    border: 2px solid transparent;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dr-quest-card.completed {
+    border-color: #e8f5e9;
+}
+
+.dr-quest-card.current {
+    border-color: #2196f3;
+    box-shadow: 0 10px 25px rgba(33, 150, 243, 0.15);
+    transform: scale(1.02);
+}
+
+.dr-quest-card.locked {
+    background: #f8fafc;
+    box-shadow: none;
+    border-color: #f1f5f9;
+}
+
+.dr-quest-card.locked .dr-quest-card-title,
+.dr-quest-card.locked .dr-quest-day,
+.dr-quest-card.locked .dr-quest-thought {
+    color: #94a3b8;
+}
+
+.dr-quest-card-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.dr-quest-day {
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #64748b;
+    margin-bottom: 4px;
+    font-family: 'Quicksand', sans-serif;
+}
+
+.dr-quest-card-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    font-family: 'Comfortaa', cursive;
+}
+
+.dr-quest-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dr-quest-thought {
+    font-size: 1rem;
+    color: #475569;
+    line-height: 1.5;
+    margin: 0;
+    font-style: italic;
+    background: #f8fafc;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border-left: 4px solid #cbd5e1;
+    font-family: 'Quicksand', sans-serif;
+}
+
+.dr-quest-card.current .dr-quest-thought {
+    background: #f0f8ff;
+    border-left-color: #2196f3;
+    color: #1e293b;
+}
+
+.dr-quest-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    align-self: flex-start;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.dr-quest-action-btn.current {
+    background: #2196f3;
+    color: white;
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+}
+
+.dr-quest-action-btn.current:hover {
+    background: #1976d2;
+    transform: translateY(-2px);
+}
+
+.dr-quest-action-btn.completed {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.dr-quest-action-btn.completed:hover {
+    background: #e2e8f0;
+}
+
+.mr-2 {
+    margin-right: 8px;
+}
+
+.dr-quest-companion-layer {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    pointer-events: none;
+    z-index: 100;
+    transition: transform 0.3s ease;
+}

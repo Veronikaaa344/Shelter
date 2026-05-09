@@ -1,0 +1,191 @@
+.dr-mat-page {
+    background: linear-gradient(to bottom, #e8f4fd 0%, #f5f9ff 50%, #fafcff 100%);
+}
+
+.dr-mat-content {
+    max-width: 900px !important;
+    padding-top: 2rem !important;
+    padding-bottom: 5rem !important;
+}
+
+.dr-mat-card {
+    padding: 3rem !important;
+    border-radius: 40px !important;
+    border: 1px solid white;
+}
+
+.dr-mat-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.dr-mat-time {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.dr-mat-main-title {
+    font-size: 2.5rem !important;
+    line-height: 1.2;
+    margin-bottom: 2rem !important;
+}
+
+/* Форматування тексту */
+.dr-mat-p {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.dr-mat-list-item {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #2c3e50;
+    margin-bottom: 0.8rem;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.dr-mat-list-item::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #42A5F5;
+    font-weight: bold;
+}
+
+/* Медіа секції */
+.dr-mat-media-section {
+    margin-bottom: 2.5rem;
+}
+
+.dr-mat-video-box {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #000;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    aspect-ratio: 16/9;
+}
+
+.dr-mat-player {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dr-mat-big-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(66, 165, 245, 0.9);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dr-mat-big-play:hover {
+    scale: 1.1;
+    background: #1E88E5;
+}
+
+/* Аудіо візуалізатор */
+.dr-mat-audio-player-card {
+    background: #f8fbff;
+    padding: 2rem;
+    border-radius: 30px;
+    border: 2px solid #e3f2fd;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.dr-mat-viz {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 50px;
+}
+
+.dr-mat-v-bar {
+    width: 4px;
+    background: #42A5F5;
+    height: 20%;
+    border-radius: 2px;
+}
+
+.dr-mat-viz.active .dr-mat-v-bar {
+    animation: mat-eq 1s infinite ease-in-out;
+}
+
+@keyframes mat-eq {
+    0%, 100% { height: 20%; }
+    50% { height: 100%; }
+}
+
+/* Тези */
+.dr-mat-highlights {
+    margin-top: 2rem;
+    background: #fff9e6;
+    padding: 2rem;
+    border-radius: 24px;
+    border-left: 6px solid #ffca28;
+}
+
+.dr-mat-highlights h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 1rem;
+    color: #856404;
+}
+
+/* Футер */
+.dr-mat-action-zone {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid #f0f4f8;
+    display: flex;
+    justify-content: center;
+}
+
+.dr-mat-finish-btn {
+    padding: 1.2rem 3rem !important;
+    font-size: 1.1rem !important;
+}
+
+.dr-mat-feedback-box {
+    text-align: center;
+}
+
+.dr-mat-feedback-box p {
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+}
+
+.dr-mat-feedback-row {
+    display: flex;
+    gap: 1rem;
+}
+
+@media (max-width: 768px) {
+    .dr-mat-card { padding: 1.5rem !important; }
+    .dr-mat-main-title { font-size: 1.8rem !important; }
+    .dr-mat-feedback-row { flex-direction: column; }
+}

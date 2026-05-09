@@ -16,16 +16,36 @@
 	padding: 0;
 }
 
+/* Smooth transitions for interactive elements only */
+button, a, input, textarea, select, .dr-card, .dr-btn, .dr-ex-card, .dr-material-card, .dr-option-btn, .dr-sim-close, .dr-back-btn, .dr-completion-btn, .dr-next-level-btn, .dr-sorting-box, .dr-difference-marker, .dr-sos-fab, .dr-sos-fab-trainer, .dr-cta-btn, .dr-finish-btn {
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap');
+
 body {
 	margin: 0;
 	font-family:
-		'Inter',
+		'Quicksand',
 		-apple-system,
 		system-ui,
 		sans-serif;
 	background-color: var(--dr-bg);
 	color: var(--dr-text-main);
 	-webkit-font-smoothing: antialiased;
+}
+
+/* Font family classes */
+.dr-font-heading {
+	font-family: 'Comfortaa', cursive;
+}
+
+.dr-font-button {
+	font-family: 'Montserrat', sans-serif;
+}
+
+.dr-font-body {
+	font-family: 'Quicksand', sans-serif;
 }
 
 .dr-loader {
@@ -81,4 +101,28 @@ body {
 .dr-back-btn:hover {
 	border-color: var(--dr-primary);
 	color: var(--dr-primary);
+}
+
+/* General hover effects for buttons */
+button:hover, .dr-btn:hover, .dr-cta-btn:hover, .dr-completion-btn:hover, .dr-finish-btn:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(92, 107, 192, 0.2);
+}
+
+/* General hover effects for cards */
+.dr-card:hover, .dr-ex-card:hover, .dr-material-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* General hover effects for links */
+a:hover {
+	color: var(--dr-primary-hover);
+}
+
+/* Smooth focus effects */
+input:focus, textarea:focus, select:focus {
+	outline: none;
+	border-color: var(--dr-primary);
+	box-shadow: 0 0 0 3px rgba(92, 107, 192, 0.2);
 }

@@ -1,116 +1,124 @@
-:root {
-    --auth-bg: #F8F9FA;
-    --auth-surface: #FFFFFF;
-    --auth-primary: #1A2B48;
-    --auth-accent: #5C6BC0;
-    --auth-text-muted: #6C757D;
-    --auth-border: #E9ECEF;
-}
+/* authPage.css */
 
-.dr-auth-container {
-    height: 100vh;
-    width: 100%;
+.dr-auth-layout {
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--auth-bg);
-    font-family: 'Inter', sans-serif;
-    padding: 20px;
+    min-height: 100vh;
+}
+
+.dr-auth-back {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    z-index: 100;
+}
+
+.dr-auth-main {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
 }
 
 .dr-auth-card {
-    background: var(--auth-surface);
     width: 100%;
-    max-width: 440px;
-    padding: 48px;
-    border-radius: 32px;
-    box-shadow: 0 20px 60px rgba(26, 43, 72, 0.05);
-    border: 1px solid var(--auth-border);
-}
-
-.dr-auth-header {
+    max-width: 420px;
+    padding: 3rem 2.5rem;
     text-align: center;
-    margin-bottom: 32px;
+    align-items: center;
+    animation: authCardFade 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.dr-auth-icon {
-    font-size: 3rem;
-    display: block;
-    margin-bottom: 16px;
+@keyframes authCardFade {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.dr-auth-title {
-    font-size: 1.8rem;
-    font-weight: 800;
-    color: var(--auth-primary);
-    margin-bottom: 8px;
-}
-
-.dr-auth-subtitle {
-    color: var(--auth-text-muted);
-    font-size: 0.95rem;
-    line-height: 1.5;
+.dr-auth-logo {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
 }
 
 .dr-auth-form {
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.dr-input-group {
+    width: 100%;
 }
 
 .dr-auth-input {
     width: 100%;
-    padding: 16px 20px;
-    background: #F1F3F5;
-    border: 2px solid transparent;
+    padding: 1rem 1.25rem;
     border-radius: 16px;
+    border: 2px solid #f0f4f8;
+    background: #f8fbff;
     font-size: 1rem;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
+    font-family: inherit;
+    color: #1a2b48;
+    transition: all 0.2s ease;
+    outline: none;
 }
 
 .dr-auth-input:focus {
-    outline: none;
-    background: #FFF;
-    border-color: var(--auth-accent);
-    box-shadow: 0 0 0 4px rgba(92, 107, 192, 0.1);
+    border-color: #42A5F5;
+    background: white;
+    box-shadow: 0 4px 12px rgba(66, 165, 245, 0.1);
 }
 
-.dr-auth-submit-btn {
-    margin-top: 8px;
-    padding: 16px;
-    background: var(--auth-primary);
-    color: white;
-    border: none;
-    border-radius: 16px;
-    font-size: 1.05rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.3s ease;
+.dr-auth-submit {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 1.1rem;
+    font-size: 1.1rem;
 }
 
-.dr-auth-submit-btn:hover {
-    background: var(--auth-accent);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(92, 107, 192, 0.2);
-}
-
-.dr-auth-footer {
-    margin-top: 32px;
-    text-align: center;
-}
-
-.dr-auth-toggle-btn {
-    background: none;
-    border: none;
-    color: var(--auth-accent);
-    font-weight: 600;
+.dr-auth-toggle {
+    margin-top: 1.5rem;
     font-size: 0.95rem;
-    cursor: pointer;
-    transition: 0.2s;
+    color: #6c757d;
 }
 
-.dr-auth-toggle-btn:hover {
-    text-decoration: underline;
-    opacity: 0.8;
+.dr-auth-divider {
+    width: 100%;
+    margin: 2rem 0;
+    position: relative;
+    border-bottom: 1px solid #eef2f6;
+}
+
+.dr-auth-divider span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 0 1rem;
+    color: #a0aec0;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.dr-guest-action {
+    width: 100%;
+    justify-content: center;
+    border-style: dashed !important; /* Робимо кнопку гостя візуально легшою */
+}
+
+/* Адаптивність */
+@media (max-width: 480px) {
+    .dr-auth-card {
+        padding: 2rem 1.5rem;
+        box-shadow: none;
+        background: transparent;
+    }
+    
+    .dr-auth-back {
+        top: 1rem;
+        left: 1rem;
+    }
 }

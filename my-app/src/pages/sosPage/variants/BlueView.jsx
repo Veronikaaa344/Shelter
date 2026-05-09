@@ -26,17 +26,37 @@ export default function BlueView({ answers }) {
 				"Стабілізація (Заземлення)",
 			);
 		}
-		navigate("/main", { state: { answers } });
+		navigate("/main", { state: { answers, fromSOS: true } });
+	};
+
+	const handleSosClick = async () => {
+		const userId = localStorage.getItem("userId");
+		if (userId) {
+			await api.updateResilience(userId, -15, "sos", "Натиснута кнопка SOS");
+		}
+		navigate("/sos");
+	};
+
+	const handleExitToSos = () => {
+		navigate("/sos", { state: { answers } });
 	};
 
 	return (
 		<main className="sos-immersive-layout grounding-mode">
-			<button
-				className="exit-btn"
-				onClick={() => navigate("/main", { state: { answers } })}
-			>
-				Вийти
-			</button>
+			<div className="exit-buttons">
+				<button
+					className="exit-btn"
+					onClick={() => navigate("/main", { state: { answers } })}
+				>
+					✕ Закрити
+				</button>
+				<button
+					className="exit-to-sos-btn"
+					onClick={handleExitToSos}
+				>
+					← Повернутися до SOS
+				</button>
+			</div>
 			<header className="header">
 				<p className="progress-text">{step + 1} / 5</p>
 				<div className="progress-track">
@@ -58,6 +78,9 @@ export default function BlueView({ answers }) {
 					)}
 				</footer>
 			</section>
+			<button className="dr-sos-fab-trainer" onClick={handleSosClick}>
+				SOS
+			</button>
 		</main>
 	);
 }

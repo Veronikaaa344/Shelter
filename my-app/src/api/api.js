@@ -14,17 +14,41 @@ const getHeaders = () => ({
 
 const isValidId = (id) => id && id !== "null" && id !== "undefined";
 
+const isGuest = () => localStorage.getItem("dr_token") === "guest_mode";
+
 export const api = {
+	isGuest,
+
+	getProfile: () => {
+		if (isGuest()) {
+			return fetch(`${API_URL}/auth/guest/me`, {
+				credentials: "include",
+			}).then((res) => res.json());
+		}
+		const userId = localStorage.getItem("userId");
+		if (!isValidId(userId)) return Promise.reject("Invalid ID");
+		return fetch(`${API_URL}/users/${userId}/stats-volume`, {
+			headers: getHeaders(),
+		}).then((res) => res.json());
+	},
+
+	logout: () => {
+		localStorage.removeItem("dr_token");
+		localStorage.removeItem("userId");
+		return Promise.resolve();
+	},
 	loginAsGuest: () =>
 		fetch(`${API_URL}/auth/guest`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
+			credentials: "include",
 		}).then((res) => res.json()),
 
 	login: (data) =>
 		fetch(`${API_URL}/auth/login`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
+			credentials: "include",
 			body: JSON.stringify(data),
 		}).then((res) => res.json()),
 
@@ -32,6 +56,15 @@ export const api = {
 		fetch(`${API_URL}/auth/register`, {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify(data),
+		}).then((res) => res.json()),
+
+	migrateGuest: (data) =>
+		fetch(`${API_URL}/auth/migrate-guest`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
 			body: JSON.stringify(data),
 		}).then((res) => res.json()),
 
@@ -92,6 +125,11 @@ export const api = {
 	},
 
 	getUserStats: (userId) => {
+		if (isGuest()) {
+			return fetch(`${API_URL}/auth/guest/stats`, {
+				credentials: "include",
+			}).then((res) => res.json());
+		}
 		if (!isValidId(userId)) return Promise.reject("Invalid ID");
 		return fetch(`${API_URL}/users/${userId}/stats`, {
 			headers: getHeaders(),
@@ -99,6 +137,14 @@ export const api = {
 	},
 
 	updateResilience: (userId, amount, type, name) => {
+		if (isGuest()) {
+			return fetch(`${API_URL}/auth/guest/update-resilience`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				credentials: "include",
+				body: JSON.stringify({ amount, type, name }),
+			}).then((res) => res.json());
+		}
 		if (!isValidId(userId)) return Promise.reject("Invalid ID");
 		return fetch(`${API_URL}/users/update-resilience`, {
 			method: "POST",
@@ -108,9 +154,44 @@ export const api = {
 	},
 
 	getVolumeStats: (userId) => {
+		if (isGuest()) {
+			return fetch(`${API_URL}/auth/guest/stats-volume`, {
+				credentials: "include",
+			}).then((res) => res.json());
+		}
 		if (!isValidId(userId)) return Promise.reject("Invalid ID");
 		return fetch(`${API_URL}/users/${userId}/stats-volume`, {
 			headers: getHeaders(),
+		}).then((res) => res.json());
+	},
+
+	// Gamification APIs
+	recordActivity: () => {
+		return fetch(`${API_URL}/auth/activity`, {
+			method: "POST",
+			headers: getHeaders(),
+			credentials: "include",
+		}).then((res) => res.json());
+	},
+
+	completeScenario: (scenarioId, score) => {
+		return fetch(`${API_URL}/auth/complete-scenario`, {
+			method: "POST",
+			headers: getHeaders(),
+			credentials: "include",
+			body: JSON.stringify({ scenarioId, score }),
+		}).then((res) => res.json());
+	},
+
+	getUserProfile: () => {
+		if (isGuest()) {
+			return fetch(`${API_URL}/auth/guest/me`, {
+				credentials: "include",
+			}).then((res) => res.json());
+		}
+		return fetch(`${API_URL}/auth/profile`, {
+			headers: getHeaders(),
+			credentials: "include",
 		}).then((res) => res.json());
 	},
 };

@@ -1,16 +1,17 @@
 import React, { useState, useRef } from 'react';
+import CharacterCompanion from '../../../components/characterCompanion/CharacterCompanion';
 import './focusMode.css';
 
-export default function FocusMode({ content, onClose, onSos }) {
+export default function FocusMode({ material, onClose, onSos }) {
 	const [showFeedback, setShowFeedback] = useState(false);
 	const [isPlaying, setIsPlaying] = useState(false);
 	const videoRef = useRef(null);
 	const audioRef = useRef(null);
 
-	if (!content) return null;
+	if (!material) return null;
 
 	// Підтримка обох форматів типів (кирилиця/латиниця) для стабільності
-	const type = content.type?.toLowerCase();
+	const type = material.type?.toLowerCase();
 	const isVideo = type === 'video' || type === 'відео';
 	const isAudio = type === 'audio' || type === 'аудіо';
 	const isText = type === 'text' || type === 'текст';
@@ -44,7 +45,7 @@ export default function FocusMode({ content, onClose, onSos }) {
 			</header>
 
 			<main className="dr-focus-content-area">
-				<h1 className="dr-focus-main-title">{content.title}</h1>
+				<h1 className="dr-focus-main-title">{material.title}</h1>
 
 				{isVideo && (
 					<div className="dr-focus-video-wrapper">
@@ -52,7 +53,7 @@ export default function FocusMode({ content, onClose, onSos }) {
 							<video
 								ref={videoRef}
 								className="dr-real-video-player"
-								src={content.url || content.content}
+								src={material.url || material.content}
 								onClick={toggleVideo}
 							/>
 							{!isPlaying && (
@@ -63,7 +64,7 @@ export default function FocusMode({ content, onClose, onSos }) {
 						</div>
 						<div className="dr-focus-text-box">
 							<h3>Ключові тези</h3>
-							<p>{content.notes || content.desc}</p>
+							<p>{material.notes || material.desc}</p>
 						</div>
 					</div>
 				)}
@@ -79,7 +80,7 @@ export default function FocusMode({ content, onClose, onSos }) {
 							</div>
 							<audio
 								ref={audioRef}
-								src={content.url || content.content}
+								src={material.url || material.content}
 								onPlay={() => setIsPlaying(true)}
 								onPause={() => setIsPlaying(false)}
 							/>
@@ -93,7 +94,7 @@ export default function FocusMode({ content, onClose, onSos }) {
 				{isText && (
 					<article className="dr-focus-reader-mode">
 						<div className="dr-focus-article-body">
-							{content.fullText || content.content}
+							{material.fullText || material.content}
 						</div>
 					</article>
 				)}
@@ -124,6 +125,7 @@ export default function FocusMode({ content, onClose, onSos }) {
 			<button className="dr-sos-fab" onClick={onSos}>
 				<span className="dr-sos-text">SOS</span>
 			</button>
+			<CharacterCompanion context="content" position="bottom-left" delay={3000} />
 		</div>
 	);
 }
