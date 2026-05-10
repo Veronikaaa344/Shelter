@@ -82,5 +82,36 @@ app.get("/api/health", (req, res) => {
 	res.status(200).json({ status: "OK", message: "Server is running" });
 });
 
+// MongoDB connection test endpoint
+app.get("/api/mongodb-test", async (req, res) => {
+	try {
+		console.log(`[${new Date().toISOString()}] Testing MongoDB connection...`);
+		console.log(`[${new Date().toISOString()}] Connection state:`, mongoose.connection.readyState);
+		console.log(`[${new Date().toISOString()}] Connected:`, mongoose.connection.readyState === 1);
+
+		// Тестуємо простий запит
+		const startTime = Date.now();
+		const collections = await mongoose.connection.db.listCollections().toArray();
+		const duration = Date.now() - startTime;
+
+		console.log(`[${new Date().toISOString()}] ✅ Collections found:`, collections.length, `(${duration}ms)`);
+
+		res.status(200).json({
+			status: "OK",
+			connected: mongoose.connection.readyState === 1,
+			collections: collections.length,
+			collectionNames: collections.map(c => c.name),
+			duration: `${duration}ms`
+		});
+	} catch (err) {
+		console.error(`[${new Date().toISOString()}] ❌ MongoDB test error:`, err.message);
+		res.status(500).json({
+			error: err.message,
+			connected: mongoose.connection.readyState === 1,
+			state: mongoose.connection.readyState
+		});
+	}
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
