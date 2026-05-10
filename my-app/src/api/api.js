@@ -27,7 +27,7 @@ export const api = {
 		}
 		const userId = localStorage.getItem("userId");
 		if (!isValidId(userId)) return Promise.reject("Invalid ID");
-		return fetch(`${API_URL}/users/${userId}/stats-volume`, {
+		return fetch(`${API_URL}/users/${userId}/profile`, {
 			headers: getHeaders(),
 		}).then((res) => res.json());
 	},
@@ -35,6 +35,7 @@ export const api = {
 	logout: () => {
 		localStorage.removeItem("dr_token");
 		localStorage.removeItem("userId");
+		localStorage.removeItem("username");
 		return Promise.resolve();
 	},
 	loginAsGuest: () =>
@@ -246,17 +247,7 @@ export const api = {
 		}).then((res) => res.json());
 	},
 
-	getUserProfile: () => {
-		if (isGuest()) {
-			return fetch(`${API_URL}/auth/guest/me`, {
-				credentials: "include",
-			}).then((res) => res.json());
-		}
-		return fetch(`${API_URL}/auth/profile`, {
-			headers: getHeaders(),
-			credentials: "include",
-		}).then((res) => res.json());
-	},
+
 };
 
 export default api;

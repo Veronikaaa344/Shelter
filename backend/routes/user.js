@@ -35,6 +35,22 @@ router.post("/update-resilience", async (req, res) => {
 	}
 });
 
+router.get("/:id/profile", async (req, res) => {
+	try {
+		if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
+			return res.status(400).json({ message: "Invalid ID" });
+		}
+		const user = await User.findById(req.params.id);
+		if (!user) return res.status(404).json({ message: "User not found" });
+		res.json({
+			id: user._id,
+			username: user.username,
+		});
+	} catch (err) {
+		res.status(500).json({ message: err.message });
+	}
+});
+
 router.get("/:id/stats-volume", async (req, res) => {
 	try {
 		if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {

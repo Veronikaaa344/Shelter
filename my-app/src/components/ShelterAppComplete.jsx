@@ -16,6 +16,7 @@ import {
   Video,
   X
 } from 'lucide-react';
+import BreathingExercise from './BreathingExercise/BreathingExercise';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../index-tailwind.css';
@@ -135,9 +136,6 @@ const ShelterAppComplete = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [libraryFilter, setLibraryFilter] = useState('Всі');
 
-  const [breathStage, setBreathStage] = useState('Вдих');
-  const [timer, setTimer] = useState(4);
-  const [isActive, setIsActive] = useState(false);
 
   const [testStep, setTestStep] = useState(0);
   const [testAnswers, setTestAnswers] = useState([]);
@@ -149,13 +147,28 @@ const ShelterAppComplete = () => {
 
   // Данные из API
   const [mediaLibraryData, setMediaLibraryData] = useState([]);
-  const [username, setUsername] = useState("Гість");
   const [resilience, setResilience] = useState(50);
   const [userStats, setUserStats] = useState(null);
-  const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  
+  // Перевірка на "null" або "undefined" як рядки
+  const rawUserId = localStorage.getItem("userId");
+  const initialUserId = (rawUserId === "null" || rawUserId === "undefined") ? null : rawUserId;
+  const [userId, setUserId] = useState(initialUserId);
+
+  const initialUsername = localStorage.getItem("username") || "Гість";
+  const [username, setUsername] = useState(initialUsername);
 
   useEffect(() => {
-    // Загрузка материалов из API
+    const handleStorageChange = () => {
+      setUserId(localStorage.getItem("userId"));
+      setUsername(localStorage.getItem("username") || "Гість");
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
+  useEffect(() => {
+    // Завантаження медіатеки та іншого...
     api.getMaterials()
       .then((data) => {
         console.log('📊 Загруженные материалы с API:', data);
@@ -186,14 +199,18 @@ const ShelterAppComplete = () => {
       .catch((err) => console.error('Error loading materials:', err));
 
     // Загрузка профиля
-    if (api.isGuest && api.isGuest()) {
+    console.log('👤 Спроба завантажити профіль для ID:', userId, 'Гість:', api.isGuest());
+    if (userId || (api.isGuest && api.isGuest())) {
       api.getProfile()
         .then((profile) => {
+          console.log('✅ Профіль отримано:', profile);
           if (profile && profile.username) {
             setUsername(profile.username);
           }
         })
-        .catch(() => { });
+        .catch((err) => { 
+          console.error('❌ Помилка завантаження профілю:', err);
+        });
     }
 
     // Загрузка статистики
@@ -219,19 +236,9 @@ const ShelterAppComplete = () => {
         }
       })
       .catch((err) => console.error('Error loading scenarios:', err));
-  }, []);
+  }, [userId]);
 
-  useEffect(() => {
-    let interval = null;
-    if (isActive && timer > 0) {
-      interval = setInterval(() => setTimer(prev => prev - 1), 1000);
-    } else if (isActive && timer === 0) {
-      const stages = { 'Вдих': 'Затримка', 'Затримка': 'Видих', 'Видих': 'Спокій', 'Спокій': 'Вдих' };
-      setBreathStage(prev => stages[prev]);
-      setTimer(4);
-    }
-    return () => clearInterval(interval);
-  }, [isActive, timer]);
+
 
 
 
@@ -241,7 +248,6 @@ const ShelterAppComplete = () => {
       setIsSimulatorMode(false);
     } else {
       setCurrentView(id);
-      setIsActive(false);
       setSearchTerm('');
       setTestStep(0);
       setIsTestFinished(false);
@@ -420,15 +426,7 @@ const ShelterAppComplete = () => {
               />}
               {currentView === 'stats' && <StatsView />}
               {currentView === 'practice' && <PracticeView
-                isActive={isActive}
-                setIsActive={setIsActive}
-                timer={timer}
-                setTimer={setTimer}
-                breathStage={breathStage}
-                setBreathStage={setBreathStage}
                 userId={userId}
-                userStats={userStats}
-                setUserStats={setUserStats}
                 navigateTo={navigateTo}
               />}
               {currentView === 'advice' && <AdviceView />}
