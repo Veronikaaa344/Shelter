@@ -49,6 +49,7 @@
   animation-name: zoomIn;
 }
 
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -56,4 +57,68 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* --- ROBUST ROUNDING & PREMIUM ANIMATIONS --- */
+
+.robust-card {
+  border-radius: 48px !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.robust-card:hover {
+  transform: translateY(-16px) scale(1.02) translateZ(0) !important;
+  box-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.6) !important;
+}
+
+.robust-card .card-bg-layer {
+  position: absolute;
+  inset: 0;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  z-index: 0;
+}
+
+.robust-card:hover .card-bg-layer {
+  transform: scale(1.4) rotate(4deg) !important;
+}
+
+.robust-card:active {
+  transform: translateY(-8px) scale(0.96) translateZ(0) !important;
+}
+
+.robust-rounded-64 {
+  border-radius: 64px !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  transform: translateZ(0);
+}
+
+.robust-rounded-48 {
+  border-radius: 48px !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  transform: translateZ(0);
+}
+
+.robust-rounded-32 {
+  border-radius: 32px !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  transform: translateZ(0);
+}
+
+.robust-rounded-20 {
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  -webkit-mask-image: -webkit-radial-gradient(white, black);
+  transform: translateZ(0);
 }
