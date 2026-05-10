@@ -17,7 +17,7 @@ services:
         generateValue: true
     healthCheckPath: /api/health
 
-  # Frontend Service (вже створено, але додамо для повноти)
+  # Frontend Service
   - type: web
     name: shelter-frontend
     env: static
@@ -27,3 +27,7 @@ services:
     envVars:
       - key: REACT_APP_API_URL
         value: https://shelter-backend.onrender.com
+    routes:
+      - type: rewrite
+        source: /api/*
+        destination: https://shelter-backend.onrender.com/api/*
