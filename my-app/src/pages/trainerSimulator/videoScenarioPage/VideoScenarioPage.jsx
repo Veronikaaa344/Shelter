@@ -15,8 +15,7 @@ export default function VideoScenarioPage() {
     const [showTranscript, setShowTranscript] = useState(false);
     const [progress, setProgress] = useState(0);
     const [showCompletionMenu, setShowCompletionMenu] = useState(false);
-    const [sessionScore, setSessionScore] = useState(0);
-    
+        
     useEffect(() => {
         api.getScenarioById(id)
             .then((data) => {
@@ -52,7 +51,6 @@ export default function VideoScenarioPage() {
     };
 
     const handleComplete = (score) => {
-        setSessionScore(score);
         api.completeScenario(id, score)
             .then(() => {
                 navigate('/trainer');

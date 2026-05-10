@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Editor } from "@tinymce/tinymce-react";
 import { api } from "../../api/api";
+import AdminMaterials from "./AdminMaterials";
+import AdminScenarios from "./AdminScenarios";
 import "./adminPage.css";
 
 const SAMPLE_MATERIAL_JSON = JSON.stringify({
@@ -54,44 +55,6 @@ const SAMPLE_SCENARIO_JSON = JSON.stringify({
 }, null, 2);
 
 
-const tinyMceConfig = {
-    height: 400,
-    menubar: true,
-    plugins: [
-        'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-        'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-        'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
-    ],
-    toolbar: 'undo redo | blocks | ' +
-        'bold italic forecolor | alignleft aligncenter ' +
-        'alignright alignjustify | bullist numlist outdent indent | ' +
-        'removeformat | help',
-    content_style: 'body { font-family:Inter,sans-serif; font-size:16px }',
-    paste_data_images: false,
-    paste_as_text: false,
-    paste_remove_spans: true,
-    paste_remove_styles: true,
-    paste_remove_styles_if_webkit: true,
-    paste_strip_class_attributes: true,
-    forced_root_block: 'p',
-    forced_root_block_attrs: {},
-    valid_elements: 'p,h1,h2,h3,h4,h5,h6,strong,em,u,ul,ol,li,a,br,span',
-    valid_children: '+p[strong|em|u|a|br|span],+h1[strong|em|u|a|br|span],+h2[strong|em|u|a|br|span],+h3[strong|em|u|a|br|span],+h4[strong|em|u|a|br|span],+h5[strong|em|u|a|br|span],+h6[strong|em|u|a|br|span],+ul[li],+ol[li]',
-    extended_valid_elements: 'p,h1,h2,h3,h4,h5,h6,strong,em,u,a,br,span,ul,ol,li',
-    invalid_elements: 'script,style,meta,link',
-    invalid_attributes: 'data-*,path-to-node,index-in-node',
-    init_instance_callback: function(editor) {
-        editor.on('GetContent', function(e) {
-            // Clean content on every get content operation
-            e.content = e.content.replace(/\s+data-[^=]*="[^"]*"/g, '')
-                                     .replace(/\s+data-[^=]*='[^']*'/g, '')
-                                     .replace(/\s+data-[^=\s>]*/g, '')
-                                     .replace(/\s+>/g, '>')
-                                     .replace(/\s+/g, ' ')
-                                     .trim();
-        });
-    }
-};
 
 export default function AdminPage() {
     const navigate = useNavigate();
@@ -140,6 +103,31 @@ export default function AdminPage() {
     const [draggingMarker, setDraggingMarker] = useState(null);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
         
+    const loadData = useCallback(async () => {
+        try {
+            console.log(`Loading ${activeTab} data...`);
+
+            const data =
+                activeTab === "content"
+                    ? await api.getMaterials()
+                    : await api.getScenarios();
+
+            console.log(`Loaded ${activeTab} data:`, data);
+
+            if (Array.isArray(data)) {
+                activeTab === "content"
+                    ? setMaterials(data)
+                    : setScenarios(data);
+
+                console.log(`Set ${activeTab} data:`, data.length, "items");
+            } else {
+                console.error(`Invalid data format for ${activeTab}:`, data);
+            }
+        } catch (error) {
+            console.error(`Error loading ${activeTab}:`, error);
+        }
+    }, [activeTab]);
+
     useEffect(() => {
         console.log("AdminPage mounted, activeTab:", activeTab);
         loadData();
@@ -178,27 +166,6 @@ export default function AdminPage() {
             document.removeEventListener('mouseup', handleMouseUp);
         };
     }, [draggingMarker, differences, imageZoom]);
-
-    const loadData = async () => {
-        try {
-            console.log(`Loading ${activeTab} data...`);
-            const data =
-                activeTab === "content"
-                    ? await api.getMaterials()
-                    : await api.getScenarios();
-            
-            console.log(`Loaded ${activeTab} data:`, data);
-            
-            if (Array.isArray(data)) {
-                activeTab === "content" ? setMaterials(data) : setScenarios(data);
-                console.log(`Set ${activeTab} data:`, data.length, "items");
-            } else {
-                console.error(`Invalid data format for ${activeTab}:`, data);
-            }
-        } catch (error) {
-            console.error(`Error loading ${activeTab}:`, error);
-        }
-    };
 
     const handleEditMaterial = (item) => {
         setEditId(item._id);
@@ -667,11 +634,12 @@ export default function AdminPage() {
                                         <span>Контент</span>
                                     </label>
                                     <div className="dr-tinymce-wrapper">
-                                        <Editor
-                                            apiKey="ugi59y3zaddsfjvw0lvtkfg1dvh6xrpoxdkh80rafozm9mh7"
+                                        <textarea
+                                            className="dr-json-area"
                                             value={materialForm.content}
-                                            onEditorChange={(content) => setMaterialForm({ ...materialForm, content })}
-                                            init={tinyMceConfig}
+                                            onChange={(e) => setMaterialForm({ ...materialForm, content: e.target.value })}
+                                            placeholder="Введіть контент матеріалу..."
+                                            rows={10}
                                         />
                                     </div>
                                 </div>
@@ -985,11 +953,12 @@ export default function AdminPage() {
                                     <span>Транскрипція відео</span>
                                 </label>
                                 <div className="dr-tinymce-wrapper">
-                                    <Editor
-                                        apiKey="ugi59y3zaddsfjvw0lvtkfg1dvh6xrpoxdkh80rafozm9mh7"
+                                    <textarea
+                                        className="dr-json-area"
                                         value={videoTranscript}
-                                        onEditorChange={(content) => setVideoTranscript(content)}
-                                        init={tinyMceConfig}
+                                        onChange={(e) => setVideoTranscript(e.target.value)}
+                                        placeholder="Введіть транскрипцію відео..."
+                                        rows={10}
                                     />
                                 </div>
                             </div>
@@ -1064,11 +1033,12 @@ export default function AdminPage() {
                                     <span>Транскрипція аудіо</span>
                                 </label>
                                 <div className="dr-tinymce-wrapper">
-                                    <Editor
-                                        apiKey="ugi59y3zaddsfjvw0lvtkfg1dvh6xrpoxdkh80rafozm9mh7"
+                                    <textarea
+                                        className="dr-json-area"
                                         value={videoTranscript}
-                                        onEditorChange={(content) => setVideoTranscript(content)}
-                                        init={tinyMceConfig}
+                                        onChange={(e) => setVideoTranscript(e.target.value)}
+                                        placeholder="Введіть транскрипцію аудіо..."
+                                        rows={10}
                                     />
                                 </div>
                             </div>
