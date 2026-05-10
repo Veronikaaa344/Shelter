@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { Editor } from "@tinymce/tinymce-react";
 import { api } from "../../api/api";
 import "./adminPage.css";
 
@@ -425,17 +426,29 @@ export default function AdminMaterials() {
                                 <div className="dr-input-group full">
                                     <label>Контент</label>
 
-                                    <textarea
-                                        className="dr-form-textarea"
+                                    <Editor
+                                        apiKey="no-api-key"
                                         value={materialForm.content}
-                                        onChange={(e) =>
+                                        onEditorChange={(content) =>
                                             setMaterialForm({
                                                 ...materialForm,
-                                                content: e.target.value,
+                                                content: content,
                                             })
                                         }
-                                        placeholder="Введіть контент матеріалу..."
-                                        rows={10}
+                                        init={{
+                                            height: 400,
+                                            menubar: false,
+                                            plugins: [
+                                                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                                                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                                                'insertdatetime', 'media', 'table', 'code', 'help', 'wordcount'
+                                            ],
+                                            toolbar: 'undo redo | blocks | ' +
+                                                'bold italic forecolor | alignleft aligncenter ' +
+                                                'alignright alignjustify | bullist numlist outdent indent | ' +
+                                                'removeformat | help',
+                                            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                                        }}
                                     />
                                 </div>
                             </div>
