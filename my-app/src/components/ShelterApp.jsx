@@ -81,35 +81,7 @@ const ShelterApp = () => {
   const SidebarItem = ({ id, icon, label }) => (
     <div 
       onClick={() => navigateTo(id)}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-        padding: '16px',
-        borderRadius: '20px',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease',
-        fontWeight: 'bold',
-        fontSize: '14px',
-        letterSpacing: '0.025em',
-        ...(currentView === id ? {
-          backgroundColor: '#10b981',
-          color: 'white',
-          boxShadow: '0 20px 25px -5px rgba(16, 185, 129, 0.2)'
-        } : {
-          color: '#94a3b8'
-        })
-      }}
-      onMouseEnter={(e) => {
-        if (currentView !== id) {
-          e.target.style.backgroundColor = '#1e293b';
-        }
-      }}
-      onMouseLeave={(e) => {
-        if (currentView !== id) {
-          e.target.style.backgroundColor = 'transparent';
-        }
-      }}
+      className={`shelter-nav-item ${currentView === id ? 'active' : ''}`}
     >
       {icon}
       <span style={{ display: 'none' }}>{label}</span>
@@ -117,153 +89,23 @@ const ShelterApp = () => {
   );
 
   const LoginView = () => (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: '#0b0f1a',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '24px',
-      position: 'relative',
-      overflow: 'hidden',
-      color: '#94a3b8'
-    }}>
-      <div style={{
-        position: 'absolute',
-        top: '-10%',
-        left: '-10%',
-        width: '40%',
-        height: '40%',
-        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-        filter: 'blur(120px)',
-        borderRadius: '50%'
-      }}></div>
-      <div style={{
-        width: '100%',
-        maxWidth: '448px',
-        backgroundColor: 'rgba(30, 41, 59, 0.4)',
-        border: '1px solid #1e293b',
-        padding: '40px',
-        borderRadius: '48px',
-        backdropFilter: 'blur(16px)',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        position: 'relative',
-        zIndex: 10
-      }}>
-        <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          marginBottom: '40px'
-        }}>
-          <div style={{
-            width: '64px',
-            height: '64px',
-            backgroundColor: 'white',
-            borderRadius: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#0b0f1a',
-            marginBottom: '24px',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-          }}>
-            <ShieldCheck size={36} />
-          </div>
-          <h1 style={{
-            fontSize: '48px',
-            fontWeight: '900',
-            color: 'white',
-            fontStyle: 'italic',
-            textTransform: 'uppercase',
-            letterSpacing: '-0.05em'
-          }}>Shelter</h1>
+    <div className="shelter-login-container">
+      <div className="shelter-login-bg"></div>
+      <div className="shelter-login-card">
+        <div className="shelter-login-header">
+          <div className="shelter-logo-icon"><ShieldCheck size={36} /></div>
+          <h1 className="shelter-login-title">Shelter</h1>
         </div>
-        <form style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '24px'
-        }} onSubmit={(e) => { e.preventDefault(); setIsLoggedIn(true); }}>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px'
-          }}>
-            <label style={{
-              fontSize: '10px',
-              fontWeight: '900',
-              color: '#64748b',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              marginLeft: '16px'
-            }}>Email</label>
-            <input 
-              type="email" 
-              placeholder="користувач@mail.com" 
-              style={{
-                width: '100%',
-                backgroundColor: 'rgba(30, 41, 59, 0.5)',
-                border: '1px solid #1e293b',
-                borderRadius: '24px',
-                padding: '16px 24px',
-                color: 'white',
-                outline: 'none',
-                transition: 'all 0.3s ease'
-              }}
-              required 
-            />
+        <form className="shelter-form" onSubmit={(e) => { e.preventDefault(); setIsLoggedIn(true); }}>
+          <div className="shelter-input-group">
+            <label className="shelter-label">Email</label>
+            <input type="email" placeholder="користувач@mail.com" className="shelter-input" required />
           </div>
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px'
-          }}>
-            <label style={{
-              fontSize: '10px',
-              fontWeight: '900',
-              color: '#64748b',
-              textTransform: 'uppercase',
-              letterSpacing: '0.1em',
-              marginLeft: '16px'
-            }}>Пароль</label>
-            <input 
-              type="password" 
-              placeholder="••••••••" 
-              style={{
-                width: '100%',
-                backgroundColor: 'rgba(30, 41, 59, 0.5)',
-                border: '1px solid #1e293b',
-                borderRadius: '24px',
-                padding: '16px 24px',
-                color: 'white',
-                outline: 'none',
-                transition: 'all 0.3s ease'
-              }}
-              required 
-            />
+          <div className="shelter-input-group">
+            <label className="shelter-label">Пароль</label>
+            <input type="password" placeholder="••••••••" className="shelter-input" required />
           </div>
-          <button 
-            type="submit" 
-            style={{
-              width: '100%',
-              background: 'linear-gradient(135deg, #10b981, #14b8a6)',
-              color: '#0b0f1a',
-              padding: '16px',
-              borderRadius: '24px',
-              fontWeight: '900',
-              textTransform: 'uppercase',
-              fontSize: '12px',
-              letterSpacing: '0.1em',
-              boxShadow: '0 25px 50px -12px rgba(16, 185, 129, 0.2)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              border: 'none'
-            }}
-            onMouseEnter={(e) => e.target.style.transform = 'scale(1.02)'}
-            onMouseLeave={(e) => e.target.style.transform = 'scale(1)'}
-          >
-            Увійти
-          </button>
+          <button type="submit" className="shelter-button">Увійти</button>
         </form>
       </div>
     </div>
@@ -271,102 +113,28 @@ const ShelterApp = () => {
 
   const HomeView = () => {
     const cards = [
-      { title: "Дихання", cat: "Практика", icon: <Wind/>, gradient: "linear-gradient(135deg, #10b981, #14b8a6)", onClick: () => navigateTo('practice') },
-      { title: "Діагностика", cat: "Тестування", icon: <Brain/>, gradient: "linear-gradient(135deg, #3b82f6, #6366f1)", onClick: () => navigateTo('testing') },
-      { title: "Поради", cat: "Освіта", icon: <Lightbulb/>, gradient: "linear-gradient(135deg, #f97316, #f59e0b)", onClick: () => navigateTo('advice') },
-      { title: "Щоденник", cat: "Рефлексія", icon: <PenLine/>, gradient: "linear-gradient(135deg, #a855f7, #ec4899)", onClick: () => navigateTo('diary') },
+      { title: "Дихання", cat: "Практика", icon: <Wind/>, gradient: "shelter-card-gradient-1", onClick: () => navigateTo('practice') },
+      { title: "Діагностика", cat: "Тестування", icon: <Brain/>, gradient: "shelter-card-gradient-2", onClick: () => navigateTo('testing') },
+      { title: "Поради", cat: "Освіта", icon: <Lightbulb/>, gradient: "shelter-card-gradient-3", onClick: () => navigateTo('advice') },
+      { title: "Щоденник", cat: "Рефлексія", icon: <PenLine/>, gradient: "shelter-card-gradient-4", onClick: () => navigateTo('diary') },
     ].filter(c => c.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
     return (
-      <div style={{
-        flex: 1,
-        padding: '32px'
-      }}>
+      <div className="shelter-content">
         <section>
-          <h1 style={{
-            fontSize: '60px',
-            fontWeight: '900',
-            color: 'white',
-            fontStyle: 'italic',
-            textTransform: 'uppercase',
-            letterSpacing: '-0.05em',
-            lineHeight: '1',
-            marginBottom: '16px'
-          }}>
+          <h1 className="shelter-title">
             {searchTerm ? `Пошук: "${searchTerm}"` : "Час для спокою"}
           </h1>
-          {!searchTerm && (
-            <p style={{
-              color: '#64748b',
-              fontSize: '20px',
-              fontStyle: 'italic',
-              fontWeight: '500',
-              maxWidth: '600px',
-              lineHeight: '1.4'
-            }}>
-              Ваш ментальний баланс сьогодні в нормі. Саме час для невеликих вправ.
-            </p>
-          )}
+          {!searchTerm && <p className="shelter-subtitle">Ваш ментальний баланс сьогодні в нормі. Саме час для невеликих вправ.</p>}
         </section>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '32px',
-          marginTop: '40px'
-        }}>
+        <div className="shelter-cards">
           {cards.map((card, i) => (
-            <div 
-              key={i} 
-              onClick={card.onClick}
-              style={{
-                height: '320px',
-                borderRadius: '48px',
-                overflow: 'hidden',
-                cursor: 'pointer',
-                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                transition: 'all 0.3s ease',
-                position: 'relative',
-                background: card.gradient
-              }}
-              onMouseEnter={(e) => e.target.style.transform = 'translateY(-8px)'}
-              onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
-            >
-              <div style={{
-                position: 'relative',
-                padding: '40px',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-                color: 'white'
-              }}>
-                <div style={{
-                  padding: '16px',
-                  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                  borderRadius: '16px',
-                  width: 'fit-content',
-                  backdropFilter: 'blur(8px)',
-                  boxShadow: 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.1)'
-                }}>
-                  {card.icon}
-                </div>
+            <div key={i} onClick={card.onClick} className={`shelter-card ${card.gradient}`}>
+              <div className="shelter-card-content">
+                <div className="shelter-card-icon">{card.icon}</div>
                 <div>
-                  <p style={{
-                    fontSize: '12px',
-                    fontWeight: '900',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.1em',
-                    opacity: '0.7',
-                    marginBottom: '4px'
-                  }}>{card.cat}</p>
-                  <h4 style={{
-                    fontSize: '28px',
-                    fontWeight: '900',
-                    fontStyle: 'italic',
-                    textTransform: 'uppercase',
-                    letterSpacing: '-0.05em',
-                    lineHeight: '1'
-                  }}>{card.title}</h4>
+                  <p className="shelter-card-title">{card.cat}</p>
+                  <h4 className="shelter-card-name">{card.title}</h4>
                 </div>
               </div>
             </div>
@@ -549,60 +317,14 @@ const ShelterApp = () => {
   if (!isLoggedIn) return <LoginView />;
   
   return (
-    <div style={{
-      display: 'flex',
-      height: '100vh',
-      backgroundColor: '#0b0f1a',
-      color: '#94a3b8',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif',
-      overflow: 'hidden'
-    }}>
+    <div className="shelter-app">
       
-      <aside style={{
-        width: '288px',
-        borderRight: '1px solid #1e293b',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#0b0f1a',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-        zIndex: 20
-      }}>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          padding: '32px'
-        }}>
-          <div style={{
-            width: '48px',
-            height: '48px',
-            backgroundColor: 'white',
-            borderRadius: '16px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#0b0f1a',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-          }}>
-            <ShieldCheck size={28} />
-          </div>
-          <span style={{
-            fontSize: '24px',
-            fontWeight: '900',
-            color: 'white',
-            fontStyle: 'italic',
-            textTransform: 'uppercase',
-            letterSpacing: '-0.025em'
-          }}>Shelter</span>
+      <aside className="shelter-sidebar">
+        <div className="shelter-logo">
+          <div className="shelter-logo-icon"><ShieldCheck size={28} /></div>
+          <span className="shelter-logo-text">Shelter</span>
         </div>
-        <nav style={{
-          flex: 1,
-          padding: '0 16px',
-          marginTop: '24px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '12px'
-        }}>
+        <nav className="shelter-nav">
           <SidebarItem id="home" icon={<Layout size={22}/>} label="Дашборд" />
           <SidebarItem id="testing" icon={<ClipboardList size={22}/>} label="Діагностика" />
           <SidebarItem id="library" icon={<BookOpen size={22}/>} label="Медіатека" />
@@ -624,53 +346,16 @@ const ShelterApp = () => {
         </div>
       </aside>
 
-      <main style={{
-        flex: 1,
-        display: 'flex',
-        flexDirection: 'column',
-        overflowY: 'auto',
-        background: 'linear-gradient(to bottom right, #0b0f1a, #121827)'
-      }}>
-        <header style={{
-          height: '96px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          padding: '0 32px',
-          position: 'sticky',
-          top: 0,
-          zIndex: 10,
-          backdropFilter: 'blur(16px)',
-          backgroundColor: 'rgba(11, 15, 26, 0.6)',
-          borderBottom: '1px solid rgba(30, 41, 59, 0.5)'
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '16px',
-            backgroundColor: 'rgba(30, 41, 59, 0.4)',
-            padding: '12px 24px',
-            borderRadius: '9999px',
-            border: '1px solid #1e293b',
-            width: '100%',
-            maxWidth: '400px',
-            boxShadow: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.1)'
-          }}>
+      <main className="shelter-main">
+        <header className="shelter-header">
+          <div className="shelter-search">
             <Search size={18} style={{ color: '#64748b' }} />
             <input 
               type="text" 
               placeholder="Пошук..." 
               value={searchTerm} 
               onChange={(e) => setSearchTerm(e.target.value)} 
-              style={{
-                backgroundColor: 'transparent',
-                border: 'none',
-                outline: 'none',
-                fontSize: '14px',
-                width: '100%',
-                color: 'white',
-                fontWeight: '500'
-              }}
+              className="shelter-search-input"
             />
             {searchTerm && (
               <button 
@@ -681,55 +366,13 @@ const ShelterApp = () => {
               </button>
             )}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-            <button 
-              onClick={() => setShowSOS(true)} 
-              style={{
-                backgroundColor: '#dc2626',
-                color: 'white',
-                padding: '12px 32px',
-                borderRadius: '16px',
-                fontWeight: '900',
-                fontSize: '14px',
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                boxShadow: '0 25px 50px -12px rgba(220, 38, 38, 0.25)',
-                border: 'none',
-                cursor: 'pointer',
-                transition: 'all 0.3s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#ef4444';
-                e.target.style.transform = 'scale(1.05)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#dc2626';
-                e.target.style.transform = 'scale(1)';
-              }}
-            >
+          <div className="shelter-header-actions">
+            <button onClick={() => setShowSOS(true)} className="shelter-sos-button">
               SOS
             </button>
-            <div style={{ 
-              position: 'relative', 
-              padding: '8px', 
-              borderRadius: '12px', 
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.05)'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
-            >
+            <div className="shelter-bell">
               <Bell size={22} style={{ color: '#94a3b8' }} />
-              <div style={{
-                position: 'absolute',
-                top: '8px',
-                right: '8px',
-                width: '8px',
-                height: '8px',
-                backgroundColor: '#10b981',
-                borderRadius: '50%',
-                border: '2px solid #0b0f1a'
-              }}></div>
+              <div className="shelter-bell-dot"></div>
             </div>
           </div>
         </header>
@@ -746,74 +389,15 @@ const ShelterApp = () => {
       </main>
 
       {showSOS && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 100,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '32px',
-          backgroundColor: 'rgba(0, 0, 0, 0.8)',
-          backdropFilter: 'blur(32px)'
-        }}>
-          <div style={{
-            position: 'relative',
-            backgroundColor: '#1e293b',
-            border: '1px solid rgba(255, 255, 255, 0.1)',
-            padding: '64px',
-            borderRadius: '64px',
-            width: '100%',
-            maxWidth: '672px',
-            textAlign: 'center',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-          }}>
-             <div style={{
-               width: '96px',
-               height: '96px',
-               backgroundColor: '#dc2626',
-               borderRadius: '32px',
-               display: 'flex',
-               alignItems: 'center',
-               justifyContent: 'center',
-               margin: '0 auto 32px',
-               boxShadow: '0 25px 50px -12px rgba(220, 38, 38, 0.25)'
-             }}>
+        <div style={{position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px', animation: 'fadeIn 0.3s ease-out'}}>
+          <div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.8)', backdropFilter: 'blur(32px'}} onClick={() => setShowSOS(false)}></div>
+          <div style={{position: 'relative', backgroundColor: '#1e293b', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '64px', borderRadius: '64px', width: '100%', maxWidth: '672px', textAlign: 'center', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'}}>
+             <div style={{width: '96px', height: '96px', backgroundColor: '#dc2626', borderRadius: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px', boxShadow: '0 25px 50px -12px rgba(220, 38, 38, 0.25)', animation: 'pulse 2s infinite'}}>
                <AlertCircle size={48} style={{color: 'white'}} />
              </div>
-             <h2 style={{
-               fontSize: '48px',
-               fontWeight: '900',
-               color: 'white',
-               fontStyle: 'italic',
-               textTransform: 'uppercase',
-               marginBottom: '16px',
-               letterSpacing: '-0.05em',
-               lineHeight: '1'
-             }}>Дихайте.</h2>
-             <p style={{
-               color: '#94a3b8',
-               marginBottom: '40px',
-               fontSize: '20px',
-               fontStyle: 'italic'
-             }}>Ви у безпеці. Давайте разом відновимо спокій.</p>
-             <button 
-               onClick={() => {setShowSOS(false); navigateTo('practice');}} 
-               style={{
-                 width: '100%',
-                 backgroundColor: 'white',
-                 color: 'black',
-                 padding: '24px',
-                 borderRadius: '28px',
-                 fontWeight: '900',
-                 fontSize: '20px',
-                 cursor: 'pointer',
-                 border: 'none',
-                 transition: 'all 0.3s ease',
-                 textTransform: 'uppercase',
-                 letterSpacing: '0.1em'
-               }}
-             >
+             <h2 style={{fontSize: '48px', fontWeight: '900', color: 'white', fontStyle: 'italic', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '-0.05em', lineHeight: '1'}}>Дихайте.</h2>
+             <p style={{color: '#94a3b8', marginBottom: '40px', fontSize: '20px', fontStyle: 'italic'}}>Ви у безпеці. Давайте разом відновимо спокій.</p>
+             <button onClick={() => {setShowSOS(false); navigateTo('practice');}} style={{width: '100%', backgroundColor: 'white', color: 'black', padding: '24px', borderRadius: '28px', fontWeight: '900', fontSize: '20px', cursor: 'pointer', border: 'none', transition: 'all 0.3s ease', textTransform: 'uppercase', letterSpacing: '0.1em'}}>
                Почати практику
              </button>
           </div>
