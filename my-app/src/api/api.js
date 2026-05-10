@@ -115,6 +115,9 @@ export const api = {
 	getScenarioById: (id) =>
 		fetch(`${API_URL}/scenarios/${id}`).then((res) => res.json()),
 
+	getMaterialById: (id) =>
+		fetch(`${API_URL}/materials/${id}`).then((res) => res.json()),
+
 	updateUserProgress: (userId, itemId, type) => {
 		if (!isValidId(userId)) return Promise.reject("Invalid ID");
 		return fetch(`${API_URL}/users/update-progress`, {

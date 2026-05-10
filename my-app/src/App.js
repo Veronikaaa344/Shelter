@@ -12,6 +12,7 @@ import StartPage from "./pages/startPage/startPage";
 import StatsPage from "./pages/statsPage/StatsPage";
 import ExercisesPage from "./pages/trainerSimulator/exercisesPage/ExercisesPage";
 import SimulatorPage from "./pages/trainerSimulator/simulatorPage/SimulatorPage";
+import MaterialPage from "./pages/materialPage/MaterialPage";
 
 const checkTestStatus = () => {
 	const saved = localStorage.getItem("dr_test_results");
@@ -86,7 +87,7 @@ function App() {
 				<Route path="/admin" element={<AdminPage />} />
 				<Route path="/exercises" element={<ExercisesPage />} />
 				<Route path="/exercises/:id" element={<SimulatorPage />} />
-				<Route path="/material/:id" element={<SimulatorPage />} />
+				<Route path="/material/:id" element={<MaterialPage />} />
 				<Route path="/stats" element={<StatsPage />} />
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
