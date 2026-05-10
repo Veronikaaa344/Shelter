@@ -88,6 +88,7 @@ app.get("/api/mongodb-test", async (req, res) => {
 		console.log(`[${new Date().toISOString()}] Testing MongoDB connection...`);
 		console.log(`[${new Date().toISOString()}] Connection state:`, mongoose.connection.readyState);
 		console.log(`[${new Date().toISOString()}] Connected:`, mongoose.connection.readyState === 1);
+		console.log(`[${new Date().toISOString()}] Database name:`, mongoose.connection.name);
 
 		// Тестуємо простий запит
 		const startTime = Date.now();
@@ -96,19 +97,48 @@ app.get("/api/mongodb-test", async (req, res) => {
 
 		console.log(`[${new Date().toISOString()}] ✅ Collections found:`, collections.length, `(${duration}ms)`);
 
+		// Перевіряємо дані в кожній колекції
+		const collectionDetails = {};
+		for (const collection of collections) {
+			const collStartTime = Date.now();
+			const count = await mongoose.connection.db.collection(collection.name).countDocuments();
+			const collDuration = Date.now() - collStartTime;
+			
+			collectionDetails[collection.name] = {
+				count: count,
+				duration: `${collDuration}ms`
+			};
+			
+			// Якщо є документи, показуємо перший
+			if (count > 0) {
+				const firstDoc = await mongoose.connection.db.collection(collection.name).findOne();
+				collectionDetails[collection.name].firstDocument = {
+					_id: firstDoc._id,
+					title: firstDoc.title || firstDoc.name || 'N/A',
+					keys: Object.keys(firstDoc).slice(0, 5)
+				};
+			}
+		}
+
+		console.log(`[${new Date().toISOString()}] ✅ Collection details:`, collectionDetails);
+
 		res.status(200).json({
 			status: "OK",
 			connected: mongoose.connection.readyState === 1,
+			database: mongoose.connection.name,
 			collections: collections.length,
 			collectionNames: collections.map(c => c.name),
+			details: collectionDetails,
 			duration: `${duration}ms`
 		});
 	} catch (err) {
 		console.error(`[${new Date().toISOString()}] ❌ MongoDB test error:`, err.message);
+		console.error(`[${new Date().toISOString()}] Full error:`, err);
 		res.status(500).json({
 			error: err.message,
 			connected: mongoose.connection.readyState === 1,
-			state: mongoose.connection.readyState
+			state: mongoose.connection.readyState,
+			database: mongoose.connection.name
 		});
 	}
 });
