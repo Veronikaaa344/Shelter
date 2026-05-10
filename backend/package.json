@@ -1,5 +1,5 @@
 {
-	"name": "backend",
+	"name": "shelter-backend",
 	"version": "1.0.0",
 	"type": "module",
 	"main": "server.js",
@@ -15,5 +15,8 @@
 		"express": "^5.2.1",
 		"jsonwebtoken": "^9.0.3",
 		"mongoose": "^8.0.0"
+	},
+	"engines": {
+		"node": "18.x"
 	}
 }
