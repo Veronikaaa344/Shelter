@@ -1,8 +1,5 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-
 import { api } from "../../api/api";
 import "./adminPage.css";
 
@@ -25,33 +22,6 @@ export default function AdminMaterials() {
         category: "general",
         duration: "5 хв",
     });
-
-    const modules = {
-        toolbar: [
-            [{ header: [1, 2, 3, false] }],
-            ["bold", "italic", "underline", "strike"],
-            [{ color: [] }, { background: [] }],
-            [{ list: "ordered" }, { list: "bullet" }],
-            [{ align: [] }],
-            ["link", "image"],
-            ["clean"],
-        ],
-    };
-
-    const formats = [
-        "header",
-        "bold",
-        "italic",
-        "underline",
-        "strike",
-        "color",
-        "background",
-        "list",
-        "bullet",
-        "align",
-        "link",
-        "image",
-    ];
 
     const cleanHtmlContent = (html) => {
         if (!html) return html;
@@ -455,20 +425,17 @@ export default function AdminMaterials() {
                                 <div className="dr-input-group full">
                                     <label>Контент</label>
 
-                                    <ReactQuill
-                                        theme="snow"
-                                        value={
-                                            materialForm.content
-                                        }
-                                        onChange={(value) =>
+                                    <textarea
+                                        className="dr-form-textarea"
+                                        value={materialForm.content}
+                                        onChange={(e) =>
                                             setMaterialForm({
                                                 ...materialForm,
-                                                content: value,
+                                                content: e.target.value,
                                             })
                                         }
-                                        modules={modules}
-                                        formats={formats}
-                                        className="dr-rich-editor"
+                                        placeholder="Введіть контент матеріалу..."
+                                        rows={10}
                                     />
                                 </div>
                             </div>
