@@ -86,6 +86,7 @@ function App() {
 				<Route path="/admin" element={<AdminPage />} />
 				<Route path="/exercises" element={<ExercisesPage />} />
 				<Route path="/exercises/:id" element={<SimulatorPage />} />
+				<Route path="/material/:id" element={<SimulatorPage />} />
 				<Route path="/stats" element={<StatsPage />} />
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
