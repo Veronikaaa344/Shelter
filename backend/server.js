@@ -53,8 +53,11 @@ app.use((req, res, next) => {
 
 const dbURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/shelter_db";
 
-console.log(`[${new Date().toISOString()}] Connecting to MongoDB...`);
-console.log(`[${new Date().toISOString()}] MongoDB URI:`, dbURI.replace(/:[^:]+@/, ":****@"));
+console.log(`[${new Date().toISOString()}] 🚀 Server starting...`);
+console.log(`[${new Date().toISOString()}] 🌍 Environment:`, process.env.NODE_ENV);
+console.log(`[${new Date().toISOString()}] 📡 Port:`, process.env.PORT || 5000);
+console.log(`[${new Date().toISOString()}] 🔗 MongoDB URI:`, dbURI.replace(/:[^:]+@/, ":****@"));
+console.log(`[${new Date().toISOString()}] 📦 MONGO_URI exists:`, !!process.env.MONGO_URI);
 
 mongoose
 	.connect(dbURI, {
@@ -65,13 +68,16 @@ mongoose
 		minPoolSize: 2,
 	})
 	.then(() => {
-		console.log(`[${new Date().toISOString()}] MongoDB Connected successfully!`);
-		console.log(`[${new Date().toISOString()}] Connection state:`, mongoose.connection.readyState);
+		console.log(`[${new Date().toISOString()}] ✅ MongoDB Connected successfully!`);
+		console.log(`[${new Date().toISOString()}] 🔗 Connection state:`, mongoose.connection.readyState);
+		console.log(`[${new Date().toISOString()}] 📦 Database name:`, mongoose.connection.name);
 	})
 	.catch((err) => {
-		console.error(`[${new Date().toISOString()}] MongoDB Connection Error:`, err.message);
-		console.error(`[${new Date().toISOString()}] Full error:`, err);
-		console.error(`[${new Date().toISOString()}] MongoDB URI used:`, dbURI.replace(/:[^:]+@/, ":****@"));
+		console.error(`[${new Date().toISOString()}] ❌ MongoDB Connection Error:`, err.message);
+		console.error(`[${new Date().toISOString()}] ❌ Full error:`, err);
+		console.error(`[${new Date().toISOString()}] ❌ MongoDB URI used:`, dbURI.replace(/:[^:]+@/, ":****@"));
+		console.error(`[${new Date().toISOString()}] ❌ Process will exit now...`);
+		process.exit(1);
 	});
 
 app.use("/api/auth", authRoutes);
@@ -193,4 +199,9 @@ app.get("/api/mongodb-test", async (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+	console.log(`[${new Date().toISOString()}] 🎉 Server successfully started on port ${PORT}`);
+	console.log(`[${new Date().toISOString()}] 🌐 Server URL: http://localhost:${PORT}`);
+	console.log(`[${new Date().toISOString()}] 📊 Health check: http://localhost:${PORT}/api/health`);
+	console.log(`[${new Date().toISOString()}] 🗄️ DB dump: http://localhost:${PORT}/api/db-dump`);
+});
