@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../api/api';
-import './authPage.css';
+import { ShieldCheck, Mail, Lock, User, ChevronLeft, Sparkles } from 'lucide-react';
 
 export default function AuthPage() {
     const [isLogin, setIsLogin] = useState(true);
     const [formData, setFormData] = useState({ email: '', password: '', username: '' });
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isLeaving, setIsLeaving] = useState(false);
     const navigate = useNavigate();
+
+    const handleSosClick = () => {
+        setIsLeaving(true);
+        setTimeout(() => navigate('/sos'), 600);
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,7 +35,7 @@ export default function AuthPage() {
                 }
             }
             
-            if (data.user) {
+            if (data.token && data.user) {
                 localStorage.setItem("dr_token", data.token);
                 localStorage.setItem("userId", data.user.id);
                 navigate('/main');
@@ -50,9 +56,8 @@ export default function AuthPage() {
         
         try {
             const data = await api.loginAsGuest();
-            if (data.user) {
+            if (data.id || data.user) {
                 localStorage.setItem("dr_token", "guest_mode");
-                localStorage.setItem("userId", data.user.id);
                 navigate('/main');
             } else {
                 setError(data.message || "Помилка входу як гість");
@@ -65,104 +70,144 @@ export default function AuthPage() {
         }
     };
 
-    const handleSosClick = async () => {
-        const userId = localStorage.getItem("userId");
-        if (userId) {
-            await api.updateResilience(userId, -15, "sos", "Нажата кнопка SOS");
-        }
-        navigate('/sos');
-    };
-
     return (
-        <div className="dr-new-layout dr-auth-layout">
-            <div className="dr-cloud dr-cloud-1">☁️</div>
-            <div className="dr-cloud dr-cloud-2">☁️</div>
-            
-            <button className="dr-show-all-btn dr-auth-back" onClick={() => navigate('/main')}>
-                ← На головну
+        <div
+            className="min-h-screen bg-[#0b0f1a] flex items-center justify-center p-6 relative overflow-hidden transition-opacity duration-500"
+            style={{ opacity: isLeaving ? 0 : 1 }}
+        >
+            {/* Декоративний фон */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
+                <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl" />
+            </div>
+
+            {/* Кнопка назад */}
+            <button
+                onClick={() => navigate('/main')}
+                className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-white font-bold uppercase text-xs tracking-widest transition-all"
+            >
+                <ChevronLeft size={18} /> На головну
             </button>
 
-            <main className="dr-new-main dr-auth-main">
-                <div className="dr-status-card dr-auth-card">
-                    <div className="dr-logo-icon-box dr-auth-logo">
-                        🛡️
+            {/* Картка */}
+            <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
+                {/* Лого */}
+                <div className="flex flex-col items-center mb-10">
+                    <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-[#0b0f1a] shadow-2xl shadow-white/10 mb-5">
+                        <ShieldCheck size={36} />
                     </div>
-                    <h1 className="dr-status-title">{isLogin ? 'Вхід' : 'Реєстрація'}</h1>
-                    
+                    <span className="text-3xl font-black text-white italic uppercase tracking-tighter">Shelter</span>
+                    <p className="text-slate-500 text-sm mt-1 font-medium">Твій простір психологічної підтримки</p>
+                </div>
+
+                {/* Форма */}
+                <div className="bg-slate-900/60 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl">
+                    {/* Перемикач */}
+                    <div className="flex bg-slate-800/50 rounded-2xl p-1 mb-8">
+                        <button
+                            onClick={() => { setIsLogin(true); setError(''); }}
+                            className={`flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 ${
+                                isLogin
+                                    ? 'bg-emerald-500 text-[#0b0f1a] shadow-lg shadow-emerald-500/20'
+                                    : 'text-slate-500 hover:text-slate-300'
+                            }`}
+                        >
+                            Вхід
+                        </button>
+                        <button
+                            onClick={() => { setIsLogin(false); setError(''); }}
+                            className={`flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 ${
+                                !isLogin
+                                    ? 'bg-emerald-500 text-[#0b0f1a] shadow-lg shadow-emerald-500/20'
+                                    : 'text-slate-500 hover:text-slate-300'
+                            }`}
+                        >
+                            Реєстрація
+                        </button>
+                    </div>
+
+                    {/* Помилка */}
                     {error && (
-                        <div className="dr-auth-error">
-                            <span className="dr-auth-error-icon">⚠️</span>
-                            <span className="dr-auth-error-text">{error}</span>
+                        <div className="mb-6 px-4 py-3 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-400 text-sm font-medium animate-in fade-in duration-300">
+                            ⚠️ {error}
                         </div>
                     )}
-                    
-                    <form className="dr-auth-form" onSubmit={handleSubmit}>
+
+                    <form onSubmit={handleSubmit} className="space-y-4">
                         {!isLogin && (
-                            <div className="dr-input-group">
-                                <input 
-                                    className="dr-auth-input"
-                                    type="text" 
-                                    placeholder="Ім'я" 
-                                    onChange={e => setFormData({...formData, username: e.target.value})} 
-                                    required 
+                            <div className="relative">
+                                <User size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                                <input
+                                    type="text"
+                                    placeholder="Ім'я"
+                                    value={formData.username}
+                                    onChange={e => setFormData({...formData, username: e.target.value})}
+                                    required
+                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:bg-slate-800/80 transition-all"
                                 />
                             </div>
                         )}
-                        <div className="dr-input-group">
-                            <input 
-                                className="dr-auth-input"
-                                type="email" 
-                                placeholder="Email" 
-                                onChange={e => setFormData({...formData, email: e.target.value})} 
-                                required 
+                        <div className="relative">
+                            <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                            <input
+                                type="email"
+                                placeholder="Email"
+                                value={formData.email}
+                                onChange={e => setFormData({...formData, email: e.target.value})}
+                                required
+                                className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:bg-slate-800/80 transition-all"
                             />
                         </div>
-                        <div className="dr-input-group">
-                            <input 
-                                className="dr-auth-input"
-                                type="password" 
-                                placeholder="Пароль" 
-                                onChange={e => setFormData({...formData, password: e.target.value})} 
-                                required 
+                        <div className="relative">
+                            <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                            <input
+                                type="password"
+                                placeholder="Пароль"
+                                value={formData.password}
+                                onChange={e => setFormData({...formData, password: e.target.value})}
+                                required
+                                className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:bg-slate-800/80 transition-all"
                             />
                         </div>
-                        
-                        <button type="submit" className="dr-trainer-btn dr-auth-submit" disabled={isLoading}>
-                            {isLoading ? (
-                                <span className="dr-auth-loading">
-                                    <span className="dr-auth-spinner">⟳</span>
-                                    {isLogin ? 'Вхід...' : 'Створення...'}
-                                </span>
-                            ) : (
-                                isLogin ? 'Увійти' : 'Створити акаунт'
-                            )}
+
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-700 disabled:text-slate-500 text-[#0b0f1a] py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-emerald-500/20 transition-all transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed mt-2"
+                        >
+                            {isLoading
+                                ? (isLogin ? 'Входимо...' : 'Створюємо...')
+                                : (isLogin ? 'Увійти' : 'Створити акаунт')
+                            }
                         </button>
                     </form>
 
-                    <button className="dr-nav-link dr-auth-toggle" onClick={() => setIsLogin(!isLogin)}>
-                        {isLogin ? 'Немає акаунту? Реєстрація' : 'Вже є акаунт? Увійти'}
-                    </button>
-
-                    <div className="dr-auth-divider">
-                        <span>або</span>
+                    <div className="flex items-center gap-4 my-6">
+                        <div className="flex-1 h-px bg-slate-800" />
+                        <span className="text-slate-600 text-xs font-bold uppercase tracking-widest">або</span>
+                        <div className="flex-1 h-px bg-slate-800" />
                     </div>
 
-                    <button className="dr-show-all-btn dr-guest-action" onClick={handleGuestLogin} disabled={isLoading}>
-                        {isLoading ? (
-                            <span className="dr-auth-loading">
-                                <span className="dr-auth-spinner">⟳</span>
-                                Вхід як гість...
-                            </span>
-                        ) : (
-                            'Увійти як гість'
-                        )}
+                    <button
+                        onClick={handleGuestLogin}
+                        disabled={isLoading}
+                        className="w-full bg-transparent border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                    >
+                        <Sparkles size={16} />
+                        Увійти як гість
                     </button>
                 </div>
-            </main>
 
-            <button className="dr-sos-btn" onClick={handleSosClick}>
-                <span className="dr-sos-label">SOS</span>
-            </button>
+                {/* SOS */}
+                <div className="mt-8 text-center">
+                    <button
+                        onClick={handleSosClick}
+                        className="bg-rose-600 hover:bg-rose-500 text-white px-8 py-3 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-rose-900/40 transition-all transform hover:scale-105"
+                    >
+                        SOS — Потрібна допомога
+                    </button>
+                </div>
+            </div>
         </div>
     );
 }

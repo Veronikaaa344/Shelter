@@ -1,306 +1,288 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { api } from '../../api/api';
 import CharacterCompanion from '../../components/characterCompanion/CharacterCompanion';
-import { Send, Bot, User, MessageSquare } from 'lucide-react';
+import { Bot, User, MessageSquare, Sparkles, ChevronRight, Play, LayoutGrid, ChevronLeft, Clock, Zap, Target } from 'lucide-react';
 import './mainChat.css';
 
+const baseNodes = {
+    start: {
+        text: "Привіт! Я твій AI-помічник для психологічної підтримки. Як ти почуваєшся сьогодні?",
+        options: [
+            { text: "Відчуваю тривогу", next: "anxiety" },
+            { text: "Мені сумно", next: "sadness" },
+            { text: "Хочу просто поговорити", next: "talk" },
+            { text: "Я в порядку, дякую!", next: "ok" }
+        ]
+    },
+    anxiety: {
+        text: "Тривога може бути дуже виснажливою. Пам'ятай, що ти в безпеці зараз. Що саме тебе тривожить?",
+        options: [
+            { text: "Ситуація навколо", next: "world" },
+            { text: "Особисті справи", next: "personal" },
+            { text: "Не знаю, просто тривожно", next: "unknown" },
+            { text: "Давай зробимо вправу", next: "trigger_exercise" }
+        ]
+    },
+    sadness: {
+        text: "Мені шкода, що ти це відчуваєш. Це нормально — давати собі час на сум. Хочеш розповісти більше чи відволіктися?",
+        options: [
+            { text: "Розповісти більше", next: "talk" },
+            { text: "Хочу відволіктися", next: "distract" }
+        ]
+    },
+    talk: {
+        text: "Я уважно слухаю. Розмова — це великий крок до зцілення. Що на душі?",
+        options: [
+            { text: "Важко зосередитися", next: "focus" },
+            { text: "Відчуваю втому", next: "fatigue" },
+            { text: "Повернутися до початку", next: "start" }
+        ]
+    },
+    world: {
+        text: "Світ зараз дуже непередбачуваний. Намагайся обмежувати потік новин та фокусуватися на тому, що ти можеш контролювати. Спробуємо техніку заземлення?",
+        options: [
+            { text: "Так, давай", next: "trigger_exercise" },
+            { text: "Пізніше", next: "start" }
+        ]
+    },
+    focus: {
+        text: "Коли мы в стресі, мозок переходить у режим виживання, і фокусуватися стає важко. Спробуй розбити великі завдання на дуже маленькі кроки. Хочеш ще порад?",
+        options: [
+            { text: "Так, давай", next: "advice" },
+            { text: "Дякую, цього досить", next: "ok" }
+        ]
+    },
+    ok: {
+        text: "Це чудово! Я завжди тут, якщо знадоблюся. Бажаю тобі гарного та спокійного дня!",
+        options: [
+            { text: "Почати спочатку", next: "start" }
+        ]
+    }
+};
+
 export default function MainChat({ onBack, username, resilience }) {
-    const [messages, setMessages] = useState([
-        {
-            id: 1,
-            text: "Привіт! Я твій AI-помічник для психологічної підтримки. Як ти почуваєшся, я готовий допомогти.",
-            sender: 'bot',
-            timestamp: new Date()
-        }
-    ]);
-    const [inputMessage, setInputMessage] = useState('');
+    const [chatView, setChatView] = useState("selection"); // "selection" or "chat"
+    const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [scenario, setScenario] = useState(null);
-    const [currentNodeId, setCurrentNodeId] = useState(null);
-    const [history, setHistory] = useState([]);
-    const [isChatMode, setIsChatMode] = useState('ai'); // 'ai' или 'scenario'
+    const [scenariosList, setScenariosList] = useState([]);
+    const [currentNodeId, setCurrentNodeId] = useState('start');
+    const [isChatMode, setIsChatMode] = useState('ai'); 
     const [loading, setLoading] = useState(false);
     
     const messagesEndRef = useRef(null);
-    const inputRef = useRef(null);
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
-
-    const handleSendMessage = async () => {
-        if (!inputMessage.trim()) return;
-
-        const userMessage = {
-            id: messages.length + 1,
-            text: inputMessage,
-            sender: 'user',
-            timestamp: new Date()
-        };
-
-        setMessages(prev => [...prev, userMessage]);
-        setInputMessage('');
-        setIsTyping(true);
-
-        // Сохранение сообщения в базу данных
-        try {
-            const userId = localStorage.getItem("userId");
-            if (userId) {
-                await api.saveChatMessage(userId, userMessage.text);
+        // Загрузка списку сценаріїв
+        api.getScenarios().then(data => {
+            if (Array.isArray(data)) {
+                setScenariosList(data.filter(s => s.type === 'dialogue' || !s.type));
             }
-        } catch (error) {
-            console.error('Error saving chat message:', error);
+        });
+    }, []);
+
+    useEffect(() => {
+        if (chatView === "chat") {
+            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
         }
+    }, [messages, isTyping, chatView]);
 
-        // Ответы AI ассистента
-        setTimeout(() => {
-            const botResponses = [
-                "Це чудово, що ти звертаєш увагу до свого ментального здоров'я. Розуміння це перший крок до змін.",
-                "Я радий допомогти тобі! Давай розглянемо твої почуття детальніше. Що саме тебе турбує?",
-                "Пам'ятай, що психологічна підтримка - це ознака сили, а не слабкості. Ти на правильному шляху!",
-                "Чудово! Твої слова показують, що ти готовий до роботи над собою. Продовжуй в тому ж дусі!",
-                "Дякую, що поділився. Це важливо - говорити про свої почуття. Хочеш спробувати вправу для заспокоєння?"
-            ];
-
-            const randomResponse = botResponses[Math.floor(Math.random() * botResponses.length)];
-            
-            const botMessage = {
-                id: messages.length + 2,
-                text: randomResponse,
-                sender: 'bot',
-                timestamp: new Date()
-            };
-
-            setMessages(prev => [...prev, botMessage]);
-            setIsTyping(false);
-        }, 1500);
-    };
-
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            handleSendMessage();
-        }
-    };
-
-    const startScenarioChat = async () => {
-        setLoading(true);
+    const selectScenario = (s) => {
+        setScenario(s);
         setIsChatMode('scenario');
-        
-        try {
-            // Загружаем случайный сценарий для чата
-            const scenarios = await api.getScenarios();
-            const chatScenarios = scenarios.filter(s => s.category === 'general' || s.category === 'anxiety');
-            
-            if (chatScenarios.length > 0) {
-                const randomScenario = chatScenarios[Math.floor(Math.random() * chatScenarios.length)];
-                const scenarioData = await api.getScenarioById(randomScenario._id);
-                
-                if (scenarioData && scenarioData.nodes) {
-                    setScenario(scenarioData);
-                    const startId = scenarioData.nodes["start"] ? "start" : Object.keys(scenarioData.nodes)[0];
-                    setCurrentNodeId(startId);
-                    setHistory([{ role: "bot", text: scenarioData.nodes[startId].text }]);
-                    
-                    setMessages(prev => [...prev, {
-                        id: prev.length + 1,
-                        text: `🎯 Починаємо вправу: ${scenarioData.name}\n\n${scenarioData.nodes[startId].text}`,
-                        sender: 'bot',
-                        timestamp: new Date(),
-                        isScenario: true
-                    }]);
-                }
+        const startId = s.nodes["start"] ? "start" : Object.keys(s.nodes)[0];
+        setCurrentNodeId(startId);
+        setMessages([
+            {
+                id: 1,
+                text: s.nodes[startId].text,
+                sender: 'bot',
+                timestamp: new Date(),
+                isScenario: true
             }
-        } catch (error) {
-            console.error('Error loading scenario:', error);
-            setIsChatMode('ai');
-        } finally {
-            setLoading(false);
-        }
+        ]);
+        setChatView("chat");
     };
 
-    const handleScenarioOption = (option) => {
+    const handleOptionSelect = (option) => {
+        if (isTyping) return;
+
+        const nextId = option.next;
         const userMessage = {
             id: messages.length + 1,
             text: option.text,
             sender: 'user',
-            timestamp: new Date(),
-            isScenario: true
+            timestamp: new Date()
         };
 
         setMessages(prev => [...prev, userMessage]);
-
-        const nextId = option.next;
-        const weight = option.weight || 0;
-
-        if (weight < 0) {
-            const userId = localStorage.getItem("userId");
-            if (userId) api.updateResilience(userId, weight, "wrong_answer", scenario.name);
-        }
-
-        if (!nextId || !scenario.nodes[nextId]) {
-            const finalMessage = {
-                id: messages.length + 2,
-                text: "🌟 Вправу завершено! Дякую за практику. Твій рівень стійкості оновлено.",
-                sender: 'bot',
-                timestamp: new Date(),
-                isScenario: true
-            };
-            setMessages(prev => [...prev, finalMessage]);
-            setIsChatMode('ai');
-            
-            const userId = localStorage.getItem("userId");
-            if (userId) {
-                const finalImpact = Math.round((weight || 5) * 2);
-                api.updateResilience(userId, finalImpact, "exercise", scenario.name);
-                api.completeScenario(scenario._id, finalImpact);
-            }
-            return;
-        }
-
-        const nextNode = scenario.nodes[nextId];
-        setHistory(prev => [...prev, { role: "bot", text: nextNode.text }]);
-        setCurrentNodeId(nextId);
-
-        const botMessage = {
-            id: messages.length + 2,
-            text: nextNode.text,
-            sender: 'bot',
-            timestamp: new Date(),
-            isScenario: true
-        };
+        setIsTyping(true);
 
         setTimeout(() => {
-            setMessages(prev => [...prev, botMessage]);
+            setIsTyping(false);
+            
+            let nextNode = isChatMode === 'ai' ? baseNodes[nextId] : scenario.nodes[nextId];
+
+            if (!nextNode) {
+                const endText = isChatMode === 'scenario' 
+                    ? "🌟 Вправу завершено! Дякую за практику." 
+                    : "Я завжди тут. Бажаєш ще щось обговорити?";
+                
+                setMessages(prev => [...prev, {
+                    id: prev.length + 1,
+                    text: endText,
+                    sender: 'bot',
+                    timestamp: new Date()
+                }]);
+                return;
+            }
+
+            setCurrentNodeId(nextId);
+            setMessages(prev => [...prev, {
+                id: prev.length + 1,
+                text: nextNode.text,
+                sender: 'bot',
+                timestamp: new Date(),
+                isScenario: isChatMode === 'scenario'
+            }]);
+
         }, 1000);
     };
 
+    if (chatView === "selection") {
+        return (
+            <div className="dr-main-chat selection-view">
+                <header className="dr-chat-header">
+                    <div className="dr-chat-header-content">
+                        <div className="dr-chat-title-section">
+                            <button onClick={onBack} className="mr-4 text-slate-500 hover:text-white transition-colors">
+                                <ChevronLeft size={24} />
+                            </button>
+                            <div className="dr-chat-icon">
+                                <MessageSquare className="w-6 h-6" />
+                            </div>
+                            <div>
+                                <h2 className="dr-chat-title">Чат-тренажери</h2>
+                                <p className="dr-chat-subtitle">Оберіть тему розмови</p>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <div className="dr-chat-selection-grid p-8 overflow-y-auto max-h-[calc(100vh-150px)]">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Сценарій AI Помічника (дефолтний) */}
+                        <div 
+                            className="dr-scenario-card ai-card"
+                            onClick={() => {
+                                setScenario(null);
+                                setIsChatMode('ai');
+                                setCurrentNodeId('start');
+                                setMessages([{ id: 1, text: baseNodes.start.text, sender: 'bot', timestamp: new Date() }]);
+                                setChatView("chat");
+                            }}
+                        >
+                            <div className="dr-card-icon"><Sparkles size={24} /></div>
+                            <h3>Вільне спілкування</h3>
+                            <p>Обговоріть будь-які почуття з нашим AI-асистентом</p>
+                            <div className="dr-card-footer">
+                                <span className="tag">AI</span>
+                                <button className="start-btn">Почати <Play size={14} fill="currentColor" /></button>
+                            </div>
+                        </div>
+
+                        {/* Сценарії з бази даних */}
+                        {scenariosList.map((s) => (
+                            <div 
+                                key={s._id} 
+                                className="dr-scenario-card"
+                                onClick={() => selectScenario(s)}
+                            >
+                                <div className="dr-card-icon"><Target size={24} /></div>
+                                <h3>{s.name}</h3>
+                                <p>Відпрацюйте конкретну ситуацію: {s.category || 'загальне'}</p>
+                                <div className="dr-card-footer">
+                                    <span className="tag"><Clock size={12} className="inline mr-1" /> {s.duration || '5 хв'}</span>
+                                    <span className="tag"><Zap size={12} className="inline mr-1 text-amber-500" /> {s.difficulty || 50}%</span>
+                                    <button className="start-btn">Тренуватись <Play size={14} fill="currentColor" /></button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <CharacterCompanion context="chat" position="bottom-right" />
+            </div>
+        );
+    }
+
     return (
         <div className="dr-main-chat">
-            {/* Header чата */}
             <header className="dr-chat-header">
                 <div className="dr-chat-header-content">
                     <div className="dr-chat-title-section">
+                        <button onClick={() => setChatView("selection")} className="mr-4 text-slate-500 hover:text-white transition-colors">
+                            <ChevronLeft size={24} />
+                        </button>
                         <div className="dr-chat-icon">
-                            <MessageSquare className="w-6 h-6" />
+                            {isChatMode === 'ai' ? <Sparkles className="w-6 h-6" /> : <Bot className="w-6 h-6" />}
                         </div>
                         <div>
-                            <h2 className="dr-chat-title">AI-помічник</h2>
-                            <p className="dr-chat-subtitle">Психологічна підтримка 24/7</p>
+                            <h2 className="dr-chat-title">{isChatMode === 'ai' ? 'Shelter AI' : scenario?.name}</h2>
+                            <p className="dr-chat-subtitle">{isChatMode === 'ai' ? 'Розумний помічник' : 'Сценарій тренування'}</p>
                         </div>
-                    </div>
-                    
-                    <div className="dr-chat-controls">
-                        <button 
-                            className="dr-scenario-btn"
-                            onClick={startScenarioChat}
-                            disabled={loading || isChatMode === 'scenario'}
-                        >
-                            {isChatMode === 'scenario' ? 'Вправа активна' : 'Спробувати вправу'}
-                        </button>
                     </div>
                 </div>
             </header>
 
-            {/* Сообщения чата */}
             <div className="dr-chat-messages">
-                <div className="dr-messages-container">
-                    {messages.map((message) => (
-                        <div
-                            key={message.id}
-                            className={`dr-message ${message.sender === 'user' ? 'user' : 'bot'} ${message.isScenario ? 'scenario' : ''}`}
+                {messages.map((message) => (
+                    <div
+                        key={message.id}
+                        className={`dr-message ${message.sender === 'user' ? 'user' : 'bot'} ${message.isSystem ? 'system' : ''} animate-in fade-in slide-in-from-bottom-2 duration-300`}
+                    >
+                        <div className="dr-message-header">
+                            {message.sender === 'bot' ? (isChatMode === 'ai' ? 'AI Assistant' : 'Помічник') : username}
+                        </div>
+                        <div className="dr-message-content">
+                            {message.text}
+                        </div>
+                    </div>
+                ))}
+
+                {isTyping && (
+                    <div className="dr-message bot">
+                        <div className="dr-message-header">AI Assistant</div>
+                        <div className="dr-message-content">
+                            <div className="dr-typing-indicator">
+                                <span></span><span></span><span></span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+                <div ref={messagesEndRef} />
+            </div>
+
+            <div className="dr-chat-footer">
+                <div className="dr-scenario-options">
+                    {currentNodeId && (isChatMode === 'ai' ? baseNodes[currentNodeId]?.options : scenario?.nodes[currentNodeId]?.options)?.map((option, index) => (
+                        <button
+                            key={index}
+                            className="dr-option-btn"
+                            onClick={() => handleOptionSelect(option)}
+                            disabled={isTyping}
                         >
-                            <div className="dr-message-content">
-                                <div className="dr-message-header">
-                                    {message.sender === 'bot' && (
-                                        <Bot size={16} className="dr-message-icon" />
-                                    )}
-                                    {message.sender === 'user' && (
-                                        <User size={16} className="dr-message-icon" />
-                                    )}
-                                    <span className="dr-message-sender">
-                                        {message.sender === 'user' ? username : 'AI'}
-                                    </span>
-                                    <span className="dr-message-time">
-                                        {new Date(message.timestamp).toLocaleTimeString('uk-UA', { 
-                                            hour: '2-digit', 
-                                            minute: '2-digit' 
-                                        })}
-                                    </span>
-                                </div>
-                                <div className="dr-message-text">
-                                    {message.text}
-                                </div>
-                            </div>
-                        </div>
+                            {option.text}
+                        </button>
                     ))}
-
-                    {/* Индикатор набора текста */}
                     {isTyping && (
-                        <div className="dr-message bot">
-                            <div className="dr-message-content">
-                                <div className="dr-message-header">
-                                    <Bot size={16} className="dr-message-icon" />
-                                    <span className="dr-message-sender">AI</span>
-                                </div>
-                                <div className="dr-typing-indicator">
-                                    <span></span>
-                                    <span></span>
-                                    <span></span>
-                                </div>
-                            </div>
+                        <div className="h-10 flex items-center justify-center opacity-20 italic text-xs text-slate-500">
+                            Чекаю на відповідь...
                         </div>
                     )}
-
-                    {/* Варианты ответа для сценария */}
-                    {isChatMode === 'scenario' && scenario && scenario.nodes[currentNodeId]?.options && (
-                        <div className="dr-scenario-options">
-                            {scenario.nodes[currentNodeId].options.map((option, index) => (
-                                <button
-                                    key={index}
-                                    className="dr-option-btn"
-                                    onClick={() => handleScenarioOption(option)}
-                                >
-                                    {option.text}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-
-                    <div ref={messagesEndRef} />
                 </div>
             </div>
 
-            {/* Поле ввода */}
-            {isChatMode === 'ai' && (
-                <div className="dr-chat-input">
-                    <div className="dr-input-container">
-                        <input
-                            ref={inputRef}
-                            type="text"
-                            value={inputMessage}
-                            onChange={(e) => setInputMessage(e.target.value)}
-                            onKeyPress={handleKeyPress}
-                            placeholder="Напиши своє повідомлення..."
-                            className="dr-message-input"
-                            disabled={isTyping}
-                        />
-                        <button
-                            onClick={handleSendMessage}
-                            disabled={!inputMessage.trim() || isTyping}
-                            className="dr-send-btn"
-                        >
-                            <Send size={20} />
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* Character Companion */}
-            <CharacterCompanion
-                context="chat"
-                position="bottom-right"
-                resilience={resilience}
-            />
+            <CharacterCompanion context="chat" position="bottom-right" resilience={resilience} />
         </div>
     );
 }

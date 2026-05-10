@@ -146,16 +146,6 @@ export const api = {
 			body: JSON.stringify({ materialId, minutes })
 		}).then((res) => res.json()),
 
-	addDiaryEntry: (userId, mood, content, tags = []) =>
-		fetch(`${API_URL}/stats/diary/${userId}`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ mood, content, tags })
-		}).then((res) => res.json()),
-
-	getDiaryEntries: (userId, limit = 10, page = 1) =>
-		fetch(`${API_URL}/stats/diary/${userId}?limit=${limit}&page=${page}`).then((res) => res.json()),
-
 	updateStreak: (userId) =>
 		fetch(`${API_URL}/stats/streak/${userId}`, {
 			method: 'POST'
@@ -179,6 +169,33 @@ export const api = {
 		if (!isValidId(userId)) return Promise.reject("Invalid ID");
 		return fetch(`${API_URL}/users/${userId}/stats`, {
 			headers: getHeaders(),
+		}).then((res) => res.json());
+	},
+
+	addDiaryEntry: (userId, mood, content, tags = []) => {
+		if (isGuest()) {
+			return fetch(`${API_URL}/auth/guest/diary`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include',
+				body: JSON.stringify({ mood, content, tags })
+			}).then((res) => res.json());
+		}
+		return fetch(`${API_URL}/stats/diary/${userId}`, {
+			method: 'POST',
+			headers: getHeaders(),
+			body: JSON.stringify({ mood, content, tags })
+		}).then((res) => res.json());
+	},
+
+	getDiaryEntries: (userId, limit = 10, page = 1) => {
+		if (isGuest()) {
+			return fetch(`${API_URL}/auth/guest/diary`, {
+				credentials: 'include'
+			}).then((res) => res.json());
+		}
+		return fetch(`${API_URL}/stats/diary/${userId}?limit=${limit}&page=${page}`, {
+			headers: getHeaders()
 		}).then((res) => res.json());
 	},
 

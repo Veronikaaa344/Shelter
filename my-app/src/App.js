@@ -1,68 +1,47 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import api from "./api/api";
-import safeStorage from "./utils/storage";
-import PageTransition from "./components/PageTransition/PageTransition";
 import AdminPage from "./pages/adminPage/AdminPage";
 import AuthPage from "./pages/authPage/AuthPage";
 import ProfilePage from "./pages/profilePage/ProfilePage";
 import SosPage from "./pages/sosPage/sosPage";
-import StartPage from "./pages/startPage/startPage";
 import ShelterAppComplete from "./components/ShelterAppComplete";
 import StatsPage from "./pages/statsPage/StatsPage";
 import ExercisesPage from "./pages/trainerSimulator/exercisesPage/ExercisesPage";
 import SimulatorPage from "./pages/trainerSimulator/simulatorPage/SimulatorPage";
 import MaterialPage from "./pages/materialPage/MaterialPage";
 import ChatTrainingPage from "./pages/chatTraining/ChatTrainingPage";
-// Updated exercise pages
 import UpdatedSortingPage from "./pages/trainerSimulator/sortingPage/UpdatedSortingPage";
 import UpdatedFindDifferencesPage from "./pages/trainerSimulator/findDifferencesPage/UpdatedFindDifferencesPage";
 import UpdatedVideoScenarioPage from "./pages/trainerSimulator/videoScenarioPage/UpdatedVideoScenarioPage";
 
-const checkTestStatus = () => {
-	const saved = localStorage.getItem("dr_test_results");
-	if (!saved) return false;
-	try {
-		const { expiry } = JSON.parse(saved);
-		if (Date.now() < expiry) return true;
-		localStorage.removeItem("dr_test_results");
-		return false;
-	} catch (e) {
-		return false;
-	}
-};
-
-const ProtectedRoute = ({ children }) => {
-	return localStorage.getItem("dr_token") ? (
-		children
-	) : (
-		<Navigate to="/auth" replace />
-	);
-};
-
 function App() {
 	const [isReady, setIsReady] = useState(false);
-	const hasValidTest = checkTestStatus();
 
 	useEffect(() => {
 		const initSession = async () => {
 			const token = localStorage.getItem("dr_token");
 			const userId = localStorage.getItem("userId");
 
-			if (
-				!token ||
-				token === "guest_mode" ||
-				!userId ||
-				userId === "null" ||
-				userId === "undefined"
-			) {
+			// Якщо є нормальний токен — нічого не робимо, просто показуємо додаток
+			const hasValidSession =
+				token &&
+				token !== "guest_mode" &&
+				userId &&
+				userId !== "null" &&
+				userId !== "undefined";
+
+			const isGuestMode = token === "guest_mode";
+
+			if (!hasValidSession && !isGuestMode) {
+				// Немає сесії — автоматично входимо як гість
 				localStorage.removeItem("dr_token");
 				localStorage.removeItem("userId");
 				try {
 					const data = await api.loginAsGuest();
-					if (data.user && data.token) {
-						localStorage.setItem("dr_token", data.token);
-						localStorage.setItem("userId", data.user.id);
+					// Гостева сесія в куках, локально позначаємо
+					if (data.id || data.user) {
+						localStorage.setItem("dr_token", "guest_mode");
 					}
 				} catch (e) {
 					console.error(e);
@@ -78,13 +57,7 @@ function App() {
 	return (
 		<BrowserRouter>
 			<Routes>
-				<Route
-					path="/"
-					element={
-						hasValidTest ? <Navigate to="/main" /> : <Navigate to="/start" />
-					}
-				/>
-				<Route path="/start" element={<StartPage />} />
+				<Route path="/" element={<Navigate to="/main" replace />} />
 				<Route path="/main" element={<ShelterAppComplete />} />
 				<Route path="/auth" element={<AuthPage />} />
 				<Route path="/sos" element={<SosPage />} />
@@ -95,11 +68,10 @@ function App() {
 				<Route path="/material/:id" element={<MaterialPage />} />
 				<Route path="/chat" element={<ChatTrainingPage />} />
 				<Route path="/stats" element={<StatsPage />} />
-				{/* Updated exercise pages */}
 				<Route path="/sorting/:id" element={<UpdatedSortingPage />} />
 				<Route path="/find-differences/:id" element={<UpdatedFindDifferencesPage />} />
 				<Route path="/video-scenario/:id" element={<UpdatedVideoScenarioPage />} />
-				<Route path="*" element={<Navigate to="/" replace />} />
+				<Route path="*" element={<Navigate to="/main" replace />} />
 			</Routes>
 		</BrowserRouter>
 	);

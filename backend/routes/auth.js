@@ -379,6 +379,62 @@ router.post("/guest/update-resilience", (req, res) => {
 	}
 });
 
+// Додати запис у щоденник (гість)
+router.post("/guest/diary", (req, res) => {
+	try {
+		const guestCookie = req.cookies?.dr_guest;
+		if (!guestCookie) {
+			return res.status(404).json({ message: "Guest not found" });
+		}
+		const { mood, content, tags = [] } = req.body;
+		const guestData = JSON.parse(guestCookie);
+
+		if (!guestData.diaryEntries) guestData.diaryEntries = [];
+
+		const newEntry = {
+			_id: `guest_diary_${Date.now()}`,
+			mood,
+			content,
+			tags,
+			date: new Date().toISOString(),
+		};
+
+		guestData.diaryEntries.unshift(newEntry);
+
+		// Ограничиваем до 20 записей чтобы не переполнить куки
+		if (guestData.diaryEntries.length > 20) {
+			guestData.diaryEntries = guestData.diaryEntries.slice(0, 20);
+		}
+
+		res
+			.cookie("dr_guest", JSON.stringify(guestData), {
+				expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+				secure: process.env.NODE_ENV === "production",
+				sameSite: "strict",
+			})
+			.json({ success: true, entry: newEntry });
+	} catch (err) {
+		res.status(500).json({ message: err.message });
+	}
+});
+
+// Отримати записи щоденника (гість)
+router.get("/guest/diary", (req, res) => {
+	try {
+		const guestCookie = req.cookies?.dr_guest;
+		if (!guestCookie) {
+			return res.json({ entries: [], total: 0 });
+		}
+		const guestData = JSON.parse(guestCookie);
+		const entries = guestData.diaryEntries || [];
+		res.json({ entries, total: entries.length });
+	} catch (err) {
+		res.status(500).json({ message: err.message });
+	}
+});
+
+
+
 router.post("/migrate-guest", async (req, res) => {
 	try {
 		const { email, password, username } = req.body;
