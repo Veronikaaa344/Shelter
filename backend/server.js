@@ -15,7 +15,7 @@ const app = express();
 
 const allowedOrigins = [
 	"http://localhost:3000",
-	"https://shelter-jsv0.onrender.com"
+	"https://shelter-1-rhi3.onrender.com"
 ];
 
 app.use(
