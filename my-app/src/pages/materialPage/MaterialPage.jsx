@@ -4,7 +4,7 @@ import { api } from '../../api/api';
 import { getDiagnosticConfig } from '../../diagnosticLogic';
 import CharacterCompanion from '../../components/characterCompanion/CharacterCompanion';
 import {
-    ArrowLeft,
+    ChevronLeft,
     Play,
     Pause,
     LifeBuoy,
@@ -12,18 +12,12 @@ import {
     Lightbulb,
     Shield,
     Clock,
-    ChevronLeft,
     ShieldCheck,
-    Search,
-    X,
-    Layout,
     BookOpen,
     Video,
     Headphones,
     FileText
 } from 'lucide-react';
-
-import './materialPage.css';
 
 export default function MaterialPage() {
     const { id } = useParams();
@@ -62,446 +56,223 @@ export default function MaterialPage() {
             );
         }
 
-        // Якщо це просто текст, рендеримо як параграф
-        return <p>{htmlContent}</p>;
+        // Якщо це просто текст, розбиваємо на параграфи
+        return htmlContent.split('\n').map((paragraph, index) => (
+            <p key={index} className="mb-4">
+                {paragraph}
+            </p>
+        ));
     };
 
-    useEffect(() => {
-        let isMounted = true;
-
-        const fetchData = async () => {
-            try {
-                console.log('Fetching material with ID:', id);
-
-                // Спочатку пробуємо знайти серед матеріалів
-                const materialsData = await api.getMaterials();
-                console.log('Materials data:', materialsData);
-
-                let foundMaterial = null;
-
-                if (isMounted && Array.isArray(materialsData)) {
-                    foundMaterial = materialsData.find(m => m._id === id);
-
-                    if (foundMaterial) {
-                        console.log('Found material:', foundMaterial);
-                        setMaterial(foundMaterial);
-                    }
-                }
-
-                // Якщо не знайдено в матеріалах, пробуємо в сценаріях (відео/аудіо)
-                if (!foundMaterial && isMounted) {
-                    try {
-                        console.log('Searching in scenarios...');
-
-                        const scenariosData = await api.getScenarios();
-                        console.log('Scenarios data:', scenariosData);
-
-                        if (Array.isArray(scenariosData)) {
-                            const foundScenario = scenariosData.find(
-                                s => s.scenarioId === id || s._id === id
-                            );
-
-                            console.log('Found scenario:', foundScenario);
-
-                            if (
-                                foundScenario &&
-                                (foundScenario.type === "video" ||
-                                    foundScenario.type === "audio")
-                            ) {
-                                console.log('Converting scenario to material...');
-                                console.log('Scenario fields:', {
-                                    videoUrl: foundScenario.videoUrl,
-                                    audioUrl: foundScenario.audioUrl,
-                                    videoTranscript: foundScenario.videoTranscript,
-                                    audioTranscript: foundScenario.audioTranscript
-                                });
-
-                                // Перетворюємо сценарій в формат матеріалу для відображення
-                                const materialFromScenario = {
-                                    _id: foundScenario._id,
-                                    title: foundScenario.name,
-                                    desc:
-                                        foundScenario.description ||
-                                        "Відео/аудіо тренування",
-                                    type: foundScenario.type,
-                                    url:
-                                        foundScenario.type === "video"
-                                            ? (
-                                                foundScenario.videoUrl ||
-                                                foundScenario.url
-                                            )
-                                            : (
-                                                foundScenario.audioUrl ||
-                                                foundScenario.url
-                                            ),
-                                    content:
-                                        foundScenario.type === "video"
-                                            ? (
-                                                foundScenario.videoTranscript ||
-                                                foundScenario.content
-                                            )
-                                            : (
-                                                foundScenario.audioTranscript ||
-                                                foundScenario.content
-                                            ),
-                                    duration: foundScenario.duration,
-                                    category: foundScenario.category
-                                };
-
-                                console.log(
-                                    'Material from scenario:',
-                                    materialFromScenario
-                                );
-
-                                setMaterial(materialFromScenario);
-                            }
-                        }
-                    } catch (scenarioErr) {
-                        console.error(
-                            "Error fetching scenarios:",
-                            scenarioErr
-                        );
-                    }
-                }
-
-                const savedData = JSON.parse(
-                    localStorage.getItem("dr_test_results")
-                );
-
-                const config = getDiagnosticConfig(savedData?.answers);
-
-                if (isMounted) {
-                    setPageType(config?.type || "default");
-                }
-
-                const guestStatus = api.isGuest
-                    ? api.isGuest()
-                    : false;
-
-                
-                if (guestStatus) {
-                    const profile = await api.getProfile();
-
-                    if (isMounted && profile?.username) {
-                        setUsername(profile.username);
-                    }
-                } else {
-                    if (isMounted) {
-                        setUsername("Профіль");
-                    }
-                }
-            } catch (err) {
-                console.error("Fetch error:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        useEffect(() => {
-            api.getMaterialById(id)
-                .then((data) => {
-                    if (data) {
-                        setMaterial(data);
-                        setPageType(getDiagnosticConfig({ answers: { anxiety: 0 } }).type);
-                        
-                        // Записываем просмотр материала в статистику
-                        if (userId) {
-                            api.recordMaterialView(userId, id)
-                                .then(() => console.log(`Material view recorded: ${data.title}`))
-                                .catch((err) => console.error('Error recording material view:', err));
-                        }
-                    }
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    console.error('Error loading material:', error);
-                    setLoading(false);
-                });
-        }, [id, userId]);
-
-        fetchData();
-
-        return () => {
-            isMounted = false;
-        };
-    }, [id]);
-
-    const handleComplete = async (delta = 5) => {
-        const userId = localStorage.getItem("userId");
-
-        if (userId && material) {
-            await api.updateResilience(
-                userId,
-                delta,
-                "material_complete",
-                material.title
-            );
-        }
-
-        navigate('/main');
+    // YouTube URL helpers
+    const isYouTubeUrl = (url) => {
+        return url && (
+            url.includes('youtube.com') ||
+            url.includes('youtu.be')
+        );
     };
 
-    const getStateLabel = () => {
-        const labels = {
-            anxiety: "Тривога",
-            apathy: "Апатія",
-            stress: "Стрес"
-        };
+    const getYouTubeEmbedUrl = (url) => {
+        if (!url) return '';
 
-        return labels[pageType] || "Норма";
+        const videoId = url.match(
+            /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/
+        );
+
+        return videoId
+            ? `https://www.youtube.com/embed/${videoId[1]}`
+            : url;
     };
 
+    // Event handlers
     const handleVideoPlay = () => {
-        if (videoRef.current) {
-            videoRef.current.play().catch(err => {
-                console.error('Video play error:', err);
-            });
-
-            setIsPlaying(true);
-        }
+        setIsPlaying(true);
     };
 
     const handleVideoPause = () => {
-        if (videoRef.current) {
-            videoRef.current.pause();
-            setIsPlaying(false);
-        }
+        setIsPlaying(false);
     };
 
     const handleVideoEnded = () => {
         setIsPlaying(false);
     };
 
-    const extractVideoUrl = (material) => {
-        // Спочатку перевіряємо пряме поле url
-        if (material?.url && material.url.startsWith('http')) {
-            return material.url;
-        }
-
-        // Якщо немає прямого URL, шукаємо в контенті
-        if (material?.content) {
-            // Регулярний вираз для пошуку YouTube URL
-            const youtubeRegex =
-                /https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)[^\s<>"{}|\\^`\[\]]+/i;
-
-            const match = material.content.match(youtubeRegex);
-
-            if (match) {
-                return match[0];
-            }
-
-            // Регулярний вираз для пошуку будь-яких HTTP URL
-            const urlRegex =
-                /https?:\/\/[^\s<>"{}|^`[\]]+/i;
-
-            const urlMatch = material.content.match(urlRegex);
-
-            if (urlMatch) {
-                return urlMatch[0];
-            }
-        }
-
-        return null;
-    };
-
-    const getYouTubeEmbedUrl = (url) => {
-        if (!url) return null;
-
-        // Перетворюємо різні формати YouTube URL в embed формат
-        const youtubeIdMatch = url.match(
-            /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/
-        );
-
-        if (youtubeIdMatch) {
-            const videoId = youtubeIdMatch[1];
-            return `https://www.youtube.com/embed/${videoId}`;
-        }
-
-        return null;
-    };
-
-    const isYouTubeUrl = (url) => {
-        return (
-            url &&
-            (
-                url.includes('youtube.com') ||
-                url.includes('youtu.be')
-            )
-        );
-    };
-
-    const handleVideoError = (e) => {
-        console.error('Video error:', e);
-
-        const videoUrl = extractVideoUrl(material);
-
-        console.log('Video src:', videoUrl);
-        console.log('Material structure:', material);
+    const handleVideoError = () => {
+        console.error('Video playback error');
+        setIsPlaying(false);
     };
 
     const handleAudioPlay = () => {
-        if (audioRef.current) {
-            audioRef.current.play().catch(err => {
-                console.error('Audio play error:', err);
-            });
-
-            setIsPlaying(true);
-        }
+        setIsPlaying(true);
     };
 
     const handleAudioPause = () => {
-        if (audioRef.current) {
-            audioRef.current.pause();
-            setIsPlaying(false);
-        }
+        setIsPlaying(false);
     };
 
-    if (loading) {
-        return (
-            <div className="dr-new-layout dr-st-center">
-                <h2>Завантаження...</h2>
-            </div>
-        );
-    }
+    const handleAudioEnded = () => {
+        setIsPlaying(false);
+    };
 
-    if (!material) {
-        return (
-            <div className="dr-new-layout dr-st-center">
-                <h2>Матеріал не знайдено</h2>
-            </div>
-        );
-    }
+    const handleComplete = async (delta = 5) => {
+        const userId = localStorage.getItem("userId");
 
-    const type = material.type?.toLowerCase();
+        if (userId) {
+            try {
+                const response = await api.updateUserProgress(userId, id, 'material');
 
-    const isVideo = type === 'video';
-    const isAudio = type === 'audio';
-    const isText = !isVideo && !isAudio;
+                if (response.success) {
+                    console.log('Progress updated successfully');
+                }
+            } catch (error) {
+                console.error('Error updating progress:', error);
+            }
+        }
 
-    // Діагностика
-    const extractedUrl = extractVideoUrl(material);
+        // Записываем время просмотра
+        const viewTime = Math.round((Date.now() - viewStartTime) / 60000); // в минутах
+        if (userId && viewTime > 0) {
+            api.recordMaterialView(userId, id, viewTime)
+                .then(() => console.log(`Material view time recorded: ${viewTime} minutes`))
+                .catch((err) => console.error('Error recording view time:', err));
+        }
 
-    console.log('Material debug:', {
-        type,
-        isVideo,
-        isAudio,
-        isText,
-        material,
-        videoUrl: material?.url,
-        content: material?.content,
-        extractedUrl
-    });
+        navigate(-1);
+    };
 
-    // Додаткові тести для діагностики
-    if (isVideo) {
-        console.log(
-            '✅ Video URL successfully extracted and should be playing'
-        );
+    // Data fetching
+    useEffect(() => {
+        const isMounted = true;
 
-        console.log(
-            '🎬 Video element src:',
-            videoRef.current?.src
-        );
-    }
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+
+                // Fetch material
+                const materialData = await api.getMaterialById(id);
+                if (isMounted && materialData) {
+                    setMaterial(materialData);
+                    setPageType(getDiagnosticConfig({ answers: { anxiety: 0 } }).type);
+                    
+                    // Записываем просмотр материала в статистику
+                    if (userId) {
+                        api.recordMaterialView(userId, id)
+                            .then(() => console.log(`Material view recorded: ${materialData.title}`))
+                            .catch((err) => console.error('Error recording material view:', err));
+                    }
+                }
+
+                // Fetch user profile
+                if (api.isGuest && api.isGuest()) {
+                    const profile = await api.getProfile();
+                    if (isMounted && profile && profile.username) {
+                        setUsername(profile.username);
+                    }
+                }
+            } catch (err) {
+                console.error("Fetch error:", err);
+            } finally {
+                if (isMounted) {
+                    setLoading(false);
+                }
+            }
+        };
+
+        fetchData();
+
+        return () => {
+            isMounted = false;
+        };
+    }, [id, userId]);
 
     return (
-        <div className="dr-new-layout dr-mat-page">
-            <div className="dr-cloud dr-cloud-1">☁️</div>
-            <div className="dr-cloud dr-cloud-2">☁️</div>
-
-            <header className="dr-new-header">
-                <div className="dr-header-container">
-                    <div className="dr-header-inner">
-                        <div
-                            className="dr-new-logo"
-                            onClick={() => navigate("/main")}
-                        >
-                            <div className="dr-logo-icon-box">
-                                <Shield size={20} />
-                            </div>
-
-                            <h1 className="dr-logo-text">
-                                Броня для розуму
-                            </h1>
+        <div className="flex h-screen bg-[#0b0f1a] text-slate-300 font-sans overflow-hidden">
+            {/* Боковая панель */}
+            <aside className="w-20 lg:w-72 border-r border-slate-800 flex flex-col bg-[#0b0f1a] z-20 shadow-2xl">
+                <div className="p-8 flex items-center gap-3">
+                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[#0b0f1a] shadow-xl">
+                        <ShieldCheck size={28} />
+                    </div>
+                    <span className="hidden lg:block text-2xl font-black text-white italic uppercase tracking-tighter italic">
+                        Shelter
+                    </span>
+                </div>
+                <nav className="flex-1 px-4 space-y-3 mt-6">
+                    <div className="flex items-center gap-4 p-4 rounded-[20px] cursor-pointer transition-all duration-300 hover:bg-slate-800 text-slate-400">
+                        <BookOpen size={22} />
+                        <span className="font-bold text-sm hidden lg:block tracking-wide">Матеріал</span>
+                    </div>
+                </nav>
+                <div className="p-6 border-t border-slate-900 space-y-4">
+                    <div className="bg-slate-900/50 p-4 rounded-[24px] flex items-center gap-3 border border-slate-800/50 shadow-inner">
+                        <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-[#0b0f1a] font-black text-xs">
+                            {username.charAt(0).toUpperCase()}
                         </div>
-
-                        <button
-                            className="dr-nav-link"
-                            onClick={() => navigate('/main')}
-                        >
-                            <ArrowLeft size={18} /> Бібліотека
-                        </button>
-
-                        <div className="dr-user-section">
-                            <div className="dr-state-badge">
-                                Стан:
-                                <span className="dr-state-value">
-                                    {getStateLabel()}
-                                </span>
-                            </div>
-
-                            <div className="dr-user-profile-btn">
-                                {username}
-                            </div>
+                        <div className="hidden lg:block text-left">
+                            <p className="text-xs font-black text-white font-bold">{username}</p>
+                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Resilience: 50%</p>
                         </div>
                     </div>
                 </div>
-            </header>
+            </aside>
 
-            <main className="dr-new-main dr-mat-content">
-                <div className="dr-status-card dr-mat-card">
-                    <div className="dr-mat-meta">
-                        <span className="dr-type-label">
-                            {material.type}
-                        </span>
-
-                        <span className="dr-mat-time">
-                            <Clock size={14} /> 5-10 хв
-                        </span>
+            {/* Основной контент */}
+            <main className="flex-1 flex flex-col overflow-y-auto bg-gradient-to-br from-[#0b0f1a] to-[#121827]">
+                {/* Header */}
+                <header className="h-24 px-8 flex items-center justify-between sticky top-0 z-10 backdrop-blur-xl bg-[#0b0f1a]/60 border-b border-slate-800/50">
+                    <button 
+                        onClick={() => navigate(-1)}
+                        className="flex items-center gap-2 text-slate-500 hover:text-white font-bold uppercase text-xs tracking-widest transition-all"
+                    >
+                        <ChevronLeft size={20} /> Назад
+                    </button>
+                    <div className="flex items-center gap-6">
+                        <button 
+                            onClick={() => navigate('/sos')}
+                            className="bg-rose-600 hover:bg-rose-500 text-white px-8 py-3 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-rose-900/40 transition-all transform hover:scale-105 active:scale-95"
+                        >
+                            SOS
+                        </button>
                     </div>
+                </header>
 
-                    <h1 className="dr-status-title dr-mat-main-title">
-                        {material.title}
-                    </h1>
-
-                    <div className="dr-mat-body">
-                        {isVideo && (
-                            <div className="dr-mat-media-section">
-                                {(() => {
-                                    const videoUrl =
-                                        extractVideoUrl(material);
-
-                                    return videoUrl ? (
-                                        <div className="dr-mat-video-wrapper">
-                                            {isYouTubeUrl(videoUrl) ? (
-                                                <iframe
-                                                    className="dr-mat-player"
-                                                    src={getYouTubeEmbedUrl(videoUrl)}
-                                                    title="YouTube video player"
-                                                    frameBorder="0"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                    allowFullScreen
-                                                    style={{
-                                                        width: '100%',
-                                                        height: '400px',
-                                                        borderRadius: '16px',
-                                                        background: '#000'
-                                                    }}
-                                                />
-                                            ) : (
-                                                <video
-                                                    ref={videoRef}
-                                                    className="dr-mat-player"
-                                                    src={videoUrl}
-                                                    controls
-                                                    preload="metadata"
-                                                    onPlay={handleVideoPlay}
-                                                    onPause={handleVideoPause}
-                                        />
+                {/* Контент материала */}
+                <div className="flex-1 p-8 space-y-8 animate-in fade-in duration-700">
+                    {loading ? (
+                        <div className="flex items-center justify-center h-full">
+                            <div className="text-slate-500">Завантаження...</div>
+                        </div>
+                    ) : material ? (
+                        <>
+                            {/* Заголовок материала */}
+                            <section className="space-y-4">
+                                <div className="flex items-center gap-4">
+                                    <div className={`p-4 rounded-2xl ${
+                                        material.category === 'anxiety' ? 'bg-blue-500' :
+                                        material.category === 'stress' ? 'bg-emerald-500' :
+                                        material.category === 'apathy' ? 'bg-rose-500' :
+                                        'bg-purple-500'
+                                    } text-white shadow-lg`}>
+                                        {material.type === 'video' ? <Video size={24} /> :
+                                         material.type === 'audio' ? <Headphones size={24} /> :
+                                         <FileText size={24} />}
+                                    </div>
+                                    <div>
+                                        <h1 className="text-4xl font-black text-white italic uppercase tracking-tighter leading-none">
+                                            {material.title}
+                                        </h1>
+                                        <div className="flex items-center gap-4 mt-2">
+                                            <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
+                                                {material.type}
+                                            </span>
+                                            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                                                <Clock size={12} className="inline mr-1" />
+                                                {material.duration || '10 хв'}
+                                            </span>
                                         </div>
-                                    )}
-                                </section>
-                            )}
+                                    </div>
+                                </div>
+                            </section>
 
                             {/* Видео/Аудио контент */}
                             {material.type === 'video' && material.url && (
@@ -622,3 +393,4 @@ export default function MaterialPage() {
             />
         </div>
     );
+}

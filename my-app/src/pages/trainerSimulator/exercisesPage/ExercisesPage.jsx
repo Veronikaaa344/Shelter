@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { api } from "../../../api/api";
 import { getDiagnosticConfig } from "../../../diagnosticLogic";
 import CharacterCompanion from "../../../components/characterCompanion/CharacterCompanion";
-import { Shield, ArrowLeft, Unlock, Target, Search, Puzzle } from 'lucide-react';
+import { Shield, ArrowLeft, Unlock, Target, Search, Puzzle, Grid3X3, Video } from 'lucide-react';
 import "./exercises.css";
 
 const getDifficultyText = (difficultyPercent) => {
@@ -226,6 +226,10 @@ export default function ExercisesPage() {
                                 onClick={() => {
                                     if (s.type === "find-differences") {
                                         navigate(`/find-differences/${s.scenarioId}`);
+                                    } else if (s.type === "sorting") {
+                                        navigate(`/sorting/${s.scenarioId}`);
+                                    } else if (s.type === "video") {
+                                        navigate(`/video-scenario/${s.scenarioId}`);
                                     } else {
                                         navigate(`/exercises/${s.scenarioId}`);
                                     }
@@ -233,10 +237,13 @@ export default function ExercisesPage() {
                             >
                                 <div className="dr-ex-card-visual" style={getCardStyle(category)}>
                                     <div className="dr-ex-card-emoji">
-                                        {isCompleted ? '✅' : s.type === "find-differences" ? '🔍' : '🧩'}
+                                        {isCompleted ? '✅' : s.type === "find-differences" ? '🔍' : s.type === "sorting" ? '🎯' : s.type === "video" ? '🎬' : '🧩'}
                                     </div>
                                     <div className="dr-ex-card-badge" style={getBadgeStyle(category)}>
-                                        {s.type === "find-differences" ? <Search className="w-5 h-5" strokeWidth={2.5}/> : <Puzzle className="w-5 h-5" strokeWidth={2.5}/>}
+                                        {s.type === "find-differences" ? <Search className="w-5 h-5" strokeWidth={2.5}/> : 
+                                         s.type === "sorting" ? <Grid3X3 className="w-5 h-5" strokeWidth={2.5}/> : 
+                                         s.type === "video" ? <Video className="w-5 h-5" strokeWidth={2.5}/> : 
+                                         <Puzzle className="w-5 h-5" strokeWidth={2.5}/>}
                                     </div>
                                 </div>
 

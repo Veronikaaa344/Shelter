@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../api/api';
+import MainChat from './MainChat/MainChat';
+import SimulatorPage from '../pages/trainerSimulator/simulatorPage/SimulatorPage';
+import UpdatedFindDifferencesPage from '../pages/trainerSimulator/findDifferencesPage/UpdatedFindDifferencesPage';
+import UpdatedSortingPage from '../pages/trainerSimulator/sortingPage/UpdatedSortingPage';
+import '../pages/trainerSimulator/simulatorPage/simulatorPage.css';
 import { 
   Heart, Wind, Brain, Activity, User, AlertCircle, 
   ChevronLeft, ChevronRight, TrendingUp, MessageCircle, X, Layout, 
@@ -33,10 +38,92 @@ const questions = [
   { q: "Як оціните якість свого сну?", options: ["Відмінна", "Задовільна", "Погана", "Жахлива"], points: [100, 70, 30, 0] }
 ];
 
+const FlipSidebarItem = ({ id, icon, label, isDashboard = false, index = 0, isSpecialMode, currentView, navigateTo, handleChatBack }) => {
+  const isFlipped = isSpecialMode;
+  const isActive = currentView === id && !isSpecialMode;
+  
+  // Stagger the flip animation based on index
+  const baseDelay = isFlipped ? index * 0.1 : (5 - index) * 0.1;
+  
+  const wrapperStyle = {
+    perspective: '1200px',
+    transition: `height 0.4s cubic-bezier(0.4, 0, 0.2, 1) ${isFlipped && !isDashboard ? baseDelay + 0.4 : baseDelay}s, opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1) ${isFlipped && !isDashboard ? baseDelay + 0.3 : baseDelay}s, margin-bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1) ${isFlipped && !isDashboard ? baseDelay + 0.4 : baseDelay}s`,
+    height: isFlipped && !isDashboard ? '0px' : '56px',
+    opacity: isFlipped && !isDashboard ? 0 : 1,
+    marginBottom: isFlipped && !isDashboard ? '0px' : '12px',
+    pointerEvents: isFlipped && !isDashboard ? 'none' : 'auto',
+    position: 'relative',
+    zIndex: 10 - index
+  };
+
+  const innerStyle = {
+    position: 'absolute',
+    width: '100%',
+    height: '56px',
+    transformStyle: 'preserve-3d',
+    transition: `transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${baseDelay}s`,
+    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+  };
+
+  const faceStyle = {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backfaceVisibility: 'hidden',
+  };
+
+  const backFaceStyle = {
+    ...faceStyle,
+    transform: 'rotateY(180deg)'
+  };
+
+  return (
+    <div style={wrapperStyle}>
+      <div style={innerStyle}>
+        {/* Front */}
+        <div 
+          style={faceStyle} 
+          className={`flex items-center gap-4 p-4 rounded-[20px] cursor-pointer transition-all duration-300 ${
+            isActive 
+            ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' 
+            : 'hover:bg-slate-800 text-slate-400'
+          }`}
+          onClick={() => { if (!isFlipped) navigateTo(id); }}
+        >
+          {icon}
+          <span className="font-bold text-sm hidden lg:block tracking-wide">{label}</span>
+        </div>
+        
+        {/* Back */}
+        <div 
+          style={backFaceStyle}
+          className={`flex items-center gap-4 p-4 rounded-[20px] transition-all duration-300 w-full ${
+            isDashboard 
+            ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 border border-blue-500/30 cursor-pointer' 
+            : 'bg-slate-800/40 border border-slate-700/30'
+          }`}
+          onClick={() => { if (isFlipped && isDashboard) handleChatBack(); }}
+        >
+          {isDashboard && (
+            <>
+              <ChevronLeft size={22} />
+              <span className="font-bold text-sm hidden lg:block tracking-wide">Назад</span>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ShelterAppComplete = () => {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(true); // Автоматически логиним
   const [currentView, setCurrentView] = useState('home'); 
+  const [isChatMode, setIsChatMode] = useState(false);
+  const [isSimulatorMode, setIsSimulatorMode] = useState(false);
+  const [isFindDifferencesMode, setIsFindDifferencesMode] = useState(false);
+  const [isSortingMode, setIsSortingMode] = useState(false);
   const [showSOS, setShowSOS] = useState(false);
   const [searchTerm, setSearchTerm] = useState(''); 
   const [libraryFilter, setLibraryFilter] = useState('Всі');
@@ -52,6 +139,10 @@ const ShelterAppComplete = () => {
   const [testAnswers, setTestAnswers] = useState([]);
   const [isTestFinished, setIsTestFinished] = useState(false);
 
+  // Simulator states
+  const [simulatorScenarioId, setSimulatorScenarioId] = useState(null);
+  const [simulatorScenariosList, setSimulatorScenariosList] = useState([]);
+
   // Данные из API
   const [mediaLibraryData, setMediaLibraryData] = useState([]);
   const [username, setUsername] = useState("Гість");
@@ -63,8 +154,11 @@ const ShelterAppComplete = () => {
     // Загрузка материалов из API
     api.getMaterials()
       .then((data) => {
+        console.log('📊 Загруженные материалы с API:', data);
+        console.log('📏 Количество материалов:', data?.length || 0);
+        
         if (Array.isArray(data)) {
-          setMediaLibraryData(data.map(m => ({
+          const mappedData = data.map(m => ({
             id: m._id,
             title: m.title,
             type: m.type === 'text' ? 'Стаття' : m.type === 'video' ? 'Відео' : 'Аудіо',
@@ -72,7 +166,17 @@ const ShelterAppComplete = () => {
             duration: '10 хв',
             icon: m.type === 'text' ? <FileText size={20}/> : m.type === 'video' ? <Video size={20}/> : <Headphones size={20}/>,
             color: m.category === 'anxiety' ? 'bg-blue-500' : m.category === 'stress' ? 'bg-emerald-500' : m.category === 'apathy' ? 'bg-rose-500' : 'bg-purple-500'
-          })));
+          }));
+          
+          console.log('🔄 Преобразованные материалы для отображения:', mappedData);
+          console.log('📋 Список материалов:');
+          mappedData.forEach((material, index) => {
+            console.log(`${index + 1}. ${material.title} (${material.type}) - ${material.cat}`);
+          });
+          
+          setMediaLibraryData(mappedData);
+        } else {
+          console.log('❌ Данные не являются массивом:', data);
         }
       })
       .catch((err) => console.error('Error loading materials:', err));
@@ -102,6 +206,15 @@ const ShelterAppComplete = () => {
       // Обновляем streak
       api.updateStreak(userId).catch(() => {});
     }
+
+    // Загрузка сценариев для кубиков
+    api.getScenarios()
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setSimulatorScenariosList(data);
+        }
+      })
+      .catch((err) => console.error('Error loading scenarios:', err));
   }, []);
 
   useEffect(() => {
@@ -117,26 +230,49 @@ const ShelterAppComplete = () => {
   }, [isActive, timer]);
 
   const navigateTo = (id) => {
-    setCurrentView(id);
-    setIsActive(false);
-    setSearchTerm('');
-    setTestStep(0);
-    setIsTestFinished(false);
+    if (id === 'chat') {
+        setIsChatMode(true);
+        setIsSimulatorMode(false);
+    } else {
+        setCurrentView(id);
+        setIsActive(false);
+        setSearchTerm('');
+        setTestStep(0);
+        setIsTestFinished(false);
+        setIsChatMode(false);
+        setIsSimulatorMode(false);
+        setIsFindDifferencesMode(false);
+        setIsSortingMode(false);
+    }
   };
 
-  const SidebarItem = ({ id, icon, label }) => (
-    <div 
-      onClick={() => navigateTo(id)}
-      className={`flex items-center gap-4 p-4 rounded-[20px] cursor-pointer transition-all duration-300 ${
-        currentView === id 
-        ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' 
-        : 'hover:bg-slate-800 text-slate-400'
-      }`}
-    >
-      {icon}
-      <span className="font-bold text-sm hidden lg:block tracking-wide">{label}</span>
-    </div>
-  );
+  const handleChatBack = () => {
+    setIsChatMode(false);
+    setIsSimulatorMode(false);
+    setIsFindDifferencesMode(false);
+    setIsSortingMode(false);
+    setCurrentView('home');
+  };
+
+  const startSimulator = async () => {
+    try {
+      const scenarios = await api.getScenarios();
+      const simulatorScenarios = scenarios.filter(s => s.category === 'general' || s.category === 'anxiety');
+      
+      if (simulatorScenarios.length > 0) {
+        const randomScenario = simulatorScenarios[Math.floor(Math.random() * simulatorScenarios.length)];
+        setSimulatorScenarioId(randomScenario._id);
+      }
+    } catch (error) {
+      console.error('Error loading scenario:', error);
+    }
+  };
+
+  
+
+  const isSpecialMode = isChatMode || isSimulatorMode || isFindDifferencesMode || isSortingMode;
+
+
 
   const LoginView = () => (
     <div className="min-h-screen bg-[#0b0f1a] flex items-center justify-center p-6 relative overflow-hidden text-slate-300">
@@ -162,12 +298,44 @@ const ShelterAppComplete = () => {
   );
 
   const HomeView = () => {
-    const cards = [
+    const baseCards = [
       { title: "Дихання", cat: "Практика", icon: <Wind/>, color: "from-emerald-500 to-emerald-600", onClick: () => navigateTo('practice') },
       { title: "Діагностика", cat: "Тестування", icon: <Brain/>, color: "from-blue-500 to-blue-600", onClick: () => navigateTo('testing') },
       { title: "Поради", cat: "Освіта", icon: <Lightbulb/>, color: "from-orange-500 to-orange-600", onClick: () => navigateTo('advice') },
       { title: "Щоденник", cat: "Рефлексія", icon: <PenLine/>, color: "from-purple-500 to-purple-600", onClick: () => navigateTo('diary') },
-    ].filter(c => c.title.toLowerCase().includes(searchTerm.toLowerCase()));
+      { title: "Чат-тренування", cat: "Практика", icon: <MessageCircle/>, color: "from-rose-500 to-rose-600", onClick: () => navigateTo('chat') },
+      { title: "Відмінності", cat: "Практика", icon: <Search/>, color: "from-teal-500 to-teal-600", onClick: () => { 
+          const diffScenario = simulatorScenariosList.find(s => s.type === 'findDifferences' || (s.name && s.name.toLowerCase().includes('відмін')));
+          if (diffScenario) setSimulatorScenarioId(diffScenario._id);
+          setIsFindDifferencesMode(true); 
+      } },
+      { title: "Сортування", cat: "Практика", icon: <Layout/>, color: "from-amber-500 to-amber-600", onClick: () => { 
+          const sortScenario = simulatorScenariosList.find(s => s.type === 'sorting' || (s.name && s.name.toLowerCase().includes('сорт')));
+          if (sortScenario) setSimulatorScenarioId(sortScenario._id);
+          setIsSortingMode(true); 
+      } }
+    ];
+
+    const simulatorCards = simulatorScenariosList.map((scenario, i) => {
+      const colors = [
+        "from-indigo-500 to-indigo-600",
+        "from-violet-500 to-violet-600",
+        "from-fuchsia-500 to-fuchsia-600",
+        "from-cyan-500 to-cyan-600"
+      ];
+      return {
+        title: scenario.title || `Тренажер ${i + 1}`,
+        cat: "Симулятор",
+        icon: <Activity/>,
+        color: colors[i % colors.length],
+        onClick: () => {
+          setSimulatorScenarioId(scenario._id);
+          setIsSimulatorMode(true);
+        }
+      };
+    });
+
+    const cards = [...baseCards, ...simulatorCards].filter(c => c.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
     return (
       <div className="p-8 space-y-10 animate-in fade-in duration-700">
@@ -193,11 +361,17 @@ const ShelterAppComplete = () => {
   };
 
   const LibraryView = () => {
+    console.log('🔍 LibraryView - все материалы:', mediaLibraryData);
+    console.log('🔍 LibraryView - текущий фильтр:', libraryFilter);
+    console.log('🔍 LibraryView - текущий поиск:', searchTerm);
+    
     const filteredMedia = mediaLibraryData.filter(item => {
       const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
       const matchesFilter = libraryFilter === 'Всі' || item.type === libraryFilter;
       return matchesSearch && matchesFilter;
     });
+    
+    console.log('🔍 LibraryView - отфильтрованные материалы:', filteredMedia);
 
     const handleMaterialClick = (material) => {
       // Записываем просмотр материала в статистику
@@ -538,14 +712,19 @@ const ShelterAppComplete = () => {
           <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[#0b0f1a] shadow-xl"><ShieldCheck size={28} /></div>
           <span className="hidden lg:block text-2xl font-black text-white italic uppercase tracking-tighter italic">Shelter</span>
         </div>
-        <nav className="flex-1 px-4 space-y-3 mt-6">
-          <SidebarItem id="home" icon={<Layout size={22}/>} label="Дашборд" />
-          <SidebarItem id="testing" icon={<ClipboardList size={22}/>} label="Діагностика" />
-          <SidebarItem id="library" icon={<BookOpen size={22}/>} label="Медіатека" />
-          <SidebarItem id="advice" icon={<Lightbulb size={22}/>} label="Поради" />
-          <SidebarItem id="diary" icon={<PenLine size={22}/>} label="Щоденник" />
-          <SidebarItem id="stats" icon={<BarChart3 size={22}/>} label="Прогрес" />
+        
+        {/* 3D Flip Navigation (Sidebar) */}
+        <nav className="flex-1 px-4 mt-6">
+          <div className="space-y-0">
+            <FlipSidebarItem id="home" icon={<Layout size={22}/>} label="Дашборд" isDashboard={true} index={0} isSpecialMode={isSpecialMode} currentView={currentView} navigateTo={navigateTo} handleChatBack={handleChatBack} />
+            <FlipSidebarItem id="testing" icon={<ClipboardList size={22}/>} label="Діагностика" index={1} isSpecialMode={isSpecialMode} currentView={currentView} navigateTo={navigateTo} handleChatBack={handleChatBack} />
+            <FlipSidebarItem id="library" icon={<BookOpen size={22}/>} label="Медіатека" index={2} isSpecialMode={isSpecialMode} currentView={currentView} navigateTo={navigateTo} handleChatBack={handleChatBack} />
+            <FlipSidebarItem id="advice" icon={<Lightbulb size={22}/>} label="Поради" index={3} isSpecialMode={isSpecialMode} currentView={currentView} navigateTo={navigateTo} handleChatBack={handleChatBack} />
+            <FlipSidebarItem id="diary" icon={<PenLine size={22}/>} label="Щоденник" index={4} isSpecialMode={isSpecialMode} currentView={currentView} navigateTo={navigateTo} handleChatBack={handleChatBack} />
+            <FlipSidebarItem id="stats" icon={<BarChart3 size={22}/>} label="Прогрес" index={5} isSpecialMode={isSpecialMode} currentView={currentView} navigateTo={navigateTo} handleChatBack={handleChatBack} />
+          </div>
         </nav>
+        
         <div className="p-6 border-t border-slate-900 space-y-4">
            <div className="bg-slate-900/50 p-4 rounded-[24px] flex items-center gap-3 border border-slate-800/50 shadow-inner">
               <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-[#0b0f1a] font-black text-xs">{username.charAt(0).toUpperCase()}</div>
@@ -578,13 +757,47 @@ const ShelterAppComplete = () => {
         </header>
 
         <div className="flex-1">
-          {currentView === 'home' && <HomeView />}
-          {currentView === 'library' && <LibraryView />}
-          {currentView === 'testing' && <TestingView />}
-          {currentView === 'stats' && <StatsView />}
-          {currentView === 'practice' && <PracticeView />}
-          {currentView === 'advice' && <AdviceView />}
-          {currentView === 'diary' && <DiaryView />}
+          {isChatMode ? (
+            <MainChat 
+              onBack={handleChatBack}
+              username={username}
+              resilience={resilience}
+            />
+          ) : isSimulatorMode && simulatorScenarioId ? (
+            <SimulatorPage 
+               isEmbedded={true} 
+               embeddedId={simulatorScenarioId} 
+               onBack={() => setIsSimulatorMode(false)} 
+            />
+          ) : isFindDifferencesMode ? (
+            <div className="relative h-full w-full bg-[#0b0f1a]">
+               <button onClick={() => setIsFindDifferencesMode(false)} className="absolute top-6 left-6 z-50 bg-slate-800/80 p-3 rounded-full hover:bg-slate-700 text-white shadow-xl backdrop-blur-md transition-all"><ChevronLeft size={24}/></button>
+               <UpdatedFindDifferencesPage 
+                 isEmbedded={true} 
+                 embeddedId={simulatorScenarioId} 
+                 onBack={() => setIsFindDifferencesMode(false)} 
+               />
+            </div>
+          ) : isSortingMode ? (
+            <div className="relative h-full w-full bg-[#0b0f1a]">
+               <button onClick={() => setIsSortingMode(false)} className="absolute top-6 left-6 z-50 bg-slate-800/80 p-3 rounded-full hover:bg-slate-700 text-white shadow-xl backdrop-blur-md transition-all"><ChevronLeft size={24}/></button>
+               <UpdatedSortingPage 
+                 isEmbedded={true} 
+                 embeddedId={simulatorScenarioId} 
+                 onBack={() => setIsSortingMode(false)} 
+               />
+            </div>
+          ) : (
+            <>
+              {currentView === 'home' && <HomeView />}
+              {currentView === 'library' && <LibraryView />}
+              {currentView === 'testing' && <TestingView />}
+              {currentView === 'stats' && <StatsView />}
+              {currentView === 'practice' && <PracticeView />}
+              {currentView === 'advice' && <AdviceView />}
+              {currentView === 'diary' && <DiaryView />}
+            </>
+          )}
         </div>
       </main>
 

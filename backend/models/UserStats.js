@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const userStatsSchema = new mongoose.Schema({
   userId: {
@@ -141,4 +141,4 @@ userStatsSchema.methods.updateStreak = function() {
   return this.save();
 };
 
-module.exports = mongoose.model('UserStats', userStatsSchema);
+export default mongoose.model('UserStats', userStatsSchema);

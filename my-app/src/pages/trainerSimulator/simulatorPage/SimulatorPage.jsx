@@ -4,8 +4,9 @@ import { api } from "../../../api/api";
 import CharacterCompanion from "../../../components/characterCompanion/CharacterCompanion";
 import "./simulatorPage.css";
 
-export default function SimulatorPage() {
-    const { id } = useParams();
+export default function SimulatorPage({ isEmbedded, embeddedId, onBack }) {
+    const params = useParams();
+    const id = isEmbedded ? embeddedId : params.id;
     const navigate = useNavigate();
     const chatEndRef = useRef(null);
     const [scenario, setScenario] = useState(null);
@@ -82,7 +83,8 @@ export default function SimulatorPage() {
 
     const handleChoice = (choice) => {
         if (choice === 'other') {
-            navigate("/exercises");
+            if (isEmbedded && onBack) onBack();
+            else navigate("/exercises");
         } else {
             const availableNodes = Object.keys(scenario.nodes).filter(id => id !== currentNodeId && !scenario.nodes[id].isFinal);
             if (availableNodes.length > 0) {
@@ -130,7 +132,7 @@ export default function SimulatorPage() {
             )}
 
             <header className="dr-trainer-header">
-                <button className="dr-back-btn" onClick={() => navigate("/exercises")}>← Вийти</button>
+                <button className="dr-back-btn" onClick={() => isEmbedded && onBack ? onBack() : navigate("/exercises")}>← Вийти</button>
                 <span className="dr-trainer-title">{scenario.name}</span>
                 <div style={{ width: "80px" }}></div>
             </header>
@@ -172,7 +174,7 @@ export default function SimulatorPage() {
                 </div>
             </footer>
 
-            <button className="dr-sos-fab-trainer" onClick={() => navigate("/sos")}>SOS</button>
+            <button className="dr-sos-fab-trainer" onClick={() => isEmbedded && onBack ? onBack() : navigate("/sos")}>SOS</button>
             <CharacterCompanion context="exercise" position="bottom-left" delay={4000} />
 
             {showCompletionMenu && (
@@ -181,8 +183,14 @@ export default function SimulatorPage() {
                         <h2>🌟 Вправа завершена!</h2>
                         <p className="dr-card-description">Кожна практика робить тебе сильнішим.</p>
                         <div className="dr-completion-buttons">
-                            <button className="dr-completion-btn primary pulse" onClick={() => navigate("/exercises")}>До списку вправ</button>
-                            <button className="dr-completion-btn secondary" onClick={() => window.location.reload()}>Ще раз</button>
+                            <button className="dr-completion-btn primary pulse" onClick={() => isEmbedded && onBack ? onBack() : navigate("/exercises")}>До списку вправ</button>
+                            <button className="dr-completion-btn secondary" onClick={() => {
+                                if (isEmbedded) {
+                                    window.location.reload(); // Or let parent handle it if needed
+                                } else {
+                                    window.location.reload();
+                                }
+                            }}>Ще раз</button>
                         </div>
                     </div>
                 </div>

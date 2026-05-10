@@ -1,9 +1,9 @@
-const express = require('express');
-const router = express.Router();
-const UserStats = require('../models/UserStats');
-const Account = require('../models/Account');
-const auth = require('../middleware/auth');
+import express from 'express';
+import UserStats from '../models/UserStats.js';
+import Account from '../models/Account.js';
+import auth from '../middleware/auth.js';
 
+const router = express.Router();
 // Получить статистику пользователя
 router.get('/user/:userId', auth, async (req, res) => {
   try {
@@ -191,4 +191,4 @@ router.get('/dashboard/:userId', auth, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -6,9 +6,9 @@ import mongoose from "mongoose";
 
 dotenv.config();
 
-const materialsRouter = require('./routes/materials');
-const scenariosRouter = require('./routes/scenarios');
-const statsRouter = require('./routes/stats');
+import materialRoutes from './routes/materials.js';
+import scenarioRoutes from './routes/scenarios.js';
+import statsRouter from './routes/stats.js';
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
 

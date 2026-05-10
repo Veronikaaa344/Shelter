@@ -12,7 +12,12 @@ import ShelterAppComplete from "./components/ShelterAppComplete";
 import StatsPage from "./pages/statsPage/StatsPage";
 import ExercisesPage from "./pages/trainerSimulator/exercisesPage/ExercisesPage";
 import SimulatorPage from "./pages/trainerSimulator/simulatorPage/SimulatorPage";
-import MaterialPage from "./pages/materialPage/MaterialPageNew";
+import MaterialPage from "./pages/materialPage/MaterialPage";
+import ChatTrainingPage from "./pages/chatTraining/ChatTrainingPage";
+// Updated exercise pages
+import UpdatedSortingPage from "./pages/trainerSimulator/sortingPage/UpdatedSortingPage";
+import UpdatedFindDifferencesPage from "./pages/trainerSimulator/findDifferencesPage/UpdatedFindDifferencesPage";
+import UpdatedVideoScenarioPage from "./pages/trainerSimulator/videoScenarioPage/UpdatedVideoScenarioPage";
 
 const checkTestStatus = () => {
 	const saved = localStorage.getItem("dr_test_results");
@@ -88,7 +93,12 @@ function App() {
 				<Route path="/exercises" element={<ExercisesPage />} />
 				<Route path="/exercises/:id" element={<SimulatorPage />} />
 				<Route path="/material/:id" element={<MaterialPage />} />
+				<Route path="/chat" element={<ChatTrainingPage />} />
 				<Route path="/stats" element={<StatsPage />} />
+				{/* Updated exercise pages */}
+				<Route path="/sorting/:id" element={<UpdatedSortingPage />} />
+				<Route path="/find-differences/:id" element={<UpdatedFindDifferencesPage />} />
+				<Route path="/video-scenario/:id" element={<UpdatedVideoScenarioPage />} />
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Routes>
 		</BrowserRouter>
