@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import api from "./api/api";
 import PageTransition from "./components/PageTransition/PageTransition";
-import TestPage from "./components/TestPage";
+import ShelterApp from "./components/ShelterApp";
 
 import AdminPage from "./pages/adminPage/AdminPage";
 import AuthPage from "./pages/authPage/AuthPage";
@@ -107,9 +107,8 @@ function App() {
 			<Routes>
 				<Route
 					path="/"
-					element={<TestPage />}
+					element={<ShelterApp />}
 				/>
-				<Route path="/shelter" element={<TestPage />} />
 				<Route path="/start" element={<PageTransition><StartPage /></PageTransition>} />
 				<Route path="/main" element={<PageTransition><MainPage /></PageTransition>} />
 				<Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
