@@ -2,7 +2,7 @@ const getBaseUrl = () => {
 	if (window.location.hostname === "localhost") {
 		return "http://localhost:5000/api";
 	}
-	return "https://shelter-backend.vercel.app/api";
+	return "https://shelter-backend-gamma.vercel.app/api";
 };
 
 const API_URL = getBaseUrl();

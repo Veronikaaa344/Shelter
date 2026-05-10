@@ -19,6 +19,8 @@ const allowedOrigins = [
 	"https://shelter-511xg9fdt-agarenkos-projects.vercel.app",
 	"https://shelter-blue.vercel.app",
 	"https://shelter-backend.vercel.app",
+	"https://shelter-xi.vercel.app",
+	"https://shelter-backend-gamma.vercel.app",
 ];
 
 app.use(
@@ -88,9 +90,29 @@ app.use("/api/materials", materialRoutes);
 app.use("/api/scenarios", scenarioRoutes);
 app.use("/api/users", userRoutes);
 
-// Health check endpoint for Render
-app.get("/api/health", (req, res) => {
-	res.status(200).json({ status: "OK", message: "Server is running" });
+// Health check endpoint for Vercel
+app.get("/api/health", async (req, res) => {
+	try {
+		const mongoStatus = mongoose.connection.readyState;
+		const mongoStatusText = mongoStatus === 1 ? "connected" : mongoStatus === 2 ? "connecting" : "disconnected";
+		
+		res.status(200).json({ 
+			status: "OK", 
+			message: "Server is running",
+			mongodb: {
+				status: mongoStatusText,
+				readyState: mongoStatus,
+				dbName: mongoose.connection.name || "not connected"
+			},
+			timestamp: new Date().toISOString()
+		});
+	} catch (error) {
+		res.status(500).json({ 
+			status: "ERROR", 
+			message: "Server error",
+			error: error.message 
+		});
+	}
 });
 
 // Full database dump endpoint

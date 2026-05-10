@@ -2,5 +2,10 @@
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/backend/server.js" },
     { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  ],
+  "functions": {
+    "backend/server.js": {
+      "maxDuration": 10
+    }
+  }
 }
