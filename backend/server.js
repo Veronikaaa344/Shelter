@@ -16,6 +16,8 @@ const app = express();
 const allowedOrigins = [
 	"http://localhost:3000",
 	"https://shelter-frontend.onrender.com",
+	"https://shelter-511xg9fdt-agarenkos-projects.vercel.app",
+	"https://shelter-blue.vercel.app",
 ];
 
 app.use(
