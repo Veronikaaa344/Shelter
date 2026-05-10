@@ -5,10 +5,10 @@ import safeStorage from "./utils/storage";
 import PageTransition from "./components/PageTransition/PageTransition";
 import AdminPage from "./pages/adminPage/AdminPage";
 import AuthPage from "./pages/authPage/AuthPage";
-import MainPage from "./pages/mainPage/MainPage";
 import ProfilePage from "./pages/profilePage/ProfilePage";
 import SosPage from "./pages/sosPage/sosPage";
 import StartPage from "./pages/startPage/startPage";
+import ShelterAppComplete from "./components/ShelterAppComplete";
 import StatsPage from "./pages/statsPage/StatsPage";
 import ExercisesPage from "./pages/trainerSimulator/exercisesPage/ExercisesPage";
 import SimulatorPage from "./pages/trainerSimulator/simulatorPage/SimulatorPage";
@@ -80,7 +80,7 @@ function App() {
 					}
 				/>
 				<Route path="/start" element={<StartPage />} />
-				<Route path="/main" element={<MainPage />} />
+				<Route path="/main" element={<ShelterAppComplete />} />
 				<Route path="/auth" element={<AuthPage />} />
 				<Route path="/sos" element={<SosPage />} />
 				<Route path="/profile" element={<ProfilePage />} />
