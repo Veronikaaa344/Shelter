@@ -32,12 +32,45 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+// Logging middleware
+app.use((req, res, next) => {
+	const start = Date.now();
+	console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+	console.log(`Headers:`, JSON.stringify(req.headers, null, 2));
+	console.log(`Query:`, JSON.stringify(req.query, null, 2));
+	console.log(`Body:`, JSON.stringify(req.body, null, 2));
+
+	// Log response
+	res.on('finish', () => {
+		const duration = Date.now() - start;
+		console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`);
+	});
+
+	next();
+});
+
 const dbURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/shelter_db";
 
+console.log(`[${new Date().toISOString()}] Connecting to MongoDB...`);
+console.log(`[${new Date().toISOString()}] MongoDB URI:`, dbURI.replace(/:[^:]+@/, ":****@"));
+
 mongoose
-	.connect(dbURI)
-	.then(() => console.log("MongoDB Connected"))
-	.catch((err) => console.log("MongoDB Error:", err));
+	.connect(dbURI, {
+		serverSelectionTimeoutMS: 30000,
+		socketTimeoutMS: 45000,
+		connectTimeoutMS: 30000,
+		bufferMaxEntries: 0,
+		bufferCommands: false,
+	})
+	.then(() => {
+		console.log(`[${new Date().toISOString()}] MongoDB Connected successfully!`);
+		console.log(`[${new Date().toISOString()}] Connection state:`, mongoose.connection.readyState);
+	})
+	.catch((err) => {
+		console.error(`[${new Date().toISOString()}] MongoDB Connection Error:`, err.message);
+		console.error(`[${new Date().toISOString()}] Full error:`, err);
+		console.error(`[${new Date().toISOString()}] MongoDB URI used:`, dbURI.replace(/:[^:]+@/, ":****@"));
+	});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/materials", materialRoutes);

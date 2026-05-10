@@ -1,16 +1,33 @@
 import { Router } from "express";
+import mongoose from "mongoose";
 import Material from "../models/Material.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
 	try {
-		console.log("Fetching materials...");
+		console.log(`[${new Date().toISOString()}] Fetching materials...`);
+		console.log(`[${new Date().toISOString()}] MongoDB connection state:`, mongoose.connection.readyState);
+		console.log(`[${new Date().toISOString()}] MongoDB connected:`, mongoose.connection.readyState === 1);
+
+		const startTime = Date.now();
 		const materials = await Material.find();
-		console.log("Materials found:", materials.length);
+		const duration = Date.now() - startTime;
+
+		console.log(`[${new Date().toISOString()}] ✅ Materials found:`, materials.length, `(${duration}ms)`);
+		console.log(`[${new Date().toISOString()}] Materials data:`, JSON.stringify(materials.map(m => ({
+			_id: m._id,
+			title: m.title,
+			type: m.type,
+			content_length: m.content?.length || 0
+		})), null, 2));
+
 		res.json(materials);
 	} catch (err) {
-		console.error("Error fetching materials:", err);
-		res.status(500).json({ message: err.message });
+		console.error(`[${new Date().toISOString()}] ❌ Error fetching materials:`, err.message);
+		console.error(`[${new Date().toISOString()}] Full error:`, err);
+		console.error(`[${new Date().toISOString()}] Error name:`, err.name);
+		console.error(`[${new Date().toISOString()}] Error code:`, err.code);
+		res.status(500).json({ message: err.message, error: err.name });
 	}
 });
 

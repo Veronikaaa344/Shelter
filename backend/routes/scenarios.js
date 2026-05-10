@@ -1,14 +1,34 @@
 import express from "express";
+import mongoose from "mongoose";
 import Scenario from "../models/Scenario.js";
 
 const router = express.Router();
 
 router.get("/", async (req, res) => {
 	try {
+		console.log(`[${new Date().toISOString()}] Fetching scenarios...`);
+		console.log(`[${new Date().toISOString()}] MongoDB connection state:`, mongoose.connection.readyState);
+		console.log(`[${new Date().toISOString()}] MongoDB connected:`, mongoose.connection.readyState === 1);
+
+		const startTime = Date.now();
 		const scenarios = await Scenario.find();
+		const duration = Date.now() - startTime;
+
+		console.log(`[${new Date().toISOString()}] ✅ Scenarios found:`, scenarios.length, `(${duration}ms)`);
+		console.log(`[${new Date().toISOString()}] Scenarios data:`, JSON.stringify(scenarios.map(s => ({
+			_id: s._id,
+			scenarioId: s.scenarioId,
+			name: s.name,
+			type: s.type
+		})), null, 2));
+
 		res.json(scenarios);
 	} catch (err) {
-		res.status(500).json({ message: err.message });
+		console.error(`[${new Date().toISOString()}] ❌ Error fetching scenarios:`, err.message);
+		console.error(`[${new Date().toISOString()}] Full error:`, err);
+		console.error(`[${new Date().toISOString()}] Error name:`, err.name);
+		console.error(`[${new Date().toISOString()}] Error code:`, err.code);
+		res.status(500).json({ message: err.message, error: err.name });
 	}
 });
 
