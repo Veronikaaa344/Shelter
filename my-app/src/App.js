@@ -12,7 +12,7 @@ import ShelterAppComplete from "./components/ShelterAppComplete";
 import StatsPage from "./pages/statsPage/StatsPage";
 import ExercisesPage from "./pages/trainerSimulator/exercisesPage/ExercisesPage";
 import SimulatorPage from "./pages/trainerSimulator/simulatorPage/SimulatorPage";
-import MaterialPage from "./pages/materialPage/MaterialPage";
+import MaterialPage from "./pages/materialPage/MaterialPageNew";
 
 const checkTestStatus = () => {
 	const saved = localStorage.getItem("dr_test_results");

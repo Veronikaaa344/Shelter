@@ -11,7 +11,16 @@ import {
     CheckCircle,
     Lightbulb,
     Shield,
-    Clock
+    Clock,
+    ChevronLeft,
+    ShieldCheck,
+    Search,
+    X,
+    Layout,
+    BookOpen,
+    Video,
+    Headphones,
+    FileText
 } from 'lucide-react';
 
 import './materialPage.css';
@@ -26,6 +35,8 @@ export default function MaterialPage() {
     const [loading, setLoading] = useState(true);
     const [username, setUsername] = useState("Гість");
     const [pageType, setPageType] = useState("default");
+    const [userId, setUserId] = useState(localStorage.getItem("userId"));
+    const [viewStartTime, setViewStartTime] = useState(Date.now());
     
     const videoRef = useRef(null);
     const audioRef = useRef(null);
@@ -185,6 +196,28 @@ export default function MaterialPage() {
                 setLoading(false);
             }
         };
+
+        useEffect(() => {
+            api.getMaterialById(id)
+                .then((data) => {
+                    if (data) {
+                        setMaterial(data);
+                        setPageType(getDiagnosticConfig({ answers: { anxiety: 0 } }).type);
+                        
+                        // Записываем просмотр материала в статистику
+                        if (userId) {
+                            api.recordMaterialView(userId, id)
+                                .then(() => console.log(`Material view recorded: ${data.title}`))
+                                .catch((err) => console.error('Error recording material view:', err));
+                        }
+                    }
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    console.error('Error loading material:', error);
+                    setLoading(false);
+                });
+        }, [id, userId]);
 
         fetchData();
 
@@ -464,162 +497,128 @@ export default function MaterialPage() {
                                                     preload="metadata"
                                                     onPlay={handleVideoPlay}
                                                     onPause={handleVideoPause}
-                                                    onEnded={handleVideoEnded}
-                                                    onError={handleVideoError}
-                                                    style={{
-                                                        width: '100%',
-                                                        height: '400px',
-                                                        borderRadius: '16px',
-                                                        background: '#000',
-                                                        objectFit: 'cover'
-                                                    }}
-                                                />
-                                            )}
-
-                                            {!isPlaying &&
-                                                !isYouTubeUrl(videoUrl) && (
-                                                    <div className="dr-mat-video-overlay">
-                                                        <button
-                                                            className="dr-mat-big-play"
-                                                            onClick={handleVideoPlay}
-                                                        >
-                                                            ▶️
-                                                        </button>
-                                                    </div>
-                                                )}
+                                        />
                                         </div>
+                                    )}
+                                </section>
+                            )}
+
+                            {/* Видео/Аудио контент */}
+                            {material.type === 'video' && material.url && (
+                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl">
+                                    {isYouTubeUrl(material.url) ? (
+                                        <iframe
+                                            src={getYouTubeEmbedUrl(material.url)}
+                                            title={material.title}
+                                            frameBorder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                            className="w-full h-96 rounded-2xl bg-black"
+                                        />
                                     ) : (
-                                        <div className="dr-mat-no-video">
-                                            <div className="dr-mat-no-video-icon">
-                                                🎥
-                                            </div>
-
-                                            <h3>Відео недоступне</h3>
-
-                                            <p>
-                                                Відео URL не знайдено або некоректний
-                                            </p>
-                                        </div>
-                                    );
-                                })()}
-
-                                <div className="dr-mat-highlights">
-                                    <h3>
-                                        <Lightbulb className="dr-st-text-pos" />
-                                        Ключові тези
-                                    </h3>
-
-                                    <div className="dr-mat-formatted">
-                                        {formatText(
-                                            material.notes ||
-                                            material.desc
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {isAudio && (
-                            <div className="dr-mat-media-section">
-                                <div className="dr-mat-audio-player-card">
-                                    <div
-                                        className={`dr-mat-viz ${
-                                            isPlaying ? 'active' : ''
-                                        }`}
-                                    >
-                                        {[...Array(15)].map((_, i) => (
-                                            <div
-                                                key={i}
-                                                className="dr-mat-v-bar"
+                                        <div className="relative">
+                                            <video
+                                                ref={videoRef}
+                                                src={material.url}
+                                                controls
+                                                onPlay={handleVideoPlay}
+                                                onPause={handleVideoPause}
+                                                onEnded={handleVideoEnded}
+                                                onError={handleVideoError}
+                                                className="w-full h-96 rounded-2xl bg-black object-cover"
                                             />
-                                        ))}
-                                    </div>
+                                        </div>
+                                    )}
+                                </section>
+                            )}
 
+                            {material.type === 'audio' && material.url && (
+                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl">
                                     <audio
                                         ref={audioRef}
-                                        src={material.url || material.content}
+                                        src={material.url}
+                                        controls
                                         onPlay={handleAudioPlay}
                                         onPause={handleAudioPause}
+                                        onEnded={handleAudioEnded}
+                                        className="w-full"
                                     />
-
-                                    <button
-                                        className="dr-trainer-btn dr-mat-audio-btn"
-                                        onClick={
-                                            isPlaying
-                                                ? handleAudioPause
-                                                : handleAudioPlay
-                                        }
-                                    >
-                                        {isPlaying ? (
-                                            <Pause fill="white" />
-                                        ) : (
-                                            <Play fill="white" />
-                                        )}
-
-                                        {isPlaying
-                                            ? "Пауза"
-                                            : "Слухати практику"}
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
-                        <div className="dr-mat-text-area">
-                            {formatText(
-                                material.fullText || material.content
+                                </section>
                             )}
-                        </div>
-                    </div>
 
-                    <div className="dr-mat-action-zone">
-                        {!showFeedback ? (
-                            <button
-                                className="dr-trainer-btn dr-mat-finish-btn"
-                                onClick={() => setShowFeedback(true)}
-                            >
-                                <CheckCircle size={20} />
-                                Завершити ознайомлення
-                            </button>
-                        ) : (
-                            <div className="dr-mat-feedback-box">
-                                <p>Як змінився ваш стан?</p>
+                            {/* Ключевые тезисы */}
+                            {material.desc && (
+                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl">
+                                    <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-6 flex items-center gap-3">
+                                        <Lightbulb size={24} className="text-emerald-500" />
+                                        Ключові тезиси
+                                    </h2>
+                                    <div className="text-slate-300 leading-relaxed">
+                                        {formatText(material.desc)}
+                                    </div>
+                                </section>
+                            )}
 
-                                <div className="dr-mat-feedback-row">
+                            {/* Полный контент */}
+                            {material.content && (
+                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl">
+                                    <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-6 flex items-center gap-3">
+                                        <BookOpen size={24} className="text-emerald-500" />
+                                        Повний текст
+                                    </h2>
+                                    <div className="text-slate-300 leading-relaxed">
+                                        {formatText(material.content)}
+                                    </div>
+                                </section>
+                            )}
+
+                            {/* Кнопка завершения */}
+                            <section className="flex justify-center">
+                                {!showFeedback ? (
                                     <button
-                                        className="dr-choice-btn"
-                                        onClick={() => handleComplete(5)}
+                                        onClick={() => setShowFeedback(true)}
+                                        className="bg-emerald-500 hover:bg-emerald-400 text-[#0b0f1a] px-12 py-4 rounded-2xl font-black uppercase text-xs shadow-xl shadow-emerald-500/20 transition-all transform hover:scale-105 active:scale-95 flex items-center gap-3"
                                     >
-                                        😊 Покращився
+                                        <CheckCircle size={20} />
+                                        Завершити ознайомлення
                                     </button>
-
-                                    <button
-                                        className="dr-show-all-btn"
-                                        onClick={() => handleComplete(2)}
-                                    >
-                                        😐 Без змін
-                                    </button>
-                                </div>
+                                ) : (
+                                    <div className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl text-center">
+                                        <p className="text-white mb-6">Як змінився ваш стан?</p>
+                                        <div className="flex gap-4 justify-center">
+                                            <button
+                                                onClick={() => handleComplete(5)}
+                                                className="bg-emerald-500 hover:bg-emerald-400 text-[#0b0f1a] px-8 py-3 rounded-2xl font-black uppercase text-xs shadow-xl shadow-emerald-500/20 transition-all"
+                                            >
+                                                😊 Покращився
+                                            </button>
+                                            <button
+                                                onClick={() => handleComplete(2)}
+                                                className="bg-slate-700 hover:bg-slate-600 text-white px-8 py-3 rounded-2xl font-black uppercase text-xs transition-all"
+                                            >
+                                                😐 Без змін
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </section>
+                        </>
+                    ) : (
+                        <div className="flex items-center justify-center h-full">
+                            <div className="text-center">
+                                <div className="text-6xl mb-4">📄</div>
+                                <h2 className="text-2xl font-black text-white mb-2">Матеріал не знайдено</h2>
+                                <p className="text-slate-500">Матеріал не існує або був видалений</p>
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
             </main>
 
+            {/* Character Companion */}
             <CharacterCompanion
                 context="content"
                 position="bottom-right"
             />
-
-            <button
-                className="dr-sos-btn"
-                onClick={() => navigate('/sos')}
-            >
-                <LifeBuoy size={24} />
-
-                <span className="dr-sos-label">
-                    SOS
-                </span>
-            </button>
         </div>
     );
-}
