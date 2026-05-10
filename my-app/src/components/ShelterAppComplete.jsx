@@ -158,10 +158,10 @@ const ShelterAppComplete = () => {
 
   const HomeView = () => {
     const cards = [
-      { title: "Дихання", cat: "Практика", icon: <Wind/>, color: "from-emerald-600 to-teal-500", onClick: () => navigateTo('practice') },
-      { title: "Діагностика", cat: "Тестування", icon: <Brain/>, color: "from-blue-600 to-indigo-500", onClick: () => navigateTo('testing') },
-      { title: "Поради", cat: "Освіта", icon: <Lightbulb/>, color: "from-orange-600 to-amber-500", onClick: () => navigateTo('advice') },
-      { title: "Щоденник", cat: "Рефлексія", icon: <PenLine/>, color: "from-purple-600 to-pink-500", onClick: () => navigateTo('diary') },
+      { title: "Дихання", cat: "Практика", icon: <Wind/>, color: "from-emerald-500 to-emerald-600", onClick: () => navigateTo('practice') },
+      { title: "Діагностика", cat: "Тестування", icon: <Brain/>, color: "from-blue-500 to-blue-600", onClick: () => navigateTo('testing') },
+      { title: "Поради", cat: "Освіта", icon: <Lightbulb/>, color: "from-orange-500 to-orange-600", onClick: () => navigateTo('advice') },
+      { title: "Щоденник", cat: "Рефлексія", icon: <PenLine/>, color: "from-purple-500 to-purple-600", onClick: () => navigateTo('diary') },
     ].filter(c => c.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
     return (
