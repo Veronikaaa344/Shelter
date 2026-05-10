@@ -90,6 +90,10 @@ export default function AdminMaterials() {
 
     const handleSaveMaterial = async (e) => {
         e.preventDefault();
+        
+        console.log("🟢 handleSaveMaterial called");
+        console.log("📋 editId:", editId);
+        console.log("📋 isJsonMode:", isJsonMode);
 
         try {
             let payload;
@@ -97,6 +101,7 @@ export default function AdminMaterials() {
             if (isJsonMode) {
                 try {
                     payload = JSON.parse(jsonInput);
+                    console.log("📋 JSON payload:", payload);
                 } catch {
                     alert("Некоректний JSON");
                     return;
@@ -106,11 +111,15 @@ export default function AdminMaterials() {
                     ...materialForm,
                     content: cleanHtmlContent(materialForm.content),
                 };
+                console.log("📋 Form payload:", payload);
             }
 
+            console.log("🚀 About to call API...");
             const res = editId
                 ? await api.updateMaterial(editId, payload)
                 : await api.createMaterial(payload);
+            
+            console.log("📥 API response:", res);
 
             if (res && !res.error) {
                 alert(

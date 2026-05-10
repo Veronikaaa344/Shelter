@@ -1,8 +1,10 @@
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import "dotenv/config";
+import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
+
+dotenv.config();
 
 import authRoutes from "./routes/auth.js";
 import materialRoutes from "./routes/materials.js";
@@ -80,6 +82,53 @@ app.use("/api/users", userRoutes);
 // Health check endpoint for Render
 app.get("/api/health", (req, res) => {
 	res.status(200).json({ status: "OK", message: "Server is running" });
+});
+
+// Full database dump endpoint
+app.get("/api/db-dump", async (req, res) => {
+	try {
+		console.log(`[${new Date().toISOString()}] 🗄️ Full database dump requested`);
+		
+		const db = mongoose.connection.db;
+		const collections = await db.listCollections().toArray();
+		
+		console.log(`[${new Date().toISOString()}] 📋 Found collections:`, collections.map(c => c.name));
+		
+		const fullDump = {
+			database: db.databaseName,
+			collections: [],
+			totalDocuments: 0
+		};
+		
+		for (const collection of collections) {
+			const collData = {
+				name: collection.name,
+				count: 0,
+				documents: []
+			};
+			
+			try {
+				const docs = await db.collection(collection.name).find({}).toArray();
+				collData.count = docs.length;
+				collData.documents = docs;
+				fullDump.totalDocuments += docs.length;
+				
+				console.log(`[${new Date().toISOString()}] 📄 Collection ${collection.name}: ${docs.length} documents`);
+			} catch (err) {
+				console.error(`[${new Date().toISOString()}] ❌ Error reading collection ${collection.name}:`, err.message);
+				collData.error = err.message;
+			}
+			
+			fullDump.collections.push(collData);
+		}
+		
+		console.log(`[${new Date().toISOString()}] ✅ Total documents in database: ${fullDump.totalDocuments}`);
+		
+		res.status(200).json(fullDump);
+	} catch (err) {
+		console.error(`[${new Date().toISOString()}] ❌ Database dump error:`, err.message);
+		res.status(500).json({ error: err.message });
+	}
 });
 
 // MongoDB connection test endpoint

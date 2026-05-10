@@ -12,7 +12,7 @@ services:
       - key: PORT
         value: 10000
       - key: MONGO_URI
-        sync: false
+        value: mongodb+srv://useruser:IlfXW3TQLASjLZv8@clustern.reruo2j.mongodb.net/shelter_db?retryWrites=true&w=majority
       - key: JWT_SECRET
         generateValue: true
     healthCheckPath: /api/health

@@ -39,14 +39,26 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
 	try {
-		console.log("Creating material:", req.body);
+		console.log(`[${new Date().toISOString()}] 🟢 POST /api/materials - Creating new material`);
+		console.log(`[${new Date().toISOString()}] 📋 Request body:`, JSON.stringify(req.body, null, 2));
+		console.log(`[${new Date().toISOString()}] 🔗 MongoDB connection state:`, mongoose.connection.readyState);
+		console.log(`[${new Date().toISOString()}] 📦 Database name:`, mongoose.connection.name);
+		
 		const newMaterial = new Material(req.body);
+		console.log(`[${new Date().toISOString()}] 🆕 New material object created:`, JSON.stringify(newMaterial, null, 2));
+		
 		const saved = await newMaterial.save();
-		console.log("Material created:", saved);
+		console.log(`[${new Date().toISOString()}] ✅ Material successfully saved to MongoDB:`, JSON.stringify(saved, null, 2));
+		console.log(`[${new Date().toISOString()}] 📊 Material _id:`, saved._id);
+		console.log(`[${new Date().toISOString()}] 📊 Material title:`, saved.title);
+		
 		res.status(201).json(saved);
 	} catch (err) {
-		console.error("Error creating material:", err);
-		res.status(400).json({ message: err.message });
+		console.error(`[${new Date().toISOString()}] ❌ ERROR creating material:`, err.message);
+		console.error(`[${new Date().toISOString()}] ❌ Full error:`, err);
+		console.error(`[${new Date().toISOString()}] ❌ Error name:`, err.name);
+		console.error(`[${new Date().toISOString()}] ❌ Error code:`, err.code);
+		res.status(400).json({ message: err.message, error: err.name });
 	}
 });
 
