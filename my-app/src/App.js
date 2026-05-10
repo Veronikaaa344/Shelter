@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import api from "./api/api";
 import PageTransition from "./components/PageTransition/PageTransition";
+import ShelterApp from "./components/ShelterApp";
 
 import AdminPage from "./pages/adminPage/AdminPage";
 import AuthPage from "./pages/authPage/AuthPage";
@@ -18,6 +19,7 @@ import VideoScenarioPage from "./pages/trainerSimulator/videoScenarioPage/VideoS
 import MaterialPage from "./pages/materialPage/MaterialPage";
 import QuestsPage from "./pages/QuestsPage/QuestsPage";
 import safeStorage from "./utils/storage";
+import './index-tailwind.css';
 
 const checkTestStatus = () => {
 	try {
@@ -105,12 +107,9 @@ function App() {
 			<Routes>
 				<Route
 					path="/"
-					element={
-						<PageTransition>
-							{hasValidTest ? <Navigate to="/main" /> : <Navigate to="/start" />}
-						</PageTransition>
-					}
+					element={<ShelterApp />}
 				/>
+				<Route path="/shelter" element={<ShelterApp />} />
 				<Route path="/start" element={<PageTransition><StartPage /></PageTransition>} />
 				<Route path="/main" element={<PageTransition><MainPage /></PageTransition>} />
 				<Route path="/auth" element={<PageTransition><AuthPage /></PageTransition>} />
