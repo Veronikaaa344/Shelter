@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import api from "./api/api";
 import safeStorage from "./utils/storage";
 import PageTransition from "./components/PageTransition/PageTransition";
 import AdminPage from "./pages/adminPage/AdminPage";
