@@ -19,7 +19,7 @@ import VideoScenarioPage from "./pages/trainerSimulator/videoScenarioPage/VideoS
 import MaterialPage from "./pages/materialPage/MaterialPage";
 import QuestsPage from "./pages/QuestsPage/QuestsPage";
 import safeStorage from "./utils/storage";
-import './index-tailwind.css';
+import './shelter-styles.css';
 
 const checkTestStatus = () => {
 	try {

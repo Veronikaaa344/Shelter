@@ -81,35 +81,31 @@ const ShelterApp = () => {
   const SidebarItem = ({ id, icon, label }) => (
     <div 
       onClick={() => navigateTo(id)}
-      className={`flex items-center gap-4 p-4 rounded-[20px] cursor-pointer transition-all duration-300 ${
-        currentView === id 
-        ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' 
-        : 'hover:bg-slate-800 text-slate-400'
-      }`}
+      className={`shelter-nav-item ${currentView === id ? 'active' : ''}`}
     >
       {icon}
-      <span className="font-bold text-sm hidden lg:block tracking-wide">{label}</span>
+      <span style={{ display: 'none' }}>{label}</span>
     </div>
   );
 
   const LoginView = () => (
-    <div className="min-h-screen bg-[#0b0f1a] flex items-center justify-center p-6 relative overflow-hidden text-slate-300">
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-emerald-500/10 blur-[120px] rounded-full"></div>
-      <div className="w-full max-w-md bg-slate-900/40 border border-slate-800 p-10 rounded-[48px] backdrop-blur-xl shadow-2xl relative z-10 animate-in fade-in zoom-in duration-700">
-        <div className="flex flex-col items-center mb-10">
-          <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-[#0b0f1a] mb-6 shadow-xl"><ShieldCheck size={36} /></div>
-          <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">Shelter</h1>
+    <div className="shelter-login-container">
+      <div className="shelter-login-bg"></div>
+      <div className="shelter-login-card">
+        <div className="shelter-login-header">
+          <div className="shelter-logo-icon"><ShieldCheck size={36} /></div>
+          <h1 className="shelter-login-title">Shelter</h1>
         </div>
-        <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); setIsLoggedIn(true); }}>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-500 uppercase ml-4 tracking-widest">Email</label>
-            <input type="email" placeholder="користувач@mail.com" className="w-full bg-slate-800/50 border border-slate-700 rounded-3xl py-4 px-6 text-white outline-none focus:border-emerald-500 transition-all" required />
+        <form className="shelter-form" onSubmit={(e) => { e.preventDefault(); setIsLoggedIn(true); }}>
+          <div className="shelter-input-group">
+            <label className="shelter-label">Email</label>
+            <input type="email" placeholder="користувач@mail.com" className="shelter-input" required />
           </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-500 uppercase ml-4 tracking-widest">Пароль</label>
-            <input type="password" placeholder="••••••••" className="w-full bg-slate-800/50 border border-slate-700 rounded-3xl py-4 px-6 text-white outline-none focus:border-emerald-500 transition-all" required />
+          <div className="shelter-input-group">
+            <label className="shelter-label">Пароль</label>
+            <input type="password" placeholder="••••••••" className="shelter-input" required />
           </div>
-          <button type="submit" className="w-full bg-gradient-to-r from-emerald-600 to-emerald-400 text-[#0b0f1a] py-4 rounded-3xl font-black uppercase text-xs shadow-xl shadow-emerald-500/20 hover:scale-[1.02] transition-all">Увійти</button>
+          <button type="submit" className="shelter-button">Увійти</button>
         </form>
       </div>
     </div>
@@ -117,27 +113,29 @@ const ShelterApp = () => {
 
   const HomeView = () => {
     const cards = [
-      { title: "Дихання", cat: "Практика", icon: <Wind/>, color: "from-emerald-600 to-teal-500", onClick: () => navigateTo('practice') },
-      { title: "Діагностика", cat: "Тестування", icon: <Brain/>, color: "from-blue-600 to-indigo-500", onClick: () => navigateTo('testing') },
-      { title: "Поради", cat: "Освіта", icon: <Lightbulb/>, color: "from-orange-600 to-amber-500", onClick: () => navigateTo('advice') },
-      { title: "Щоденник", cat: "Рефлексія", icon: <PenLine/>, color: "from-purple-600 to-pink-500", onClick: () => navigateTo('diary') },
+      { title: "Дихання", cat: "Практика", icon: <Wind/>, gradient: "shelter-card-gradient-1", onClick: () => navigateTo('practice') },
+      { title: "Діагностика", cat: "Тестування", icon: <Brain/>, gradient: "shelter-card-gradient-2", onClick: () => navigateTo('testing') },
+      { title: "Поради", cat: "Освіта", icon: <Lightbulb/>, gradient: "shelter-card-gradient-3", onClick: () => navigateTo('advice') },
+      { title: "Щоденник", cat: "Рефлексія", icon: <PenLine/>, gradient: "shelter-card-gradient-4", onClick: () => navigateTo('diary') },
     ].filter(c => c.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
     return (
-      <div className="p-8 space-y-10 animate-in fade-in duration-700">
+      <div className="shelter-content">
         <section>
-          <h1 className="text-6xl font-black text-white italic uppercase tracking-tighter mb-4 leading-none">
+          <h1 className="shelter-title">
             {searchTerm ? `Пошук: "${searchTerm}"` : "Час для спокою"}
           </h1>
-          {!searchTerm && <p className="text-slate-500 max-w-xl text-xl italic font-medium">Ваш ментальний баланс сьогодні в нормі. Саме час для невеликих вправ.</p>}
+          {!searchTerm && <p className="shelter-subtitle">Ваш ментальний баланс сьогодні в нормі. Саме час для невеликих вправ.</p>}
         </section>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="shelter-cards">
           {cards.map((card, i) => (
-            <div key={i} onClick={card.onClick} className="group relative h-80 rounded-[48px] overflow-hidden cursor-pointer shadow-2xl transition-all hover:-translate-y-2">
-              <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-90 transition-all group-hover:scale-110 duration-700`}></div>
-              <div className="relative p-10 h-full flex flex-col justify-between text-white">
-                  <div className="p-4 bg-white/20 rounded-2xl w-fit backdrop-blur-md shadow-inner">{card.icon}</div>
-                  <div><p className="text-[10px] font-black uppercase mb-1 opacity-70 tracking-widest">{card.cat}</p><h4 className="text-3xl font-black italic uppercase tracking-tighter leading-none">{card.title}</h4></div>
+            <div key={i} onClick={card.onClick} className={`shelter-card ${card.gradient}`}>
+              <div className="shelter-card-content">
+                <div className="shelter-card-icon">{card.icon}</div>
+                <div>
+                  <p className="shelter-card-title">{card.cat}</p>
+                  <h4 className="shelter-card-name">{card.title}</h4>
+                </div>
               </div>
             </div>
           ))}
@@ -319,14 +317,14 @@ const ShelterApp = () => {
   if (!isLoggedIn) return <LoginView />;
   
   return (
-    <div className="flex h-screen bg-[#0b0f1a] text-slate-300 font-sans overflow-hidden">
+    <div className="shelter-app">
       
-      <aside className="w-20 lg:w-72 border-r border-slate-800 flex flex-col bg-[#0b0f1a] z-20 shadow-2xl">
-        <div className="p-8 flex items-center gap-3">
-          <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[#0b0f1a] shadow-xl"><ShieldCheck size={28} /></div>
-          <span className="hidden lg:block text-2xl font-black text-white italic uppercase tracking-tighter italic">Shelter</span>
+      <aside className="shelter-sidebar">
+        <div className="shelter-logo">
+          <div className="shelter-logo-icon"><ShieldCheck size={28} /></div>
+          <span className="shelter-logo-text">Shelter</span>
         </div>
-        <nav className="flex-1 px-4 space-y-3 mt-6">
+        <nav className="shelter-nav">
           <SidebarItem id="home" icon={<Layout size={22}/>} label="Дашборд" />
           <SidebarItem id="testing" icon={<ClipboardList size={22}/>} label="Діагностика" />
           <SidebarItem id="library" icon={<BookOpen size={22}/>} label="Медіатека" />
@@ -334,38 +332,52 @@ const ShelterApp = () => {
           <SidebarItem id="diary" icon={<PenLine size={22}/>} label="Щоденник" />
           <SidebarItem id="stats" icon={<BarChart3 size={22}/>} label="Прогрес" />
         </nav>
-        <div className="p-6 border-t border-slate-900 space-y-4">
-           <div className="bg-slate-900/50 p-4 rounded-[24px] flex items-center gap-3 border border-slate-800/50 shadow-inner">
-              <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-[#0b0f1a] font-black text-xs">ОА</div>
-              <div className="hidden lg:block text-left">
-                <p className="text-xs font-black text-white font-bold">О. Антонов</p>
-                <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Resilience: Pro</p>
+        <div style={{padding: '24px', borderTop: '1px solid #1e293b', display: 'flex', flexDirection: 'column', gap: '16px'}}>
+           <div style={{backgroundColor: 'rgba(30, 41, 59, 0.5)', padding: '16px', borderRadius: '24px', display: 'flex', alignItems: 'center', gap: '12px', border: '1px solid rgba(30, 41, 59, 0.5)', boxShadow: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.1)'}}>
+              <div style={{width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0b0f1a', fontWeight: '900', fontSize: '12px'}}>ОА</div>
+              <div style={{display: 'none'}}>
+                <p style={{fontSize: '12px', fontWeight: '900', color: 'white'}}>О. Антонов</p>
+                <p style={{fontSize: '10px', color: '#64748b', textTransform: 'uppercase', fontWeight: '900', letterSpacing: '0.1em'}}>Resilience: Pro</p>
               </div>
            </div>
-           <button onClick={() => setIsLoggedIn(false)} className="w-full flex items-center gap-4 p-4 rounded-[20px] text-slate-500 hover:text-rose-500 hover:bg-rose-500/10 transition-all font-bold text-xs uppercase tracking-widest text-left"><LogOut size={18} /> <span className="hidden lg:block">Вийти</span></button>
+           <button onClick={() => setIsLoggedIn(false)} style={{width: '100%', display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', borderRadius: '20px', color: '#94a3b8', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '0.1em', textAlign: 'left', transition: 'all 0.3s ease'}}>
+             <LogOut size={18} /> <span style={{display: 'none'}}>Вийти</span>
+           </button>
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col overflow-y-auto bg-gradient-to-br from-[#0b0f1a] to-[#121827]">
-        <header className="h-24 px-8 flex items-center justify-between sticky top-0 z-10 backdrop-blur-xl bg-[#0b0f1a]/60 border-b border-slate-800/50">
-          <div className="flex items-center gap-4 bg-slate-900/40 px-6 py-3 rounded-full border border-slate-800 w-full max-md focus-within:border-emerald-500 transition-all group shadow-inner">
-            <Search size={18} className="text-slate-500 group-focus-within:text-emerald-500 transition-colors" />
+      <main className="shelter-main">
+        <header className="shelter-header">
+          <div className="shelter-search">
+            <Search size={18} style={{ color: '#64748b' }} />
             <input 
               type="text" 
               placeholder="Пошук..." 
               value={searchTerm} 
               onChange={(e) => setSearchTerm(e.target.value)} 
-              className="bg-transparent border-none outline-none text-sm w-full text-white placeholder:text-slate-600 font-medium" 
+              className="shelter-search-input"
             />
-            {searchTerm && <button onClick={() => setSearchTerm('')} className="text-slate-500 hover:text-white transition-colors"><X size={16} /></button>}
+            {searchTerm && (
+              <button 
+                onClick={() => setSearchTerm('')} 
+                style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer' }}
+              >
+                <X size={16} />
+              </button>
+            )}
           </div>
-          <div className="flex items-center gap-6">
-            <button onClick={() => setShowSOS(true)} className="bg-rose-600 hover:bg-rose-500 text-white px-8 py-3 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-rose-900/40 transition-all transform hover:scale-105 active:scale-95">SOS</button>
-            <div className="relative p-2 hover:bg-white/5 rounded-xl transition-all cursor-pointer text-slate-400 hover:text-white"><Bell size={22} /><div className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full border border-[#0b0f1a]"></div></div>
+          <div className="shelter-header-actions">
+            <button onClick={() => setShowSOS(true)} className="shelter-sos-button">
+              SOS
+            </button>
+            <div className="shelter-bell">
+              <Bell size={22} style={{ color: '#94a3b8' }} />
+              <div className="shelter-bell-dot"></div>
+            </div>
           </div>
         </header>
 
-        <div className="flex-1">
+        <div style={{ flex: 1 }}>
           {currentView === 'home' && <HomeView />}
           {currentView === 'library' && <LibraryView />}
           {currentView === 'testing' && <TestingView />}
@@ -377,13 +389,17 @@ const ShelterApp = () => {
       </main>
 
       {showSOS && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-8 animate-in fade-in duration-300">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-2xl" onClick={() => setShowSOS(false)}></div>
-          <div className="relative bg-slate-900 border border-white/10 p-16 rounded-[64px] w-full max-w-2xl text-center shadow-2xl">
-             <div className="w-24 h-24 bg-rose-600 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-2xl animate-pulse"><AlertCircle size={48} className="text-white" /></div>
-             <h2 className="text-4xl font-black text-white italic uppercase mb-4 tracking-tighter leading-none">Дихайте.</h2>
-             <p className="text-slate-400 mb-10 text-xl italic">Ви у безпеці. Давайте разом відновимо спокій.</p>
-             <button onClick={() => {setShowSOS(false); navigateTo('practice');}} className="w-full bg-white text-black py-6 rounded-[28px] font-black text-xl hover:bg-emerald-500 transition-all uppercase tracking-widest">Почати практику</button>
+        <div style={{position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px', animation: 'fadeIn 0.3s ease-out'}}>
+          <div style={{position: 'absolute', inset: 0, backgroundColor: 'rgba(0, 0, 0, 0.8)', backdropFilter: 'blur(32px'}} onClick={() => setShowSOS(false)}></div>
+          <div style={{position: 'relative', backgroundColor: '#1e293b', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '64px', borderRadius: '64px', width: '100%', maxWidth: '672px', textAlign: 'center', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)'}}>
+             <div style={{width: '96px', height: '96px', backgroundColor: '#dc2626', borderRadius: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 32px', boxShadow: '0 25px 50px -12px rgba(220, 38, 38, 0.25)', animation: 'pulse 2s infinite'}}>
+               <AlertCircle size={48} style={{color: 'white'}} />
+             </div>
+             <h2 style={{fontSize: '48px', fontWeight: '900', color: 'white', fontStyle: 'italic', textTransform: 'uppercase', marginBottom: '16px', letterSpacing: '-0.05em', lineHeight: '1'}}>Дихайте.</h2>
+             <p style={{color: '#94a3b8', marginBottom: '40px', fontSize: '20px', fontStyle: 'italic'}}>Ви у безпеці. Давайте разом відновимо спокій.</p>
+             <button onClick={() => {setShowSOS(false); navigateTo('practice');}} style={{width: '100%', backgroundColor: 'white', color: 'black', padding: '24px', borderRadius: '28px', fontWeight: '900', fontSize: '20px', cursor: 'pointer', border: 'none', transition: 'all 0.3s ease', textTransform: 'uppercase', letterSpacing: '0.1em'}}>
+               Почати практику
+             </button>
           </div>
         </div>
       )}
