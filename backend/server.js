@@ -6,9 +6,10 @@ import mongoose from "mongoose";
 
 dotenv.config();
 
+const materialsRouter = require('./routes/materials');
+const scenariosRouter = require('./routes/scenarios');
+const statsRouter = require('./routes/stats');
 import authRoutes from "./routes/auth.js";
-import materialRoutes from "./routes/materials.js";
-import scenarioRoutes from "./routes/scenarios.js";
 import userRoutes from "./routes/user.js";
 
 const app = express();
@@ -85,6 +86,7 @@ mongoose
 app.use("/api/auth", authRoutes);
 app.use("/api/materials", materialRoutes);
 app.use("/api/scenarios", scenarioRoutes);
+app.use("/api/stats", statsRouter);
 app.use("/api/users", userRoutes);
 
 // Health check endpoint for Vercel

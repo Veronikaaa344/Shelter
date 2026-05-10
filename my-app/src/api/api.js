@@ -118,6 +118,49 @@ export const api = {
 	getMaterialById: (id) =>
 		fetch(`${API_URL}/materials/${id}`).then((res) => res.json()),
 
+	// Статистика
+	getUserStats: (userId) =>
+		fetch(`${API_URL}/stats/user/${userId}`).then((res) => res.json()),
+
+	getDashboardStats: (userId) =>
+		fetch(`${API_URL}/stats/dashboard/${userId}`).then((res) => res.json()),
+
+	recordBreathingSession: (userId, minutes) =>
+		fetch(`${API_URL}/stats/breathing/${userId}`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ minutes })
+		}).then((res) => res.json()),
+
+	recordDiagnostic: (userId, score, answers) =>
+		fetch(`${API_URL}/stats/diagnostic/${userId}`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ score, answers })
+		}).then((res) => res.json()),
+
+	recordMaterialView: (userId, materialId, minutes = 0) =>
+		fetch(`${API_URL}/stats/material-view/${userId}`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ materialId, minutes })
+		}).then((res) => res.json()),
+
+	addDiaryEntry: (userId, mood, content, tags = []) =>
+		fetch(`${API_URL}/stats/diary/${userId}`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ mood, content, tags })
+		}).then((res) => res.json()),
+
+	getDiaryEntries: (userId, limit = 10, page = 1) =>
+		fetch(`${API_URL}/stats/diary/${userId}?limit=${limit}&page=${page}`).then((res) => res.json()),
+
+	updateStreak: (userId) =>
+		fetch(`${API_URL}/stats/streak/${userId}`, {
+			method: 'POST'
+		}).then((res) => res.json()),
+
 	updateUserProgress: (userId, itemId, type) => {
 		if (!isValidId(userId)) return Promise.reject("Invalid ID");
 		return fetch(`${API_URL}/users/update-progress`, {

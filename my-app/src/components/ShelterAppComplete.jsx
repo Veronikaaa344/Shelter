@@ -56,6 +56,8 @@ const ShelterAppComplete = () => {
   const [mediaLibraryData, setMediaLibraryData] = useState([]);
   const [username, setUsername] = useState("Гість");
   const [resilience, setResilience] = useState(50);
+  const [userStats, setUserStats] = useState(null);
+  const [userId, setUserId] = useState(localStorage.getItem("userId"));
 
   useEffect(() => {
     // Загрузка материалов из API
@@ -87,15 +89,18 @@ const ShelterAppComplete = () => {
     }
 
     // Загрузка статистики
-    const userId = localStorage.getItem("userId");
     if (userId) {
       api.getUserStats(userId)
         .then((stats) => {
-          if (stats?.resilience) {
-            setResilience(stats.resilience);
+          setUserStats(stats);
+          if (stats?.resilience?.current) {
+            setResilience(stats.resilience.current);
           }
         })
-        .catch(() => {});
+        .catch((err) => console.error('Error loading user stats:', err));
+      
+      // Обновляем streak
+      api.updateStreak(userId).catch(() => {});
     }
   }, []);
 
@@ -194,6 +199,30 @@ const ShelterAppComplete = () => {
       return matchesSearch && matchesFilter;
     });
 
+    const handleMaterialClick = (material) => {
+      // Записываем просмотр материала в статистику
+      if (userId) {
+        api.recordMaterialView(userId, material.id)
+          .then(() => {
+            console.log(`Material view recorded: ${material.title}`);
+            // Обновляем локальную статистику
+            if (userStats) {
+              setUserStats({
+                ...userStats,
+                materialsViewed: {
+                  ...userStats.materialsViewed,
+                  count: (userStats.materialsViewed?.count || 0) + 1
+                }
+              });
+            }
+          })
+          .catch((err) => console.error('Error recording material view:', err));
+      }
+      
+      // Переходим к материалу
+      navigate(`/material/${material.id}`);
+    };
+
     return (
       <div className="p-8 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
@@ -206,7 +235,7 @@ const ShelterAppComplete = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredMedia.map((item) => (
-            <div key={item.id} onClick={() => navigate(`/material/${item.id}`)} className="group bg-slate-900/40 border border-slate-800 p-8 rounded-[40px] hover:border-emerald-500/50 transition-all cursor-pointer relative overflow-hidden text-left">
+            <div key={item.id} onClick={() => handleMaterialClick(item)} className="group bg-slate-900/40 border border-slate-800 p-8 rounded-[40px] hover:border-emerald-500/50 transition-all cursor-pointer relative overflow-hidden text-left">
               <div className="flex justify-between items-start mb-10 relative z-10">
                 <div className={`p-4 rounded-2xl ${item.color} text-white shadow-lg`}>{item.icon}</div>
                 <div className="bg-slate-800 px-3 py-1 rounded-full text-[9px] font-black uppercase text-slate-400">{item.duration}</div>
@@ -228,7 +257,30 @@ const ShelterAppComplete = () => {
       const newAnswers = [...testAnswers, points];
       setTestAnswers(newAnswers);
       if (testStep < questions.length - 1) setTestStep(testStep + 1);
-      else setIsTestFinished(true);
+      else {
+        setIsTestFinished(true);
+        // Сохраняем результаты в базу данных
+        const score = Math.round(newAnswers.reduce((a, b) => a + b, 0) / questions.length);
+        if (userId) {
+          api.recordDiagnostic(userId, score, newAnswers)
+            .then(() => {
+              // Обновляем локальную статистику
+              setResilience(score);
+              if (userStats) {
+                setUserStats({
+                  ...userStats,
+                  diagnosticsTaken: {
+                    ...userStats.diagnosticsTaken,
+                    count: (userStats.diagnosticsTaken?.count || 0) + 1,
+                    lastScore: score,
+                    lastDate: new Date()
+                  }
+                });
+              }
+            })
+            .catch((err) => console.error('Error saving diagnostic:', err));
+        }
+      }
     };
 
     if (isTestFinished) {
@@ -283,7 +335,55 @@ const ShelterAppComplete = () => {
     </div>
   );
 
-  const DiaryView = () => (
+  const DiaryView = () => {
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState('');
+
+  const handleSaveDiary = () => {
+    if (!diaryEntry.trim() || selectedMood === null) {
+      setSaveMessage('Будь ласка, напишіть щось та виберіть настрій');
+      setTimeout(() => setSaveMessage(''), 3000);
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveMessage('');
+
+    if (userId) {
+      api.addDiaryEntry(userId, selectedMood, diaryEntry.trim())
+        .then(() => {
+          setSaveMessage('✅ Нотатку збережено!');
+          setDiaryEntry('');
+          setSelectedMood(null);
+          
+          // Обновляем локальную статистику
+          if (userStats) {
+            setUserStats({
+              ...userStats,
+              diaryEntries: [
+                {
+                  date: new Date(),
+                  mood: selectedMood,
+                  content: diaryEntry.trim(),
+                  wordCount: diaryEntry.trim().split(' ').length
+                },
+                ...(userStats.diaryEntries || [])
+              ]
+            });
+          }
+        })
+        .catch((err) => {
+          console.error('Error saving diary entry:', err);
+          setSaveMessage('❌ Помилка збереження');
+        })
+        .finally(() => {
+          setIsSaving(false);
+          setTimeout(() => setSaveMessage(''), 3000);
+        });
+    }
+  };
+
+  return (
     <div className="p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 text-left">
       <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">Щоденник рефлексії</h2>
       <div className="bg-slate-900/40 border border-slate-800 p-8 rounded-[40px] backdrop-blur-xl shadow-2xl space-y-8 text-left">
@@ -308,11 +408,25 @@ const ShelterAppComplete = () => {
               ))}
             </div>
           </div>
-          <button className="bg-emerald-500 text-[#0b0f1a] px-12 py-4 rounded-2xl font-black uppercase text-xs hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20">Зберегти нотатку</button>
+          <div className="flex items-center gap-4">
+            {saveMessage && (
+              <span className={`text-sm ${saveMessage.includes('✅') ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {saveMessage}
+              </span>
+            )}
+            <button 
+              onClick={handleSaveDiary}
+              disabled={isSaving}
+              className="bg-emerald-500 text-[#0b0f1a] px-12 py-4 rounded-2xl font-black uppercase text-xs hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSaving ? 'Збереження...' : 'Зберегти нотатку'}
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
+};
 
   const StatsView = () => (
     <div className="p-8 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -331,7 +445,58 @@ const ShelterAppComplete = () => {
     </div>
   );
 
-  const PracticeView = () => (
+  const PracticeView = () => {
+  const [sessionStartTime, setSessionStartTime] = useState(null);
+  const [totalSessionTime, setTotalSessionTime] = useState(0);
+
+  const handleStartSession = () => {
+    setIsActive(true);
+    if (!sessionStartTime) {
+      setSessionStartTime(Date.now());
+    }
+  };
+
+  const handleEndSession = () => {
+    setIsActive(false);
+    if (sessionStartTime) {
+      const sessionMinutes = Math.round((Date.now() - sessionStartTime) / 60000);
+      setTotalSessionTime(sessionMinutes);
+      
+      // Сохраняем сессию в базу данных
+      if (userId && sessionMinutes > 0) {
+        api.recordBreathingSession(userId, sessionMinutes)
+          .then(() => {
+            console.log(`Breathing session saved: ${sessionMinutes} minutes`);
+            // Обновляем локальную статистику
+            if (userStats) {
+              setUserStats({
+                ...userStats,
+                breathingSessions: {
+                  ...userStats.breathingSessions,
+                  count: (userStats.breathingSessions?.count || 0) + 1,
+                  totalMinutes: (userStats.breathingSessions?.totalMinutes || 0) + sessionMinutes,
+                  lastSession: new Date()
+                },
+                totalSessions: (userStats.totalSessions || 0) + 1,
+                totalMinutes: (userStats.totalMinutes || 0) + sessionMinutes
+              });
+            }
+          })
+          .catch((err) => console.error('Error saving breathing session:', err));
+      }
+      
+      setSessionStartTime(null);
+    }
+  };
+
+  const handleReset = () => {
+    setTimer(4);
+    setBreathStage('Вдих');
+    setIsActive(false);
+    setSessionStartTime(null);
+  };
+
+  return (
     <div className="fixed inset-0 z-50 bg-[#0b0f1a] flex flex-col p-8 animate-in zoom-in duration-500 text-slate-300">
        <div className="flex justify-between items-center mb-12">
           <button onClick={() => navigateTo('home')} className="flex items-center gap-2 text-slate-500 hover:text-white font-bold uppercase text-xs tracking-widest transition-all"><ChevronLeft size={20} /> Вийти</button>
@@ -348,14 +513,20 @@ const ShelterAppComplete = () => {
              </div>
           </div>
           <div className="flex gap-6">
-             <button onClick={() => setIsActive(!isActive)} className={`w-24 h-24 rounded-[32px] flex items-center justify-center shadow-2xl transition-all ${isActive ? 'bg-slate-800 text-white' : 'bg-white text-black hover:scale-105'}`}>
+             <button onClick={isActive ? handleEndSession : handleStartSession} className={`w-24 h-24 rounded-[32px] flex items-center justify-center shadow-2xl transition-all ${isActive ? 'bg-slate-800 text-white' : 'bg-white text-black hover:scale-105'}`}>
                 {isActive ? <Pause size={32} /> : <Play size={32} className="ml-1" />}
              </button>
-             <button onClick={() => {setTimer(4); setBreathStage('Вдих'); setIsActive(false);}} className="w-24 h-24 rounded-[32px] bg-slate-900 border border-slate-800 text-slate-400 flex items-center justify-center hover:text-white transition-all"><RotateCcw size={32} /></button>
+             <button onClick={handleReset} className="w-24 h-24 rounded-[32px] bg-slate-900 border border-slate-800 text-slate-400 flex items-center justify-center hover:text-white transition-all"><RotateCcw size={32} /></button>
           </div>
+          {totalSessionTime > 0 && (
+            <div className="mt-8 text-emerald-400 text-sm">
+              Сесія завершена: {totalSessionTime} хвилин
+            </div>
+          )}
        </div>
     </div>
   );
+};
 
   if (!isLoggedIn) return <LoginView />;
 
