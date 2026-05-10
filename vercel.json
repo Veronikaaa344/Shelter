@@ -1,10 +1,10 @@
 {
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/backend/server.js" },
+    { "source": "/api/(.*)", "destination": "/backend/server-simple.js" },
     { "source": "/(.*)", "destination": "/index.html" }
   ],
   "functions": {
-    "backend/server.js": {
+    "backend/server-simple.js": {
       "maxDuration": 10
     }
   }
