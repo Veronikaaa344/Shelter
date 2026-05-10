@@ -1,0 +1,29 @@
+services:
+  # Backend Service
+  - type: web
+    name: shelter-backend
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+    healthCheckPath: /api/health
+
+  # Frontend Service (вже створено, але додамо для повноти)
+  - type: web
+    name: shelter-frontend
+    env: static
+    rootDir: my-app
+    buildCommand: npm install && npm run build
+    staticPublishPath: build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://shelter-backend.onrender.com

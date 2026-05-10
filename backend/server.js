@@ -44,5 +44,10 @@ app.use("/api/materials", materialRoutes);
 app.use("/api/scenarios", scenarioRoutes);
 app.use("/api/users", userRoutes);
 
+// Health check endpoint for Render
+app.get("/api/health", (req, res) => {
+	res.status(200).json({ status: "OK", message: "Server is running" });
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
