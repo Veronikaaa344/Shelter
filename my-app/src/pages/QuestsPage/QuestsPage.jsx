@@ -97,6 +97,69 @@ export default function QuestsPage() {
         return quests;
     };
 
+    const updateQuestStatuses = (completedScenarios, completedMaterials) => {
+        setQuests(prevQuests => {
+            const updatedQuests = [...prevQuests];
+            let foundCurrent = false;
+
+            updatedQuests.forEach((quest, index) => {
+                let isCompleted = false;
+
+                if (quest.questType === "exercise" && quest.scenarioId) {
+                    isCompleted = completedScenarios.some(c => c.scenarioId === quest.scenarioId);
+                } else if (quest.questType === "material" && quest.materialId) {
+                    isCompleted = completedMaterials.some(m => m.materialId === quest.materialId);
+                }
+
+                if (isCompleted) {
+                    quest.status = "completed";
+                } else if (!foundCurrent) {
+                    quest.status = "current";
+                    foundCurrent = true;
+                    setCurrentDay(index + 1);
+                } else {
+                    quest.status = "locked";
+                }
+            });
+
+            return updatedQuests;
+        });
+    };
+
+    const loadUserProfile = () => {
+        const userId = localStorage.getItem("userId");
+        if (userId || (api.isGuest && api.isGuest())) {
+            // Завантажуємо профіль користувача
+            api.getUserProfile().then((profile) => {
+                if (profile) {
+                    setCompletedScenarios(profile.completedScenarios || []);
+                    setCompletedMaterials(profile.completedMaterials || []);
+                    setUserResilience(profile.stats?.resilience || 50);
+
+                    // Оновлюємо статуси квестів на основі завершених вправ і матеріалів
+                    updateQuestStatuses(profile.completedScenarios || [], profile.completedMaterials || []);
+                }
+            }).catch(() => {});
+
+            if (api.isGuest && api.isGuest()) {
+                setIsGuest(true);
+                setUsername("Гість");
+                api.getProfile().then((profile) => {
+                    if (profile && profile.username) setUsername(profile.username);
+                }).catch(() => {});
+            } else {
+                setIsGuest(false);
+                setUsername("Профіль");
+            }
+
+            if (userId) {
+                api.getUserStats(userId).then((stats) => {
+                    if (stats?.resilience) setUserResilience(stats.resilience);
+                }).catch(() => {});
+            }
+        }
+    };
+
     useEffect(() => {
         const savedData = JSON.parse(localStorage.getItem("dr_test_results"));
         const config = getDiagnosticConfig(savedData?.answers);
@@ -141,69 +204,6 @@ export default function QuestsPage() {
         window.addEventListener('focus', handleFocus);
         return () => window.removeEventListener('focus', handleFocus);
     }, [loadUserProfile]);
-
-    const loadUserProfile = () => {
-        const userId = localStorage.getItem("userId");
-        if (userId || (api.isGuest && api.isGuest())) {
-            // Завантажуємо профіль користувача
-            api.getUserProfile().then((profile) => {
-                if (profile) {
-                    setCompletedScenarios(profile.completedScenarios || []);
-                    setCompletedMaterials(profile.completedMaterials || []);
-                    setUserResilience(profile.stats?.resilience || 50);
-                    
-                    // Оновлюємо статуси квестів на основі завершених вправ і матеріалів
-                    updateQuestStatuses(profile.completedScenarios || [], profile.completedMaterials || []);
-                }
-            }).catch(() => {});
-
-            if (api.isGuest && api.isGuest()) {
-                setIsGuest(true);
-                setUsername("Гість");
-                api.getProfile().then((profile) => {
-                    if (profile && profile.username) setUsername(profile.username);
-                }).catch(() => {});
-            } else {
-                setIsGuest(false);
-                setUsername("Профіль");
-            }
-
-            if (userId) {
-                api.getUserStats(userId).then((stats) => {
-                    if (stats?.resilience) setUserResilience(stats.resilience);
-                }).catch(() => {});
-            }
-        }
-    };
-
-    const updateQuestStatuses = (completedScenarios, completedMaterials) => {
-        setQuests(prevQuests => {
-            const updatedQuests = [...prevQuests];
-            let foundCurrent = false;
-            
-            updatedQuests.forEach((quest, index) => {
-                let isCompleted = false;
-                
-                if (quest.questType === "exercise" && quest.scenarioId) {
-                    isCompleted = completedScenarios.some(c => c.scenarioId === quest.scenarioId);
-                } else if (quest.questType === "material" && quest.materialId) {
-                    isCompleted = completedMaterials.some(m => m.materialId === quest.materialId);
-                }
-                
-                if (isCompleted) {
-                    quest.status = "completed";
-                } else if (!foundCurrent) {
-                    quest.status = "current";
-                    foundCurrent = true;
-                    setCurrentDay(index + 1);
-                } else {
-                    quest.status = "locked";
-                }
-            });
-            
-            return updatedQuests;
-        });
-    };
 
     const getStateLabel = () => {
         switch(pageType) {
