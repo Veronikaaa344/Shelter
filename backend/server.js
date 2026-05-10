@@ -225,10 +225,5 @@ app.get("/api/mongodb-test", async (req, res) => {
 	}
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-	console.log(`[${new Date().toISOString()}] 🎉 Server successfully started on port ${PORT}`);
-	console.log(`[${new Date().toISOString()}] 🌐 Server URL: http://localhost:${PORT}`);
-	console.log(`[${new Date().toISOString()}] 📊 Health check: http://localhost:${PORT}/api/health`);
-	console.log(`[${new Date().toISOString()}] 🗄️ DB dump: http://localhost:${PORT}/api/db-dump`);
-});
+// Export for Vercel
+export default app;
