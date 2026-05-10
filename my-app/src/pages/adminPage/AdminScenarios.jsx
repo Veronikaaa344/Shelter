@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api/api";
 import "./adminPage.css";
@@ -45,7 +45,6 @@ export default function AdminScenarios() {
     const [scenarioDuration, setScenarioDuration] = useState("5 хв");
     const [scenarioDifficulty, setScenarioDifficulty] = useState(50);
     const [scenarioType, setScenarioType] = useState("dialogue");
-    const [showTypeSelector, setShowTypeSelector] = useState(false);
     const [nodes, setNodes] = useState([
         {
             id: "start",

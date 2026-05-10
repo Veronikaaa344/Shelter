@@ -1,8 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api/api";
-import AdminMaterials from "./AdminMaterials";
-import AdminScenarios from "./AdminScenarios";
 import "./adminPage.css";
 
 const SAMPLE_MATERIAL_JSON = JSON.stringify({
