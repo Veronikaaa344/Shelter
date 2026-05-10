@@ -59,6 +59,8 @@ mongoose
 		serverSelectionTimeoutMS: 30000,
 		socketTimeoutMS: 45000,
 		connectTimeoutMS: 30000,
+		maxPoolSize: 10,
+		minPoolSize: 2,
 	})
 	.then(() => {
 		console.log(`[${new Date().toISOString()}] MongoDB Connected successfully!`);

@@ -11,7 +11,13 @@ router.get("/", async (req, res) => {
 		console.log(`[${new Date().toISOString()}] MongoDB connected:`, mongoose.connection.readyState === 1);
 
 		const startTime = Date.now();
-		const scenarios = await Scenario.find();
+
+		// Додаємо тайм-аут для запиту
+		const scenarios = await Scenario.find()
+			.maxTimeMS(30000) // 30 секунд тайм-аут
+			.lean() // швидший запит без Mongoose документів
+			.exec();
+
 		const duration = Date.now() - startTime;
 
 		console.log(`[${new Date().toISOString()}] ✅ Scenarios found:`, scenarios.length, `(${duration}ms)`);
