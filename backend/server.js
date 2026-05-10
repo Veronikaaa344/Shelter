@@ -59,8 +59,6 @@ mongoose
 		serverSelectionTimeoutMS: 30000,
 		socketTimeoutMS: 45000,
 		connectTimeoutMS: 30000,
-		bufferMaxEntries: 0,
-		bufferCommands: false,
 	})
 	.then(() => {
 		console.log(`[${new Date().toISOString()}] MongoDB Connected successfully!`);
