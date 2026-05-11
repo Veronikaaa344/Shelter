@@ -46,7 +46,6 @@
 	width: 100%;
 	height: 100%;
 	object-fit: contain;
-	border-radius: 50%;
 	animation: characterIdle 3s ease-in-out infinite;
 	filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
 	transition: transform 0.3s ease;
@@ -195,7 +194,6 @@
 /* Aura Effects */
 .character-avatar {
     position: relative;
-    border-radius: 50%;
     transition: all 0.5s ease;
 }
 
