@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef, useImperativeHandle } from "react";
+import { useEffect, useState, useCallback, useRef, useImperativeHandle, forwardRef } from "react";
 import "./characterCompanion.css";
 
 import capybara1 from "../../images/capybara/1111111111111111.png";
@@ -111,6 +111,7 @@ const phrases = {
 };
 
 
+
 // Determine user state based on resilience and answers
 const getUserState = (resilience, stressCount = 0, pageType = 'default') => {
 	// If user has high stress answers, prioritize stress state
@@ -126,17 +127,16 @@ const getUserState = (resilience, stressCount = 0, pageType = 'default') => {
 	return 'calm';
 };
 
-export default function CharacterCompanion({ 
+const CharacterCompanion = forwardRef(({ 
 	context = "default", 
 	position = "bottom-right",
 	resilience = 50,
 	stressCount = 0,
 	pageType = 'default',
 	auraColor = 'emerald', // emerald, amber, rose, blue, purple
-	isBreathing = false
-}) {
-	const ref = useRef(null);
-
+	isBreathing = false,
+	forceSpeakMode = null
+}, ref) => {
 	// Expose method to trigger achievement praise
 	useImperativeHandle(ref, () => ({
 		speakAchievement: () => {
@@ -176,25 +176,32 @@ export default function CharacterCompanion({
 		}, 10000);
 	}, [getRandomPhrase, isSpeaking]);
 
+	// Handle forced speech (e.g. after completing a task)
 	useEffect(() => {
-		// Random initial delay (2-8 seconds)
-		const initialDelay = 2000 + Math.random() * 6000;
+		if (forceSpeakMode) {
+			setIsVisible(true);
+			speak(forceSpeakMode);
+		}
+	}, [forceSpeakMode, speak]);
+
+	useEffect(() => {
+		// Initial delay 5 seconds
+		const initialDelay = 5000;
 		const initialTimer = setTimeout(() => {
 			setIsVisible(true);
 			speak();
 		}, initialDelay);
 
-		// Random interval between appearances (20-90 seconds)
-		// More unpredictable, not annoying but visible enough
+		// Exactly 2 minutes interval between appearances
 		const scheduleNext = () => {
-			const randomDelay = 20000 + Math.random() * 70000; // 20-90 seconds
+			const delay = 120000; // 2 minutes
 			return setTimeout(() => {
 				if (!isSpeaking) {
 					setIsVisible(true);
 					speak();
 				}
 				scheduleNext(); // Reschedule for next appearance
-			}, randomDelay);
+			}, delay);
 		};
 
 		let nextTimer;
@@ -235,7 +242,9 @@ export default function CharacterCompanion({
 			</div>
 		</div>
 	);
-}
+});
+
+export default CharacterCompanion;
 
 // Hook to trigger character manually
 export function useCharacterTrigger() {

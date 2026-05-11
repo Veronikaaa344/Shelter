@@ -237,7 +237,7 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
                 </div>
             )}
 
-            <CharacterCompanion context="exercise" position="bottom-right" resilience={score / 10} />
+            <CharacterCompanion context="exercise" position="bottom-right" resilience={score / 10} forceSpeakMode={showCompletionMenu ? 'achievement' : null} />
         </div>
     );
 }
