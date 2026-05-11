@@ -52,6 +52,8 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid rgba(0,0,0,0.05);
+  flex-shrink: 0;
+  height: 96px;
 }
 
 .dr-back-btn {

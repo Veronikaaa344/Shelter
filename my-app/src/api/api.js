@@ -98,6 +98,8 @@ export const api = {
 		return fetch(url).then((res) => res.json());
 	},
 
+	seedDiagnostics: () => fetch(`${API_URL}/diagnostic/seed`, { method: "POST" }).then((res) => res.json()),
+
 	createScenario: (data) =>
 		fetch(`${API_URL}/scenarios`, {
 			method: "POST",

@@ -73,8 +73,29 @@ const TestingView = ({
 
     if (questions.length === 0) {
         return (
-            <div className="p-8 text-center text-slate-500">
-                Питання для діагностики не завантажені.
+            <div className="p-8 flex flex-col items-center justify-center min-h-[60vh] text-center">
+                <p className="text-slate-500 mb-6">Питання для діагностики не завантажені (база пуста).</p>
+                <button 
+                    onClick={() => {
+                        setLoading(true);
+                        api.seedDiagnostics()
+                            .then(() => api.getDiagnosticQuestions())
+                            .then(data => {
+                                if (Array.isArray(data) && data.length > 0) {
+                                    setQuestions(data.map(q => ({
+                                        q: q.text,
+                                        options: q.options,
+                                        points: q.points
+                                    })));
+                                }
+                            })
+                            .catch(err => console.error("Error fetching seeded questions:", err))
+                            .finally(() => setLoading(false));
+                    }}
+                    className="bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 px-6 py-3 rounded-2xl font-bold transition-all border border-emerald-500/30"
+                >
+                    Завантажити базові питання (Seed DB)
+                </button>
             </div>
         );
     }
