@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, X, Bell } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import HoldSOSButton from '../HoldSOSButton/HoldSOSButton';
 
 const MainHeader = React.memo(({ 
@@ -26,10 +26,6 @@ const MainHeader = React.memo(({
             </div>
             <div className="flex items-center gap-6">
                 <HoldSOSButton onActivate={() => setShowSOS(true)} />
-                <div className="relative p-2 hover:bg-white/5 rounded-xl transition-colors cursor-pointer text-slate-400 hover:text-white">
-                    <Bell size={22} />
-                    <div className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full border border-[#0b0f1a]"></div>
-                </div>
             </div>
         </header>
     );
