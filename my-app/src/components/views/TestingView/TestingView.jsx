@@ -20,8 +20,17 @@ const TestingView = ({
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        api.getDiagnosticQuestions()
-            .then(data => {
+        const fetchQuestions = async () => {
+            try {
+                let data = await api.getDiagnosticQuestions();
+                
+                // If database is empty, automatically seed and refetch
+                if (!Array.isArray(data) || data.length === 0) {
+                    console.log("Database empty. Auto-seeding diagnostic questions...");
+                    await api.seedDiagnostics();
+                    data = await api.getDiagnosticQuestions();
+                }
+
                 if (Array.isArray(data) && data.length > 0) {
                     setQuestions(data.map(q => ({
                         q: q.text,
@@ -29,9 +38,14 @@ const TestingView = ({
                         points: q.points
                     })));
                 }
-            })
-            .catch(err => console.error("Error fetching questions:", err))
-            .finally(() => setLoading(false));
+            } catch (err) {
+                console.error("Error fetching or seeding questions:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchQuestions();
     }, []);
 
     const handleAnswer = (points) => {
