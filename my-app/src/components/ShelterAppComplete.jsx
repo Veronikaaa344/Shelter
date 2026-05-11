@@ -120,6 +120,13 @@ const ShelterAppComplete = () => {
   }, []);
 
   useEffect(() => {
+    if (location.state?.showSOS) {
+      // Clear the state so SOS doesn't reopen on refresh
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]);
+
+  useEffect(() => {
     // Завантаження медіатеки та іншого...
     api.getMaterials()
       .then((data) => {
