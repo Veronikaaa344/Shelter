@@ -92,7 +92,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                     api.updateResilience(userId, clickedDifference.points || 3, "difference_found", scenario.name);
                 }
 
-                // Анимация нахождения
+                // Анімація знаходження
                 const marker = document.querySelector(`[data-diff-id="${diffId}"]`);
                 if (marker) {
                     marker.classList.add('found');
@@ -113,7 +113,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                 }
             }
         } else {
-            // Неправильный клик - анимация ошибки
+            // Неправильний клік — анімація помилки
             const clickEffect = document.createElement('div');
             clickEffect.className = 'wrong-click';
             clickEffect.style.left = `${e.clientX - rect.left}px`;
@@ -146,7 +146,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
 
     const handleSosClick = async () => {
         const userId = localStorage.getItem("userId");
-        if (userId) await api.updateResilience(userId, -15, "sos", "Нажата кнопка SOS");
+        if (userId) await api.updateResilience(userId, -15, "sos", "Натиснута кнопка SOS");
         navigate("/sos");
     };
 
@@ -156,7 +156,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
         const currentLevel = scenario.levels?.[currentLevelIndex];
         const differences = currentLevel?.differences || [];
         
-        // Найти первую не найденную разницу
+        // Знайти першу не знайдену різницю
         const unfoundDifference = differences.find((diff, index) => {
             const diffId = `${currentLevelIndex}-${diff.x}-${diff.y}`;
             return !foundDifferences.includes(diffId);
@@ -167,7 +167,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
             setScore(prev => Math.max(0, prev - 5));
             setShowHint(true);
             
-            // Показать подсказку на 3 секунды
+            // Показати підказку на 3 секунди
             setTimeout(() => {
                 setShowHint(false);
             }, 3000);

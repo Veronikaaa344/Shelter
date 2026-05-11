@@ -46,7 +46,7 @@ const baseNodes = {
         ]
     },
     focus: {
-        text: "Коли мы в стресі, мозок переходить у режим виживання, і фокусуватися стає важко. Спробуй розбити великі завдання на дуже маленькі кроки. Хочеш ще порад?",
+        text: "Коли ми в стресі, мозок переходить у режим виживання, і фокусуватися стає важко. Спробуй розбити великі завдання на дуже маленькі кроки. Хочеш ще порад?",
         options: [
             { text: "Так, давай", next: "advice" },
             { text: "Дякую, цього досить", next: "ok" }
@@ -73,7 +73,7 @@ export default function MainChat({ onBack, username, resilience }) {
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
-        // Загрузка списку сценаріїв
+        // Завантаження списку сценаріїв
         api.getScenarios().then(data => {
             if (Array.isArray(data)) {
                 setScenariosList(data.filter(s => s.type === 'dialogue' || !s.type));

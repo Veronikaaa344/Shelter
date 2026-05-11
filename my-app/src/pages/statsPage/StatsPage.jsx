@@ -39,7 +39,7 @@ const StatsPage = () => {
 
     const handleSosClick = async () => {
         if (userId || isGuest) {
-            await api.updateResilience(userId, -15, "sos", "Нажата кнопка SOS");
+            await api.updateResilience(userId, -15, "sos", "Натиснута кнопка SOS");
         }
         navigate("/sos");
     };

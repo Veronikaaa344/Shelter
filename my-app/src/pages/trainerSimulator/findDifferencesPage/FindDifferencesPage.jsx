@@ -99,7 +99,7 @@ export default function FindDifferencesPage() {
 
 	const handleSosClick = async () => {
 		const userId = localStorage.getItem("userId");
-		if (userId) await api.updateResilience(userId, -15, "sos", "Нажата кнопка SOS");
+		if (userId) await api.updateResilience(userId, -15, "sos", "Натиснута кнопка SOS");
 		navigate("/sos");
 	};
 

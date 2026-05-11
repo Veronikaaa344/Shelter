@@ -4,7 +4,7 @@ import Account from '../models/Account.js';
 import auth from '../middleware/auth.js';
 
 const router = express.Router();
-// Получить статистику пользователя
+// Отримати статистику користувача
 router.get('/user/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -12,7 +12,7 @@ router.get('/user/:userId', auth, async (req, res) => {
     let userStats = await UserStats.findOne({ userId }).populate('materialsViewed.materials.materialId');
     
     if (!userStats) {
-      // Создаем новую статистику для пользователя
+      // Створюємо нову статистику для користувача
       userStats = new UserStats({ userId });
       await userStats.save();
     }
@@ -24,7 +24,7 @@ router.get('/user/:userId', auth, async (req, res) => {
   }
 });
 
-// Записать сессию дыхания
+// Записати сесію дихання
 router.post('/breathing/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -44,7 +44,7 @@ router.post('/breathing/:userId', auth, async (req, res) => {
   }
 });
 
-// Записать результаты диагностики
+// Записати результати діагностики
 router.post('/diagnostic/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -64,7 +64,7 @@ router.post('/diagnostic/:userId', auth, async (req, res) => {
   }
 });
 
-// Записать просмотр материала
+// Записати перегляд матеріалу
 router.post('/material-view/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -84,7 +84,7 @@ router.post('/material-view/:userId', auth, async (req, res) => {
   }
 });
 
-// Добавить запись в дневник
+// Додати запис до щоденника
 router.post('/diary/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -104,7 +104,7 @@ router.post('/diary/:userId', auth, async (req, res) => {
   }
 });
 
-// Получить записи из дневника
+// Отримати записи зі щоденника
 router.get('/diary/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -129,7 +129,7 @@ router.get('/diary/:userId', auth, async (req, res) => {
   }
 });
 
-// Обновить streak (последовательность дней)
+// Оновити streak (послідовність днів)
 router.post('/streak/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -152,7 +152,7 @@ router.post('/streak/:userId', auth, async (req, res) => {
   }
 });
 
-// Получить общую статистику для дашборда
+// Отримати загальну статистику для дашборду
 router.get('/dashboard/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -163,7 +163,7 @@ router.get('/dashboard/:userId', auth, async (req, res) => {
       await userStats.save();
     }
     
-    // Формируем данные для дашборда
+    // Формуємо дані для дашборду
     const dashboardData = {
       totalSessions: userStats.totalSessions,
       totalMinutes: userStats.totalMinutes,
@@ -174,7 +174,7 @@ router.get('/dashboard/:userId', auth, async (req, res) => {
       materialsViewed: userStats.materialsViewed.count,
       diaryEntries: userStats.diaryEntries.length,
       lastDiagnosticScore: userStats.diagnosticsTaken.lastScore,
-      resilienceHistory: userStats.resilience.history.slice(-7), // последние 7 записей
+      resilienceHistory: userStats.resilience.history.slice(-7), // останні 7 записів
       recentActivity: {
         lastBreathing: userStats.breathingSessions.lastSession,
         lastDiagnostic: userStats.diagnosticsTaken.lastDate,

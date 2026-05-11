@@ -62,7 +62,7 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
             }
         }
 
-        if (option.text.toLowerCase().includes("ні") || option.text.toLowerCase().includes("нет")) {
+        if (option.text.toLowerCase().includes("ні")) {
             setHistory([...newHistory, { 
                 role: "bot", 
                 text: "Бажаєш спробувати інший сценарій чи продовжити цей?",

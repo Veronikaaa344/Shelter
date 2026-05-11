@@ -71,7 +71,7 @@ const ShelterAppComplete = () => {
   const [simulatorScenarioId, setSimulatorScenarioId] = useState(null);
   const [simulatorScenariosList, setSimulatorScenariosList] = useState([]);
 
-  // Данные из API
+  // Дані з API
   const [mediaLibraryData, setMediaLibraryData] = useState([]);
   const [resilience, setResilience] = useState(0);
   const [userStats, setUserStats] = useState(null);
@@ -130,8 +130,8 @@ const ShelterAppComplete = () => {
     // Завантаження медіатеки та іншого...
     api.getMaterials()
       .then((data) => {
-        console.log('📊 Загруженные материалы с API:', data);
-        console.log('📏 Количество материалов:', data?.length || 0);
+        console.log('📊 Завантажені матеріали з API:', data);
+        console.log('📏 Кількість матеріалів:', data?.length || 0);
 
         if (Array.isArray(data)) {
           const adviceTitles = [
@@ -153,21 +153,20 @@ const ShelterAppComplete = () => {
               color: m.category === 'anxiety' ? 'bg-blue-500' : m.category === 'stress' ? 'bg-emerald-500' : m.category === 'apathy' ? 'bg-rose-500' : 'bg-purple-500'
             }));
 
-          console.log('🔄 Преобразованные материалы для отображения:', mappedData);
-          console.log('📋 Список материалов:');
+          console.log('🔄 Перетворені матеріали для відображення:', mappedData);
+          console.log('📋 Список матеріалів:');
           mappedData.forEach((material, index) => {
             console.log(`${index + 1}. ${material.title} (${material.type}) - ${material.cat}`);
           });
 
           setMediaLibraryData(mappedData);
         } else {
-          console.log('❌ Данные не являются массивом:', data);
+          console.log('❌ Дані не є масивом:', data);
         }
       })
       .catch((err) => console.error('Error loading materials:', err));
 
-    // Загрузка профиля
-    console.log('👤 Спроба завантажити профіль для ID:', userId, 'Гість:', api.isGuest());
+    // Завантаження профілю
     if (userId || (api.isGuest && api.isGuest())) {
       api.getProfile()
         .then((profile) => {
@@ -181,10 +180,10 @@ const ShelterAppComplete = () => {
         });
     }
 
-    // Загрузка статистики
+    // Завантаження статистики
     refreshStats();
 
-    // Загрузка сценариев для кубиков
+    // Завантаження сценаріїв для кубиків
     api.getScenarios()
       .then((data) => {
         if (Array.isArray(data)) {
@@ -193,7 +192,7 @@ const ShelterAppComplete = () => {
       })
       .catch((err) => console.error('Error loading scenarios:', err));
 
-    // Загрузка профиля для реальных данных
+    // Завантаження профілю для реальних даних
     api.getProfile()
       .then((profile) => {
         if (profile) {
@@ -223,7 +222,7 @@ const ShelterAppComplete = () => {
         })
         .catch((err) => console.error('Error loading user stats:', err));
 
-      // Обновляем streak и получаем актуальное значение
+      // Оновлюємо streak та отримуємо актуальне значення
       api.updateStreak(userId)
         .then((data) => {
           if (data && data.streak !== undefined) {
