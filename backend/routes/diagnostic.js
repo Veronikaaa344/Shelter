@@ -9,10 +9,10 @@ router.get("/questions", async (req, res) => {
         const { category } = req.query;
         const matchStage = category ? { $match: { category } } : { $match: {} };
         
-        // Randomly select 5 questions from the database
+        // Randomly select 7 questions from the database
         const questions = await Question.aggregate([
             matchStage,
-            { $sample: { size: 5 } }
+            { $sample: { size: 7 } }
         ]);
         
         res.json(questions);
