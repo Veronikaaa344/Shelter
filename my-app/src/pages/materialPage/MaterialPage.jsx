@@ -3,6 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../../api/api';
 import { getDiagnosticConfig } from '../../diagnosticLogic';
 import CharacterCompanion from '../../components/characterCompanion/CharacterCompanion';
+import FlipSidebarItem from '../../components/FlipSidebarItem/FlipSidebarItem';
+import '../../shelter-styles.css';
 import {
     ChevronLeft,
     Play,
@@ -16,7 +18,12 @@ import {
     BookOpen,
     Video,
     Headphones,
-    FileText
+    FileText,
+    LayoutGrid,
+    ClipboardList,
+    Trophy,
+    PenLine,
+    BarChart3
 } from 'lucide-react';
 
 export default function MaterialPage() {
@@ -142,7 +149,7 @@ export default function MaterialPage() {
 
     // Data fetching
     useEffect(() => {
-        const isMounted = true;
+        let isMounted = true;
 
         const fetchData = async () => {
             try {
@@ -197,8 +204,55 @@ export default function MaterialPage() {
                         Shelter
                     </span>
                 </div>
-                <nav className="flex-1 px-4 space-y-3 mt-6">
-                    <div className="flex items-center gap-4 p-4 rounded-[20px] cursor-pointer transition-all duration-300 hover:bg-slate-800 text-slate-400">
+                <nav className="flex-1 px-4 mt-6 space-y-0">
+                    <FlipSidebarItem 
+                        id="home" 
+                        icon={<LayoutGrid size={22} />} 
+                        label="Дашборд" 
+                        index={0}
+                        isSpecialMode={true}
+                    />
+                    <FlipSidebarItem 
+                        id="quests" 
+                        icon={<Trophy size={22} />} 
+                        label="Квести" 
+                        index={1}
+                        isSpecialMode={true}
+                    />
+                    {/* Медіатека перетворюється на Назад */}
+                    <FlipSidebarItem 
+                        id="library" 
+                        icon={<BookOpen size={22} />} 
+                        label="Медіатека" 
+                        isDashboard={true} 
+                        index={2}
+                        isSpecialMode={true}
+                        onBackAction={() => navigate(-1)}
+                    />
+                    <FlipSidebarItem 
+                        id="advice" 
+                        icon={<Lightbulb size={22} />} 
+                        label="Поради" 
+                        index={3}
+                        isSpecialMode={true}
+                    />
+                    <FlipSidebarItem 
+                        id="diary" 
+                        icon={<PenLine size={22} />} 
+                        label="Щоденник" 
+                        index={4}
+                        isSpecialMode={true}
+                    />
+                    <FlipSidebarItem 
+                        id="stats" 
+                        icon={<BarChart3 size={22} />} 
+                        label="Прогрес" 
+                        index={5}
+                        isSpecialMode={true}
+                    />
+
+                    {/* Активна кнопка матеріалу, яка з'являється після анімації */}
+                    <div className="flex items-center gap-4 p-4 robust-rounded-20 bg-emerald-500 text-white shadow-lg shadow-emerald-500/20 border border-emerald-500/30 animate-in fade-in slide-in-from-bottom duration-700 delay-500">
                         <BookOpen size={22} />
                         <span className="font-bold text-sm hidden lg:block tracking-wide">Матеріал</span>
                     </div>
@@ -245,7 +299,7 @@ export default function MaterialPage() {
                     ) : material ? (
                         <>
                             {/* Заголовок материала */}
-                            <section className="space-y-4">
+                            <section className="space-y-4 animate-in fade-in slide-in-from-left duration-700">
                                 <div className="flex items-center gap-4">
                                     <div className={`p-4 rounded-2xl ${
                                         material.category === 'anxiety' ? 'bg-blue-500' :
@@ -276,7 +330,7 @@ export default function MaterialPage() {
 
                             {/* Видео/Аудио контент */}
                             {material.type === 'video' && material.url && (
-                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl">
+                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl animate-in fade-in slide-in-from-bottom duration-700 delay-150">
                                     {isYouTubeUrl(material.url) ? (
                                         <iframe
                                             src={getYouTubeEmbedUrl(material.url)}
@@ -304,7 +358,7 @@ export default function MaterialPage() {
                             )}
 
                             {material.type === 'audio' && material.url && (
-                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl">
+                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl animate-in fade-in slide-in-from-bottom duration-700 delay-150">
                                     <audio
                                         ref={audioRef}
                                         src={material.url}
@@ -319,7 +373,7 @@ export default function MaterialPage() {
 
                             {/* Ключевые тезисы */}
                             {material.desc && (
-                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl">
+                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl animate-in fade-in slide-in-from-bottom duration-700 delay-300">
                                     <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-6 flex items-center gap-3">
                                         <Lightbulb size={24} className="text-emerald-500" />
                                         Ключові тезиси
@@ -332,7 +386,7 @@ export default function MaterialPage() {
 
                             {/* Полный контент */}
                             {material.content && (
-                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl">
+                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl animate-in fade-in slide-in-from-bottom duration-700 delay-450">
                                     <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-6 flex items-center gap-3">
                                         <BookOpen size={24} className="text-emerald-500" />
                                         Повний текст
@@ -344,7 +398,7 @@ export default function MaterialPage() {
                             )}
 
                             {/* Кнопка завершения */}
-                            <section className="flex justify-center">
+                            <section className="flex justify-center animate-in fade-in slide-in-from-bottom duration-700 delay-600">
                                 {!showFeedback ? (
                                     <button
                                         onClick={() => setShowFeedback(true)}

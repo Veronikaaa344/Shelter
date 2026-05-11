@@ -4,7 +4,7 @@ import { api } from "../../../api/api";
 import CharacterCompanion from "../../../components/characterCompanion/CharacterCompanion";
 import "./simulatorPage.css";
 
-export default function SimulatorPage({ isEmbedded, embeddedId, onBack }) {
+export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyResilienceChange }) {
     const params = useParams();
     const id = isEmbedded ? embeddedId : params.id;
     const navigate = useNavigate();
@@ -51,9 +51,15 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack }) {
         setSessionScore(currentTotalScore);
         setChoicesCount(currentTotalChoices);
 
-        if (weight < 0) {
-            const userId = localStorage.getItem("userId");
-            if (userId) api.updateResilience(userId, weight, "wrong_answer", scenario.name);
+        // Строгий розрахунок за вибір
+        if (applyResilienceChange) {
+            applyResilienceChange('simulator_choice', { weight, name: scenario.name });
+        } else {
+            // Фолбек якщо проп не передано
+            if (weight < 0) {
+                const userId = localStorage.getItem("userId");
+                if (userId) api.updateResilience(userId, weight, "wrong_answer", scenario.name);
+            }
         }
 
         if (option.text.toLowerCase().includes("ні") || option.text.toLowerCase().includes("нет")) {
@@ -102,13 +108,18 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack }) {
         setHistory(finalHistory);
         setIsFinished(true);
         setProgress(100);
-        const avg = totalPoints / totalChoices;
-        const finalImpact = Math.round(avg * 20);
         
-        const userId = localStorage.getItem("userId");
-        api.updateResilience(userId, finalImpact, "exercise", scenario.name);
-        api.completeScenario(id, finalImpact);
+        const score = Math.round((totalPoints / totalChoices) * 100);
         
+        if (applyResilienceChange) {
+            applyResilienceChange('exercise_finish', { score, name: scenario.name });
+        } else {
+            const finalImpact = Math.round((totalPoints / totalChoices) * 20);
+            const userId = localStorage.getItem("userId");
+            api.updateResilience(userId, finalImpact, "exercise", scenario.name);
+        }
+        
+        api.completeScenario(id, score);
         setTimeout(() => setShowCompletionMenu(true), 1500);
     };
 

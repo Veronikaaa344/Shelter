@@ -1,40 +1,37 @@
-import {
-  AlertCircle,
-  BarChart3,
-  Bell,
-  BookOpen,
-  ChevronLeft,
-  ClipboardList,
-  FileText,
-  Headphones,
-  Layout,
-  Lightbulb,
-  LogOut,
-  PenLine,
-  Search,
-  ShieldCheck,
-  Video,
-  X
-} from 'lucide-react';
-import BreathingExercise from './BreathingExercise/BreathingExercise';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../index-tailwind.css';
-import { api } from '../api/api';
-import UpdatedFindDifferencesPage from '../pages/trainerSimulator/findDifferencesPage/UpdatedFindDifferencesPage';
-import SimulatorPage from '../pages/trainerSimulator/simulatorPage/SimulatorPage';
-import '../pages/trainerSimulator/simulatorPage/simulatorPage.css';
-import UpdatedSortingPage from '../pages/trainerSimulator/sortingPage/UpdatedSortingPage';
-import MainChat from './MainChat/MainChat';
+import {
+  AlertCircle, BarChart3, Bell, BookOpen, ChevronLeft, ClipboardList,
+  FileText, Headphones, Layout, Lightbulb, LogOut, PenLine, Search,
+  ShieldCheck, TrendingUp, Trophy, Video, Wind, X
+} from 'lucide-react';
 
-// Views
+import '../index-tailwind.css';
+import '../pages/trainerSimulator/simulatorPage/simulatorPage.css';
+import { api } from '../api/api';
+import { calculateResilienceChange, clampResilience } from '../utils/resilienceLogic';
+
+// Core Components
+import MainSidebar from './MainSidebar/MainSidebar';
+import MainHeader from './MainHeader/MainHeader';
+import HoldSOSButton from './HoldSOSButton/HoldSOSButton';
 import HomeView from './views/HomeView/HomeView';
-import LibraryView from './views/LibraryView/LibraryView';
-import TestingView from './views/TestingView/TestingView';
-import AdviceView from './views/AdviceView/AdviceView';
-import DiaryView from './views/DiaryView/DiaryView';
-import StatsView from './views/StatsView/StatsView';
-import PracticeView from './views/PracticeView/PracticeView';
+import MainChat from './MainChat/MainChat';
+import CharacterCompanion from './characterCompanion/CharacterCompanion';
+
+// Heavy View Components (Lazy)
+const LibraryView = React.lazy(() => import('./views/LibraryView/LibraryView'));
+const QuestsView = React.lazy(() => import('./views/QuestsView/QuestsView'));
+const TestingView = React.lazy(() => import('./views/TestingView/TestingView'));
+const StatsView = React.lazy(() => import('./views/StatsView/StatsView'));
+const PracticeView = React.lazy(() => import('./views/PracticeView/PracticeView'));
+const AdviceView = React.lazy(() => import('./views/AdviceView/AdviceView'));
+const DiaryView = React.lazy(() => import('./views/DiaryView/DiaryView'));
+
+// Simulator Components (Lazy)
+const SimulatorPage = React.lazy(() => import('../pages/trainerSimulator/simulatorPage/SimulatorPage'));
+const UpdatedFindDifferencesPage = React.lazy(() => import('../pages/trainerSimulator/findDifferencesPage/UpdatedFindDifferencesPage'));
+const UpdatedSortingPage = React.lazy(() => import('../pages/trainerSimulator/sortingPage/UpdatedSortingPage'));
 
 // --- ІМІТАЦІЯ ДАНИХ (MOCK DATA) ---
 
@@ -48,81 +45,7 @@ const resilienceHistory = [
   { day: 'Нд', val: 78 },
 ];
 
-const FlipSidebarItem = ({ id, icon, label, isDashboard = false, index = 0, isSpecialMode, currentView, navigateTo, handleChatBack }) => {
-  const isFlipped = isSpecialMode;
-  const isActive = currentView === id && !isSpecialMode;
 
-  // Stagger the flip animation based on index
-  const baseDelay = isFlipped ? index * 0.1 : (5 - index) * 0.1;
-
-  const wrapperStyle = {
-    perspective: '1200px',
-    transition: `height 0.4s cubic-bezier(0.4, 0, 0.2, 1) ${isFlipped && !isDashboard ? baseDelay + 0.4 : baseDelay}s, opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1) ${isFlipped && !isDashboard ? baseDelay + 0.3 : baseDelay}s, margin-bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1) ${isFlipped && !isDashboard ? baseDelay + 0.4 : baseDelay}s`,
-    height: isFlipped && !isDashboard ? '0px' : '56px',
-    opacity: isFlipped && !isDashboard ? 0 : 1,
-    marginBottom: isFlipped && !isDashboard ? '0px' : '12px',
-    pointerEvents: isFlipped && !isDashboard ? 'none' : 'auto',
-    position: 'relative',
-    zIndex: 10 - index
-  };
-
-  const innerStyle = {
-    position: 'absolute',
-    width: '100%',
-    height: '56px',
-    transformStyle: 'preserve-3d',
-    transition: `transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${baseDelay}s`,
-    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
-  };
-
-  const faceStyle = {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    backfaceVisibility: 'hidden',
-  };
-
-  const backFaceStyle = {
-    ...faceStyle,
-    transform: 'rotateY(180deg)'
-  };
-
-  return (
-    <div style={wrapperStyle}>
-      <div style={innerStyle}>
-        {/* Front */}
-        <div
-          style={faceStyle}
-          className={`flex items-center gap-4 p-4 robust-rounded-20 cursor-pointer transition-all duration-300 ${isActive
-              ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20'
-              : 'hover:bg-slate-800 text-slate-400'
-            }`}
-          onClick={() => { if (!isFlipped) navigateTo(id); }}
-        >
-          {icon}
-          <span className="font-bold text-sm hidden lg:block tracking-wide">{label}</span>
-        </div>
-
-        {/* Back */}
-        <div
-          style={backFaceStyle}
-          className={`flex items-center gap-4 p-4 robust-rounded-20 transition-all duration-300 w-full ${isDashboard
-              ? 'bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 border border-blue-500/30 cursor-pointer'
-              : 'bg-slate-800/40 border border-slate-700/30'
-            }`}
-          onClick={() => { if (isFlipped && isDashboard) handleChatBack(); }}
-        >
-          {isDashboard && (
-            <>
-              <ChevronLeft size={22} />
-              <span className="font-bold text-sm hidden lg:block tracking-wide">Назад</span>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const ShelterAppComplete = () => {
   const navigate = useNavigate();
@@ -147,8 +70,10 @@ const ShelterAppComplete = () => {
 
   // Данные из API
   const [mediaLibraryData, setMediaLibraryData] = useState([]);
-  const [resilience, setResilience] = useState(50);
+  const [resilience, setResilience] = useState(0);
   const [userStats, setUserStats] = useState(null);
+  const [streak, setStreak] = useState(0);
+  const [currentMood, setCurrentMood] = useState(null);
   
   // Перевірка на "null" або "undefined" як рядки
   const rawUserId = localStorage.getItem("userId");
@@ -157,7 +82,15 @@ const ShelterAppComplete = () => {
 
   const initialUsername = localStorage.getItem("username") || "Гість";
   const [username, setUsername] = useState(initialUsername);
+  const [showStabilizationHint, setShowStabilizationHint] = useState(false);
 
+  useEffect(() => {
+    if (resilience > 0 && resilience < 40) {
+      setShowStabilizationHint(true);
+    } else {
+      setShowStabilizationHint(false);
+    }
+  }, [resilience]);
   useEffect(() => {
     const handleStorageChange = () => {
       setUserId(localStorage.getItem("userId"));
@@ -175,15 +108,24 @@ const ShelterAppComplete = () => {
         console.log('📏 Количество материалов:', data?.length || 0);
 
         if (Array.isArray(data)) {
-          const mappedData = data.map(m => ({
-            id: m._id,
-            title: m.title,
-            type: m.type === 'text' ? 'Стаття' : m.type === 'video' ? 'Відео' : 'Аудіо',
-            cat: m.category || 'Загальне',
-            duration: '10 хв',
-            icon: m.type === 'text' ? <FileText size={20} /> : m.type === 'video' ? <Video size={20} /> : <Headphones size={20} />,
-            color: m.category === 'anxiety' ? 'bg-blue-500' : m.category === 'stress' ? 'bg-emerald-500' : m.category === 'apathy' ? 'bg-rose-500' : 'bg-purple-500'
-          }));
+          const adviceTitles = [
+            "Гігієна сну в стресі",
+            "Емоційний інтелект",
+            "Медітація для новачків",
+            "Як працює кортизол"
+          ];
+
+          const mappedData = data
+            .filter(m => !adviceTitles.includes(m.title)) // Прибираємо поради з медіатеки
+            .map(m => ({
+              id: m._id,
+              title: m.title,
+              type: m.type === 'text' ? 'Стаття' : m.type === 'video' ? 'Відео' : 'Аудіо',
+              cat: m.category || 'Загальне',
+              duration: m.duration || '10 хв',
+              icon: m.type === 'text' ? <FileText size={20} /> : m.type === 'video' ? <Video size={20} /> : <Headphones size={20} />,
+              color: m.category === 'anxiety' ? 'bg-blue-500' : m.category === 'stress' ? 'bg-emerald-500' : m.category === 'apathy' ? 'bg-rose-500' : 'bg-purple-500'
+            }));
 
           console.log('🔄 Преобразованные материалы для отображения:', mappedData);
           console.log('📋 Список материалов:');
@@ -214,19 +156,7 @@ const ShelterAppComplete = () => {
     }
 
     // Загрузка статистики
-    if (userId) {
-      api.getUserStats(userId)
-        .then((stats) => {
-          setUserStats(stats);
-          if (stats?.resilience?.current) {
-            setResilience(stats.resilience.current);
-          }
-        })
-        .catch((err) => console.error('Error loading user stats:', err));
-
-      // Обновляем streak
-      api.updateStreak(userId).catch(() => { });
-    }
+    refreshStats();
 
     // Загрузка сценариев для кубиков
     api.getScenarios()
@@ -236,13 +166,64 @@ const ShelterAppComplete = () => {
         }
       })
       .catch((err) => console.error('Error loading scenarios:', err));
+
+    // Загрузка профиля для реальных данных
+    api.getProfile()
+      .then((profile) => {
+        if (profile) {
+          setCompletedScenariosCount(profile.completedScenarios?.length || 0);
+          setCompletedMaterialsCount(profile.completedMaterials?.length || 0);
+          if (profile.username) setUsername(profile.username);
+        }
+      })
+      .catch(() => {});
   }, [userId]);
 
+  const [completedScenariosCount, setCompletedScenariosCount] = useState(0);
+  const [completedMaterialsCount, setCompletedMaterialsCount] = useState(0);
+
+  const refreshStats = () => {
+    if (userId) {
+      api.getUserStats(userId)
+        .then((stats) => {
+          console.log('📈 Статистика оновлена:', stats);
+          setUserStats(stats);
+          if (stats?.resilience?.current !== undefined) {
+            setResilience(stats.resilience.current);
+          }
+          if (stats?.streak !== undefined) {
+            setStreak(stats.streak);
+          }
+        })
+        .catch((err) => console.error('Error loading user stats:', err));
+
+      // Обновляем streak и получаем актуальное значение
+      api.updateStreak(userId)
+        .then((data) => {
+          if (data && data.streak !== undefined) {
+            setStreak(data.streak);
+          }
+        })
+        .catch(() => { });
+    }
+  };
+
+  useEffect(() => {
+    if (userId) {
+      refreshStats();
+    }
+  }, [userId, currentView]); // Refresh when view changes or user changes
 
 
 
 
-  const navigateTo = (id) => {
+
+  const navigateTo = (id, materialId = null) => {
+    if (materialId) {
+      navigate(`/material/${materialId}`);
+      return;
+    }
+    
     if (id === 'chat') {
       setIsChatMode(true);
       setIsSimulatorMode(false);
@@ -256,6 +237,31 @@ const ShelterAppComplete = () => {
       setIsFindDifferencesMode(false);
       setIsSortingMode(false);
     }
+  };
+
+  const applyResilienceChange = (type, metadata = {}) => {
+    const change = calculateResilienceChange(type, metadata);
+    const newResilience = clampResilience(resilience + change);
+    
+    if (newResilience !== resilience) {
+      setResilience(newResilience);
+      if (userId && !isGuest) {
+        api.updateResilience(userId, change, type, metadata.name || type);
+      }
+    }
+    return change;
+  };
+
+  const handleMoodSelect = (moodId) => {
+    setCurrentMood(moodId);
+    applyResilienceChange('mood_select', { mood: moodId });
+    
+    // Візуальний зворотний зв'язок
+    const message = moodId === 'anxiety' || moodId === 'stress' 
+      ? "Ваш стан зафіксовано. Це вимагає додаткових зусиль для відновлення." 
+      : "Чудово! Ваша стійкість зростає.";
+    
+    console.log(message);
   };
 
   const handleChatBack = () => {
@@ -290,160 +296,173 @@ const ShelterAppComplete = () => {
   }
 
   return (
-    <div className="flex h-screen bg-[#0b0f1a] text-slate-300 font-sans overflow-hidden">
+    <div className={`flex h-screen bg-[#0b0f1a] text-slate-300 font-sans overflow-hidden`}>
+      {/* Digital Isolation Overlay (Simpler for FPS) */}
+      {showSOS && <div className="fixed inset-0 z-[100] bg-[#0b0f1a]/80 animate-in fade-in duration-300"></div>}
 
-      <aside className="w-20 lg:w-72 border-r border-slate-800 flex flex-col bg-[#0b0f1a] z-20 shadow-2xl">
-        <div className="p-8 flex items-center gap-3">
-          <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[#0b0f1a] shadow-xl"><ShieldCheck size={28} /></div>
-          <span className="hidden lg:block text-2xl font-black text-white italic uppercase tracking-tighter italic">Shelter</span>
-        </div>
-
-        {/* 3D Flip Navigation (Sidebar) */}
-        <nav className="flex-1 px-4 mt-6">
-          <div className="space-y-0">
-            <FlipSidebarItem id="home" icon={<Layout size={22} />} label="Дашборд" isDashboard={true} index={0} isSpecialMode={isSpecialMode} currentView={currentView} navigateTo={navigateTo} handleChatBack={handleChatBack} />
-            <FlipSidebarItem id="testing" icon={<ClipboardList size={22} />} label="Діагностика" index={1} isSpecialMode={isSpecialMode} currentView={currentView} navigateTo={navigateTo} handleChatBack={handleChatBack} />
-            <FlipSidebarItem id="library" icon={<BookOpen size={22} />} label="Медіатека" index={2} isSpecialMode={isSpecialMode} currentView={currentView} navigateTo={navigateTo} handleChatBack={handleChatBack} />
-            <FlipSidebarItem id="advice" icon={<Lightbulb size={22} />} label="Поради" index={3} isSpecialMode={isSpecialMode} currentView={currentView} navigateTo={navigateTo} handleChatBack={handleChatBack} />
-            <FlipSidebarItem id="diary" icon={<PenLine size={22} />} label="Щоденник" index={4} isSpecialMode={isSpecialMode} currentView={currentView} navigateTo={navigateTo} handleChatBack={handleChatBack} />
-            <FlipSidebarItem id="stats" icon={<BarChart3 size={22} />} label="Прогрес" index={5} isSpecialMode={isSpecialMode} currentView={currentView} navigateTo={navigateTo} handleChatBack={handleChatBack} />
-          </div>
-        </nav>
-
-        <div className="p-6 border-t border-slate-900 space-y-4">
-          <div className="bg-slate-900/50 p-4 rounded-[24px] flex items-center gap-3 border border-slate-800/50 shadow-inner">
-            <div className="w-10 h-10 rounded-full bg-emerald-500 flex items-center justify-center text-[#0b0f1a] font-black text-xs">{username.charAt(0).toUpperCase()}</div>
-            <div className="hidden lg:block text-left">
-              <p className="text-xs font-black text-white font-bold">{username}</p>
-              <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Resilience: {resilience}%</p>
-            </div>
-          </div>
-          {isGuest ? (
-            <div className="hidden lg:flex flex-col gap-2">
-              <button
-                onClick={() => navigate('/auth')}
-                className="w-full flex items-center justify-center gap-2 p-3 rounded-[16px] bg-emerald-500 text-[#0b0f1a] font-black text-xs uppercase tracking-widest hover:bg-emerald-400 transition-all"
-              >
-                Зареєструватись
-              </button>
-              <button
-                onClick={() => navigate('/auth')}
-                className="w-full flex items-center justify-center gap-2 p-3 rounded-[16px] text-slate-500 border border-slate-800 font-bold text-xs uppercase tracking-widest hover:text-white hover:border-slate-600 transition-all"
-              >
-                Увійти
-              </button>
-            </div>
-          ) : (
-            <button onClick={() => { api.logout(); navigate('/auth'); }} className="w-full flex items-center gap-4 p-4 rounded-[20px] text-slate-500 hover:text-rose-500 hover:bg-rose-500/10 transition-all font-bold text-xs uppercase tracking-widest text-left">
-              <LogOut size={18} /> <span className="hidden lg:block">Вийти</span>
-            </button>
-          )}
-        </div>
-      </aside>
-
-      <main className="flex-1 flex flex-col overflow-y-auto bg-gradient-to-br from-[#0b0f1a] to-[#121827]">
-        <header className="h-24 px-8 flex items-center justify-between sticky top-0 z-10 backdrop-blur-xl bg-[#0b0f1a]/60 border-b border-slate-800/50">
-          <div className="flex items-center gap-4 bg-slate-900/40 px-6 py-3 rounded-full border border-slate-800 w-full max-md focus-within:border-emerald-500 transition-all group shadow-inner">
-            <Search size={18} className="text-slate-500 group-focus-within:text-emerald-500 transition-colors" />
-            <input
-              type="text"
-              placeholder="Пошук..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-transparent border-none outline-none text-sm w-full text-white placeholder:text-slate-600 font-medium"
-            />
-            {searchTerm && <button onClick={() => setSearchTerm('')} className="text-slate-500 hover:text-white transition-colors"><X size={16} /></button>}
-          </div>
-          <div className="flex items-center gap-6">
-            <button onClick={() => setShowSOS(true)} className="bg-rose-600 hover:bg-rose-500 text-white px-8 py-3 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-rose-900/40 transition-all transform hover:scale-105 active:scale-95">SOS</button>
-            <div className="relative p-2 hover:bg-white/5 rounded-xl transition-all cursor-pointer text-slate-400 hover:text-white"><Bell size={22} /><div className="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full border border-[#0b0f1a]"></div></div>
-          </div>
-        </header>
+      <MainSidebar 
+        username={username}
+        resilience={resilience}
+        currentView={currentView}
+        isGuest={isGuest}
+        isSpecialMode={isSpecialMode}
+        navigateTo={navigateTo}
+        handleChatBack={handleChatBack}
+        showSOS={showSOS}
+        logout={() => { api.logout(); navigate('/auth'); }}
+      />
+      <main className={`flex-1 flex flex-col overflow-y-auto bg-[#0b0f1a] transition-opacity duration-500 ${showSOS ? 'opacity-20 pointer-events-none' : 'opacity-100'}`}>
+        <MainHeader 
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            setShowSOS={setShowSOS}
+        />
 
         <div className="flex-1">
-          {isChatMode ? (
-            <MainChat
-              onBack={handleChatBack}
-              username={username}
-              resilience={resilience}
-            />
-          ) : isSimulatorMode && simulatorScenarioId ? (
-            <SimulatorPage
-              isEmbedded={true}
-              embeddedId={simulatorScenarioId}
-              onBack={() => setIsSimulatorMode(false)}
-            />
-          ) : isFindDifferencesMode ? (
-            <div className="relative h-full w-full bg-[#0b0f1a]">
-              <button onClick={() => setIsFindDifferencesMode(false)} className="absolute top-6 left-6 z-50 bg-slate-800/80 p-3 rounded-full hover:bg-slate-700 text-white shadow-xl backdrop-blur-md transition-all"><ChevronLeft size={24} /></button>
-              <UpdatedFindDifferencesPage
+          <React.Suspense fallback={<div className="flex items-center justify-center h-full"><div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div></div>}>
+            {isChatMode ? (
+              <MainChat
+                onBack={handleChatBack}
+                username={username}
+                resilience={resilience}
+              />
+            ) : isSimulatorMode && simulatorScenarioId ? (
+              <SimulatorPage
                 isEmbedded={true}
                 embeddedId={simulatorScenarioId}
-                onBack={() => setIsFindDifferencesMode(false)}
+                onBack={() => setIsSimulatorMode(false)}
+                applyResilienceChange={applyResilienceChange}
               />
-            </div>
-          ) : isSortingMode ? (
-            <div className="relative h-full w-full bg-[#0b0f1a]">
-              <button onClick={() => setIsSortingMode(false)} className="absolute top-6 left-6 z-50 bg-slate-800/80 p-3 rounded-full hover:bg-slate-700 text-white shadow-xl backdrop-blur-md transition-all"><ChevronLeft size={24} /></button>
-              <UpdatedSortingPage
-                isEmbedded={true}
-                embeddedId={simulatorScenarioId}
-                onBack={() => setIsSortingMode(false)}
-              />
-            </div>
-          ) : (
-            <>
-              {currentView === 'home' && <HomeView
-                searchTerm={searchTerm}
-                navigateTo={navigateTo}
-                simulatorScenariosList={simulatorScenariosList}
-                setSimulatorScenarioId={setSimulatorScenarioId}
-                setIsFindDifferencesMode={setIsFindDifferencesMode}
-                setIsSortingMode={setIsSortingMode}
-                setIsSimulatorMode={setIsSimulatorMode}
-              />}
-              {currentView === 'library' && <LibraryView
-                mediaLibraryData={mediaLibraryData}
-                libraryFilter={libraryFilter}
-                setLibraryFilter={setLibraryFilter}
-                searchTerm={searchTerm}
-                userId={userId}
-                userStats={userStats}
-                setUserStats={setUserStats}
-              />}
-              {currentView === 'testing' && <TestingView
-                testStep={testStep}
-                setTestStep={setTestStep}
-                testAnswers={testAnswers}
-                setTestAnswers={setTestAnswers}
-                isTestFinished={isTestFinished}
-                setIsTestFinished={setIsTestFinished}
-                userId={userId}
-                setResilience={setResilience}
-                userStats={userStats}
-                setUserStats={setUserStats}
-                navigateTo={navigateTo}
-              />}
-              {currentView === 'stats' && <StatsView />}
-              {currentView === 'practice' && <PracticeView
-                userId={userId}
-                navigateTo={navigateTo}
-              />}
-              {currentView === 'advice' && <AdviceView />}
-              {currentView === 'diary' && <DiaryView userId={userId} />}
-            </>
-          )}
+            ) : isFindDifferencesMode ? (
+              <div className="relative h-full w-full bg-[#0b0f1a]">
+                <button onClick={() => setIsFindDifferencesMode(false)} className="absolute top-6 left-6 z-50 bg-slate-800/80 p-3 rounded-full hover:bg-slate-700 text-white shadow-xl backdrop-blur-md transition-all"><ChevronLeft size={24} /></button>
+                <UpdatedFindDifferencesPage
+                  isEmbedded={true}
+                  embeddedId={simulatorScenarioId}
+                  onBack={() => setIsFindDifferencesMode(false)}
+                  applyResilienceChange={applyResilienceChange}
+                />
+              </div>
+            ) : isSortingMode ? (
+              <div className="relative h-full w-full bg-[#0b0f1a]">
+                <button onClick={() => setIsSortingMode(false)} className="absolute top-6 left-6 z-50 bg-slate-800/80 p-3 rounded-full hover:bg-slate-700 text-white shadow-xl backdrop-blur-md transition-all"><ChevronLeft size={24} /></button>
+                <UpdatedSortingPage
+                  isEmbedded={true}
+                  embeddedId={simulatorScenarioId}
+                  onBack={() => setIsSortingMode(false)}
+                  applyResilienceChange={applyResilienceChange}
+                />
+              </div>
+            ) : (
+              <>
+                {currentView === 'home' && <HomeView 
+                  searchTerm={searchTerm} 
+                  navigateTo={navigateTo} 
+                  simulatorScenariosList={simulatorScenariosList} 
+                  setSimulatorScenarioId={setSimulatorScenarioId} 
+                  setIsFindDifferencesMode={setIsFindDifferencesMode} 
+                  setIsSortingMode={setIsSortingMode} 
+                  setIsSimulatorMode={setIsSimulatorMode}
+                  username={username}
+                  resilience={resilience}
+                  setResilience={setResilience}
+                  streak={streak}
+                  setStreak={setStreak}
+                  currentMood={currentMood}
+                  setCurrentMood={setCurrentMood}
+                  mediaLibraryData={mediaLibraryData}
+                  showStabilizationHint={showStabilizationHint}
+                />}
+                {currentView === 'library' && <LibraryView
+                  mediaLibraryData={mediaLibraryData}
+                  libraryFilter={libraryFilter}
+                  setLibraryFilter={setLibraryFilter}
+                  searchTerm={searchTerm}
+                  userId={userId}
+                  userStats={userStats}
+                  setUserStats={setUserStats}
+                />}
+                {currentView === 'quests' && <QuestsView
+                  navigateTo={navigateTo}
+                  resilience={resilience}
+                  setSimulatorScenarioId={setSimulatorScenarioId}
+                  setIsSimulatorMode={setIsSimulatorMode}
+                  setIsFindDifferencesMode={setIsFindDifferencesMode}
+                  setIsSortingMode={setIsSortingMode}
+                  simulatorScenariosList={simulatorScenariosList}
+                />}
+                {currentView === 'testing' && (
+                  <TestingView 
+                    testStep={testStep} 
+                    setTestStep={setTestStep} 
+                    testAnswers={testAnswers} 
+                    setTestAnswers={setTestAnswers} 
+                    isTestFinished={isTestFinished} 
+                    setIsTestFinished={setIsTestFinished} 
+                    userId={userId} 
+                    setResilience={setResilience} 
+                    userStats={userStats} 
+                    setUserStats={setUserStats} 
+                    navigateTo={navigateTo} 
+                    onFinish={() => refreshStats()}
+                  />
+                )}
+                {currentView === 'stats' && <StatsView
+                  userStats={userStats}
+                  resilience={resilience}
+                />}{currentView === 'practice' && (
+                  <PracticeView 
+                    userId={userId} 
+                    navigateTo={navigateTo} 
+                    onFinish={() => refreshStats()}
+                  />
+                )}
+                {currentView === 'advice' && <AdviceView />}
+                {currentView === 'diary' && <DiaryView userId={userId} />}
+              </>
+            )}
+          </React.Suspense>
         </div>
+        <footer className="h-16 px-8 flex items-center justify-between border-t border-slate-900/50 text-[10px] text-slate-600 font-bold uppercase tracking-widest bg-[#0b0f1a]">
+          <div className="flex gap-6">
+            <span className="hover:text-slate-400 cursor-pointer transition-colors" onClick={() => setShowSOS(true)}>SOS Допомога</span>
+            <span className="hidden md:inline opacity-30">|</span>
+            <span className="hidden md:inline">Система Shelter не є заміною професійної терапії</span>
+          </div>
+          <div>© 2026 Shelter App</div>
+        </footer>
       </main>
 
+      {/* Character Companion */}
+      <CharacterCompanion
+        resilience={resilience}
+        auraColor={resilience > 70 ? 'emerald' : resilience > 40 ? 'amber' : 'rose'}
+        context={currentView}
+      />
+
       {showSOS && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-8 animate-in fade-in duration-300">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-2xl" onClick={() => setShowSOS(false)}></div>
-          <div className="relative bg-slate-900 border border-white/10 p-16 robust-rounded-64 w-full max-w-2xl text-center shadow-2xl">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-8 animate-in zoom-in-95 duration-500">
+          <div className="absolute inset-0" onClick={() => setShowSOS(false)}></div>
+          <div className="relative bg-slate-900/90 border border-white/10 p-16 rounded-[64px] w-full max-w-2xl text-center shadow-[0_0_100px_rgba(225,29,72,0.3)] backdrop-blur-3xl">
             <div className="w-24 h-24 bg-rose-600 rounded-[32px] flex items-center justify-center mx-auto mb-8 shadow-2xl animate-pulse"><AlertCircle size={48} className="text-white" /></div>
-            <h2 className="text-4xl font-black text-white italic uppercase mb-4 tracking-tighter leading-none">Дихайте.</h2>
-            <p className="text-slate-400 mb-10 text-xl italic">Ви у безпеці. Давайте разом відновимо спокій.</p>
-            <button onClick={() => { setShowSOS(false); navigateTo('practice'); }} className="w-full bg-white text-black py-6 rounded-[28px] font-black text-xl hover:bg-emerald-500 transition-all uppercase tracking-widest">Почати практику</button>
+            <h2 className="text-6xl font-black text-white italic uppercase mb-6 tracking-tighter leading-none">Дихайте.</h2>
+            <p className="text-slate-400 mb-12 text-xl italic font-medium">Ви у безпеці. Давайте разом відновимо спокій через практику «Квадратного дихання».</p>
+            
+            <div className="flex flex-col gap-4">
+              <button 
+                onClick={() => { setShowSOS(false); navigateTo('practice'); }} 
+                className="w-full bg-white text-black py-8 rounded-[32px] font-black text-xl hover:bg-emerald-500 transition-all uppercase tracking-widest flex items-center justify-center gap-4 shadow-2xl"
+              >
+                <Wind size={28} />
+                Почати дихання (4-4-4)
+              </button>
+              <button 
+                onClick={() => window.open('tel:103')}
+                className="w-full bg-slate-800/80 text-white py-6 rounded-[28px] font-black text-xs hover:bg-slate-700 transition-all uppercase tracking-widest border border-slate-700"
+              >
+                Зв'язатися з фахівцем
+              </button>
+            </div>
           </div>
         </div>
       )}

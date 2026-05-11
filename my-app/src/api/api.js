@@ -93,6 +93,11 @@ export const api = {
 
 	getScenarios: () => fetch(`${API_URL}/scenarios`).then((res) => res.json()),
 
+	getDiagnosticQuestions: (category) => {
+		const url = category ? `${API_URL}/diagnostic/questions?category=${category}` : `${API_URL}/diagnostic/questions`;
+		return fetch(url).then((res) => res.json());
+	},
+
 	createScenario: (data) =>
 		fetch(`${API_URL}/scenarios`, {
 			method: "POST",
@@ -120,9 +125,6 @@ export const api = {
 		fetch(`${API_URL}/materials/${id}`).then((res) => res.json()),
 
 	// Статистика
-	getUserStats: (userId) =>
-		fetch(`${API_URL}/stats/user/${userId}`).then((res) => res.json()),
-
 	getDashboardStats: (userId) =>
 		fetch(`${API_URL}/stats/dashboard/${userId}`).then((res) => res.json()),
 
@@ -133,23 +135,36 @@ export const api = {
 			body: JSON.stringify({ minutes })
 		}).then((res) => res.json()),
 
-	recordDiagnostic: (userId, score, answers) =>
-		fetch(`${API_URL}/stats/diagnostic/${userId}`, {
+	recordDiagnostic: (userId, score, answers) => {
+		if (isGuest()) {
+			return fetch(`${API_URL}/auth/guest/update`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				credentials: 'include',
+				body: JSON.stringify({ 
+					stats: { resilience: score },
+					diagnostic: { answers, completedAt: new Date() }
+				})
+			}).then((res) => res.json());
+		}
+		return fetch(`${API_URL}/stats/diagnostic/${userId}`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: getHeaders(),
 			body: JSON.stringify({ score, answers })
-		}).then((res) => res.json()),
+		}).then((res) => res.json());
+	},
 
 	recordMaterialView: (userId, materialId, minutes = 0) =>
 		fetch(`${API_URL}/stats/material-view/${userId}`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: getHeaders(),
 			body: JSON.stringify({ materialId, minutes })
 		}).then((res) => res.json()),
 
 	updateStreak: (userId) =>
 		fetch(`${API_URL}/stats/streak/${userId}`, {
-			method: 'POST'
+			method: 'POST',
+			headers: getHeaders()
 		}).then((res) => res.json()),
 
 	updateUserProgress: (userId, itemId, type) => {
@@ -167,8 +182,9 @@ export const api = {
 				credentials: "include",
 			}).then((res) => res.json());
 		}
-		if (!isValidId(userId)) return Promise.reject("Invalid ID");
-		return fetch(`${API_URL}/users/${userId}/stats`, {
+		const finalUserId = userId || localStorage.getItem("userId");
+		if (!isValidId(finalUserId)) return Promise.reject("Invalid ID");
+		return fetch(`${API_URL}/users/${finalUserId}/stats`, {
 			headers: getHeaders(),
 		}).then((res) => res.json());
 	},

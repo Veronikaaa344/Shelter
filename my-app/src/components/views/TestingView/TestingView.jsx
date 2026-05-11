@@ -1,13 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { CheckCircle2, ChevronRight } from 'lucide-react';
 import { api } from '../../../api/api';
-
-const questions = [
-  { q: "Як часто за останній тиждень ви відчували напруження?", options: ["Ніколи", "Рідко", "Часто", "Постійно"], points: [100, 70, 40, 10] },
-  { q: "Наскільки легко вам вдається зосередитися?", options: ["Дуже легко", "Важко", "Майже неможливо", "Легко"], points: [100, 40, 15, 80] },
-  { q: "Чи відчуваєте ви підтримку від близьких людей?", options: ["Повну", "Часткову", "Мінімальну", "Зовсім ні"], points: [100, 70, 40, 10] },
-  { q: "Як оціните якість свого сну?", options: ["Відмінна", "Задовільна", "Погана", "Жахлива"], points: [100, 70, 30, 0] }
-];
 
 const TestingView = ({ 
     testStep, 
@@ -20,8 +13,27 @@ const TestingView = ({
     setResilience, 
     userStats, 
     setUserStats, 
-    navigateTo 
+    navigateTo,
+    onFinish
 }) => {
+    const [questions, setQuestions] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        api.getDiagnosticQuestions()
+            .then(data => {
+                if (Array.isArray(data) && data.length > 0) {
+                    setQuestions(data.map(q => ({
+                        q: q.text,
+                        options: q.options,
+                        points: q.points
+                    })));
+                }
+            })
+            .catch(err => console.error("Error fetching questions:", err))
+            .finally(() => setLoading(false));
+    }, []);
+
     const handleAnswer = (points) => {
       const newAnswers = [...testAnswers, points];
       setTestAnswers(newAnswers);
@@ -33,6 +45,7 @@ const TestingView = ({
           api.recordDiagnostic(userId, score, newAnswers)
             .then(() => {
               setResilience(score);
+              if (onFinish) onFinish();
               if (userStats) {
                 setUserStats({
                   ...userStats,
@@ -50,12 +63,28 @@ const TestingView = ({
       }
     };
 
+    if (loading) {
+        return (
+            <div className="p-8 flex flex-col items-center justify-center min-h-[60vh]">
+                <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+            </div>
+        );
+    }
+
+    if (questions.length === 0) {
+        return (
+            <div className="p-8 text-center text-slate-500">
+                Питання для діагностики не завантажені.
+            </div>
+        );
+    }
+
     if (isTestFinished) {
       const score = Math.round(testAnswers.reduce((a, b) => a + b, 0) / questions.length);
       return (
         <div className="p-8 flex flex-col items-center justify-center min-h-[60vh] animate-in zoom-in duration-500 text-center">
           <div className="w-24 h-24 bg-emerald-500 rounded-[32px] flex items-center justify-center mb-8 shadow-2xl shadow-emerald-500/20"><CheckCircle2 size={48} className="text-[#0b0f1a]" /></div>
-          <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter mb-4 leading-none text-white">Діагностика завершена</h2>
+          <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter mb-4 leading-none">Діагностика завершена</h2>
           <p className="text-slate-500 mb-8 max-w-sm">Індекс стійкості: <span className="text-emerald-400 font-black">{score}%</span>. Продовжуйте працювати над собою!</p>
           <button onClick={() => navigateTo('stats')} className="bg-white text-black px-10 py-4 rounded-2xl font-black uppercase text-xs shadow-lg">Дивитися динаміку</button>
         </div>

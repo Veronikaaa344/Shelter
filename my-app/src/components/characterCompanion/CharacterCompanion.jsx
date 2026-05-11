@@ -162,7 +162,9 @@ export default function CharacterCompanion({
 	position = "bottom-right",
 	resilience = 50,
 	stressCount = 0,
-	pageType = 'default'
+	pageType = 'default',
+	auraColor = 'emerald', // emerald, amber, rose, blue, purple
+	isBreathing = false
 }) {
 	const ref = useRef(null);
 
@@ -270,11 +272,11 @@ export default function CharacterCompanion({
 	if (!isVisible) return null;
 
 	return (
-		<div className={`character-companion ${position} ${isSpeaking ? 'speaking' : ''}`}>
+		<div className={`character-companion ${position} ${isSpeaking ? 'speaking' : ''} ${isBreathing ? 'breathing-sync' : ''}`}>
 			<div className="character-bubble">
 				<p className="character-text">{currentPhrase}</p>
 			</div>
-			<div className="character-avatar">
+			<div className={`character-avatar aura-${auraColor}`}>
 				<img
 					src={characters[currentCharacter].image}
 					alt="Character companion"
