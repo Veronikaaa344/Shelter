@@ -52,16 +52,24 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
                     ]).map(b => ({ ...b, items: [], isHighlighted: false }));
                     
                     const dbItems = (data.items || [
-                        { text: "Я впораюся", categoryId: 0 },
-                        { text: "Це занадто складно", categoryId: 1 },
-                        { text: "Я маю право на помилку", categoryId: 0 },
-                        { text: "Нічого не вийде", categoryId: 1 }
+                        { text: "Ця ситуація — лише досвід, а не вирок для мого майбутнього", categoryId: 0 },
+                        { text: "Я повинен завжди бути сильним і ніколи не показувати слабкість", categoryId: 1 },
+                        { text: "Я маю право на втому та можливість просити про підтримку", categoryId: 0 },
+                        { text: "Якщо я не впорався ідеально, значить я повний невдаха", categoryId: 1 },
+                        { text: "Моя цінність як людини не залежить від продуктивності сьогодні", categoryId: 0 },
+                        { text: "Усі навколо справляються набагато краще, ніж я зараз", categoryId: 1 },
+                        { text: "Я можу контролювати свою реакцію, навіть якщо події поза контролем", categoryId: 0 },
+                        { text: "Один поганий день означає, що весь мій прогрес назавжди втрачено", categoryId: 1 },
+                        { text: "Кожна маленька перемога сьогодні — це міцний фундамент моєї стійкості", categoryId: 0 },
+                        { text: "Я ніколи не зможу повернутися до нормального та щасливого життя", categoryId: 1 },
+                        { text: "Помилка — це лише цінний зворотний зв'язок, а не ознака невдачі", categoryId: 0 },
+                        { text: "Краще взагалі нічого не починати, щоб не відчувати розчарування", categoryId: 1 }
                     ]).map((item, index) => ({
                         ...item,
                         id: index,
                         scale: 1,
                         rotation: Math.random() * 10 - 5
-                    }));
+                    })).sort(() => Math.random() - 0.5);
 
                     setBoxes(dbBoxes);
                     setItems(dbItems);
@@ -136,10 +144,7 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
         <div className="dr-updated-sorting-layout">
             <header className="dr-sorting-header">
                 <div className="dr-header-content">
-                    <button className="dr-back-btn" onClick={handleClose}>
-                        <ArrowLeft size={18} />
-                        <span>Назад</span>
-                    </button>
+                    <div className="dr-back-placeholder" />
                     
                     <h1 className="dr-scenario-title">{scenario?.name || "Сортування"}</h1>
                     

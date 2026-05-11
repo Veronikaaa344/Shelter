@@ -115,10 +115,9 @@ router.get('/diary/:userId', auth, async (req, res) => {
       return res.json({ entries: [] });
     }
     
-    const entries = userStats.diaryEntries
-      .sort((a, b) => b.date - a.date)
-      .skip((page - 1) * limit)
-      .limit(parseInt(limit));
+    const sortedEntries = userStats.diaryEntries.sort((a, b) => b.date - a.date);
+    const start = (page - 1) * limit;
+    const entries = sortedEntries.slice(start, start + parseInt(limit));
     
     res.json({ 
       entries,

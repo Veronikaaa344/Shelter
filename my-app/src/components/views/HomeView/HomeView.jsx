@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
     Wind, Brain, Lightbulb, PenLine, MessageCircle, Search, Layout, Activity,
-    CheckCircle, Sparkles, TrendingUp, Clock
+    CheckCircle, Sparkles, TrendingUp, Clock, Trophy
 } from 'lucide-react';
 
 const HomeView = ({ 
@@ -124,10 +124,10 @@ const HomeView = ({
         }
 
         return [
-            { title: "Квести", cat: "РОЗВИТОК", icon: <Trophy className="text-amber-400"/>, color: "from-amber-500 to-amber-600", onClick: () => navigateTo('quests') },
+            { title: "Квести Стійкості", cat: "РОЗВИТОК", icon: <Trophy className="text-amber-400"/>, color: "from-amber-500 to-amber-600", onClick: () => navigateTo('quests') },
             { title: "Глибока діагностика", cat: "АНАЛІТИКА", icon: <Brain/>, color: "from-indigo-500 to-indigo-600", onClick: () => navigateTo('testing') },
-            ...baseCards.filter(c => c.title !== "Квести" && c.title !== "Діагностика"),
-            ...simulatorCards
+            ...baseCards.filter(c => c.title !== "Діагностика"), // Всі базові вправи
+            ...simulatorCards // Всі симулятори
         ];
     };
 

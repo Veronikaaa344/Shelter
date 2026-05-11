@@ -37,6 +37,22 @@ router.get("/", async (req, res) => {
 	}
 });
 
+router.get("/:id", async (req, res) => {
+	try {
+		console.log(`[${new Date().toISOString()}] Fetching material by ID: ${req.params.id}`);
+		const material = await Material.findById(req.params.id);
+		if (!material) {
+			console.log(`[${new Date().toISOString()}] ❌ Material not found: ${req.params.id}`);
+			return res.status(404).json({ message: "Матеріал не знайдено" });
+		}
+		console.log(`[${new Date().toISOString()}] ✅ Material found: ${material.title}`);
+		res.json(material);
+	} catch (err) {
+		console.error(`[${new Date().toISOString()}] ❌ Error fetching material:`, err.message);
+		res.status(500).json({ message: err.message });
+	}
+});
+
 router.post("/", async (req, res) => {
 	try {
 		console.log(`[${new Date().toISOString()}] 🟢 POST /api/materials - Creating new material`);

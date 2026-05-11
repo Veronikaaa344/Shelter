@@ -178,16 +178,16 @@ const QuestsView = ({
     };
 
     return (
-        <div className="p-8 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-24 max-w-4xl mx-auto">
-            <div className="text-center space-y-4 mb-16">
-                <div className="inline-flex p-4 bg-amber-500/10 rounded-3xl border border-amber-500/20 mb-4">
-                    <Trophy className="text-amber-500" size={40} />
+        <div className="p-8 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-24">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+                <h2 className="text-5xl font-black text-white italic uppercase tracking-tighter leading-none">Квести Стійкості</h2>
+                <div className="flex items-center gap-3 bg-amber-500/10 px-4 py-2 rounded-2xl border border-amber-500/20">
+                    <Trophy className="text-amber-500" size={20} />
+                    <p className="text-amber-500 font-bold text-xs uppercase tracking-widest">Один день — один маленький крок.</p>
                 </div>
-                <h1 className="text-6xl font-black text-white italic uppercase tracking-tighter leading-none">Квести Стійкості</h1>
-                <p className="text-slate-500 text-xl italic font-medium">Один день — один маленький крок.</p>
             </div>
 
-            <div className="relative space-y-12 before:absolute before:left-[27px] before:top-8 before:bottom-8 before:w-1 before:bg-slate-800 before:rounded-full">
+            <div className="relative max-w-4xl mx-auto space-y-12 before:absolute before:left-[27px] before:top-8 before:bottom-8 before:w-1 before:bg-slate-800 before:rounded-full">
                 {quests.map((quest) => (
                     <div key={quest.id} className={`relative pl-20 transition-all duration-500 ${quest.status === 'locked' ? 'opacity-50' : 'opacity-100'}`}>
                         {/* Fox Marker */}

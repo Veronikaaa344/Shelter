@@ -92,12 +92,15 @@ const TestingView = ({
     }
 
     return (
-      <div className="p-8 max-w-3xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div className="flex justify-between items-end">
-          <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none text-left">Питання {testStep + 1} / {questions.length}</h2>
-          <div className="flex gap-1">{questions.map((_, i) => <div key={i} className={`w-8 h-1.5 rounded-full transition-all ${i <= testStep ? 'bg-emerald-500' : 'bg-slate-800'}`}></div>)}</div>
+      <div className="p-8 space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-24">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+          <h2 className="text-5xl font-black text-white italic uppercase tracking-tighter leading-none text-left">Діагностика</h2>
+          <div className="flex items-center gap-4 bg-slate-900/50 p-3 rounded-2xl border border-slate-800 backdrop-blur-md">
+            <span className="text-xs font-black uppercase text-slate-400 tracking-widest">Питання {testStep + 1} з {questions.length}</span>
+            <div className="flex gap-1">{questions.map((_, i) => <div key={i} className={`w-6 h-1.5 rounded-full transition-all ${i <= testStep ? 'bg-emerald-500' : 'bg-slate-800'}`}></div>)}</div>
+          </div>
         </div>
-        <div className="bg-slate-900/40 border border-slate-800 p-12 robust-rounded-48 backdrop-blur-xl shadow-2xl">
+        <div className="max-w-3xl mx-auto bg-slate-900/40 border border-slate-800 p-12 robust-rounded-48 backdrop-blur-xl shadow-2xl">
            <h3 className="text-2xl font-bold text-white mb-10 leading-tight text-left">{questions[testStep].q}</h3>
            <div className="grid grid-cols-1 gap-4">
               {questions[testStep].options.map((opt, idx) => (

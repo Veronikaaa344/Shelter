@@ -14,7 +14,7 @@ const MainSidebar = React.memo(({
     logout 
 }) => {
     return (
-        <aside className={`w-20 lg:w-72 border-r border-slate-800 flex flex-col bg-[#0b0f1a] z-20 shadow-2xl transition-all duration-500 ${showSOS ? 'blur-md grayscale opacity-50 scale-95 pointer-events-none' : ''}`}>
+        <aside className={`w-20 lg:w-72 border-r border-slate-800 flex flex-col bg-[#0b0f1a] z-20 shadow-2xl transition-all duration-500 transform-gpu will-change-[filter,transform,opacity] ${showSOS ? 'blur-md grayscale opacity-50 scale-95 pointer-events-none' : ''}`}>
             <div className="p-8 flex items-center gap-3">
                 <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-[#0b0f1a] shadow-xl">
                     <ShieldCheck size={28} />

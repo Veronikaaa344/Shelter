@@ -1,4 +1,4 @@
-/* Shelter App Styles */
+/* Shelter App Styles - Optimized for FPS */
 
 /* Base styles */
 .shelter-app {
@@ -8,6 +8,8 @@
   color: #94a3b8;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
   overflow: hidden;
+  /* Use hardware acceleration for the whole app container */
+  transform: translateZ(0);
 }
 
 /* Sidebar */
@@ -17,7 +19,7 @@
   display: flex;
   flex-direction: column;
   background-color: #0b0f1a;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
   z-index: 20;
 }
 
@@ -37,7 +39,7 @@
   align-items: center;
   justify-content: center;
   color: #0b0f1a;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.3);
 }
 
 .shelter-logo-text {
@@ -65,21 +67,23 @@
   padding: 16px;
   border-radius: 20px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease;
   font-weight: bold;
   font-size: 14px;
   letter-spacing: 0.025em;
+  will-change: transform;
 }
 
 .shelter-nav-item:hover {
   background-color: #1e293b;
   color: #94a3b8;
+  transform: translateX(4px);
 }
 
 .shelter-nav-item.active {
   background-color: #10b981;
   color: white;
-  box-shadow: 0 20px 25px -5px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 12px 20px -8px rgba(16, 185, 129, 0.4);
 }
 
 /* Main content */
@@ -88,7 +92,7 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  background: linear-gradient(to bottom right, #0b0f1a, #121827);
+  background: #0b0f1a; /* Simplified background for better scroll performance */
 }
 
 .shelter-header {
@@ -100,8 +104,10 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  backdrop-filter: blur(16px);
-  background-color: rgba(11, 15, 26, 0.6);
+  /* Optimized blur: lower radius is much faster */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(11, 15, 26, 0.7);
   border-bottom: 1px solid rgba(30, 41, 59, 0.5);
 }
 
@@ -115,7 +121,6 @@
   border: 1px solid #1e293b;
   width: 100%;
   max-width: 400px;
-  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.1);
 }
 
 .shelter-search-input {
@@ -126,10 +131,6 @@
   width: 100%;
   color: white;
   font-weight: 500;
-}
-
-.shelter-search-input::placeholder {
-  color: #64748b;
 }
 
 .shelter-content {
@@ -149,15 +150,6 @@
   margin-bottom: 16px;
 }
 
-.shelter-subtitle {
-  color: #64748b;
-  font-size: 20px;
-  font-style: italic;
-  font-weight: 500;
-  max-width: 600px;
-  line-height: 1.4;
-}
-
 /* Cards */
 .shelter-cards {
   display: grid;
@@ -171,29 +163,14 @@
   border-radius: 48px;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  transition: all 0.3s ease;
+  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.4s cubic-bezier(0.2, 0, 0.2, 1);
   position: relative;
+  will-change: transform;
 }
 
 .shelter-card:hover {
-  transform: translateY(-8px);
-}
-
-.shelter-card-gradient-1 {
-  background: linear-gradient(135deg, #10b981, #14b8a6);
-}
-
-.shelter-card-gradient-2 {
-  background: linear-gradient(135deg, #3b82f6, #6366f1);
-}
-
-.shelter-card-gradient-3 {
-  background: linear-gradient(135deg, #f97316, #f59e0b);
-}
-
-.shelter-card-gradient-4 {
-  background: linear-gradient(135deg, #a855f7, #ec4899);
+  transform: translateY(-8px) scale(1.02);
 }
 
 .shelter-card-content {
@@ -208,123 +185,39 @@
 
 .shelter-card-icon {
   padding: 16px;
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.15);
   border-radius: 16px;
   width: fit-content;
-  backdrop-filter: blur(8px);
-  box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.1);
-}
-
-.shelter-card-title {
-  font-size: 12px;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  opacity: 0.7;
-  margin-bottom: 4px;
-}
-
-.shelter-card-name {
-  font-size: 28px;
-  font-weight: 900;
-  font-style: italic;
-  text-transform: uppercase;
-  letter-spacing: -0.05em;
-  line-height: 1;
+  /* Removed expensive blur from small icon container */
+  box-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.05);
 }
 
 /* Login */
-.shelter-login-container {
-  min-height: 100vh;
-  background-color: #0b0f1a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  position: relative;
-  overflow: hidden;
-  color: #94a3b8;
-}
-
-.shelter-login-bg {
-  position: absolute;
-  top: -10%;
-  left: -10%;
-  width: 40%;
-  height: 40%;
-  background-color: rgba(16, 185, 129, 0.1);
-  filter: blur(120px);
-  border-radius: 50%;
-}
-
 .shelter-login-card {
   width: 100%;
   max-width: 448px;
-  background-color: rgba(30, 41, 59, 0.4);
+  background-color: rgba(30, 41, 59, 0.6);
   border: 1px solid #1e293b;
   padding: 40px;
   border-radius: 48px;
-  backdrop-filter: blur(16px);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
   position: relative;
   z-index: 10;
-  animation: fadeIn 0.7s ease-out, zoomIn 0.7s ease-out;
-}
-
-.shelter-login-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 40px;
-}
-
-.shelter-login-title {
-  font-size: 48px;
-  font-weight: 900;
-  color: white;
-  font-style: italic;
-  text-transform: uppercase;
-  letter-spacing: -0.05em;
-}
-
-.shelter-form {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.shelter-input-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.shelter-label {
-  font-size: 10px;
-  font-weight: 900;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-left: 16px;
+  animation: fadeIn 0.6s ease-out;
+  will-change: transform, opacity;
 }
 
 .shelter-input {
   width: 100%;
-  background-color: rgba(30, 41, 59, 0.5);
+  background-color: rgba(15, 23, 42, 0.6);
   border: 1px solid #1e293b;
   border-radius: 24px;
   padding: 16px 24px;
   color: white;
   outline: none;
-  transition: all 0.3s ease;
-}
-
-.shelter-input:focus {
-  border-color: #10b981;
-}
-
-.shelter-input::placeholder {
-  color: #64748b;
+  transition: border-color 0.2s ease;
 }
 
 .shelter-button {
@@ -337,14 +230,16 @@
   text-transform: uppercase;
   font-size: 12px;
   letter-spacing: 0.1em;
-  box-shadow: 0 25px 50px -12px rgba(16, 185, 129, 0.2);
-  transition: all 0.3s ease;
+  box-shadow: 0 12px 24px -8px rgba(16, 185, 129, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
   border: none;
+  will-change: transform;
 }
 
 .shelter-button:hover {
-  transform: scale(1.02);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 32px -10px rgba(16, 185, 129, 0.4);
 }
 
 /* SOS Button */
@@ -357,136 +252,51 @@
   font-size: 14px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  box-shadow: 0 25px 50px -12px rgba(220, 38, 38, 0.25);
+  box-shadow: 0 12px 20px -8px rgba(220, 38, 38, 0.3);
   border: none;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  will-change: transform;
 }
 
-.shelter-sos-button:hover {
-  background-color: #ef4444;
-  transform: scale(1.05);
-}
-
-/* Bell icon */
-.shelter-bell {
-  position: relative;
-  padding: 8px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.shelter-bell:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-}
-
-.shelter-bell-dot {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 8px;
-  height: 8px;
-  background-color: #10b981;
-  border-radius: 50%;
-  border: 2px solid #0b0f1a;
-}
-
-/* Header actions */
-.shelter-header-actions {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-/* Animations */
+/* Animations - Optimized with transform and will-change */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes breathingSync {
     0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.25); } /* Inhale - Expand */
+    50% { transform: scale(1.15); }
 }
 
 @keyframes visualizerScale {
-    0% { transform: scaleY(0.5); opacity: 0.5; }
+    0% { transform: scaleY(0.4); opacity: 0.6; }
     100% { transform: scaleY(1); opacity: 1; }
 }
 
-@keyframes zoomIn {
-  from { 
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to { 
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
 .shelter-fade-in {
-  animation-duration: 0.5s;
-  animation-fill-mode: both;
-  animation-name: fadeIn;
+  animation: fadeIn 0.4s ease-out both;
+  will-change: transform, opacity;
 }
 
-.shelter-zoom-in {
-  animation-duration: 0.5s;
-  animation-fill-mode: both;
-  animation-name: zoomIn;
-}
-
-/* Responsive */
+/* Responsive - Keep essential performance only */
 @media (max-width: 768px) {
-  .shelter-sidebar {
-    width: 80px;
-  }
-  
-  .shelter-logo-text {
-    display: none;
-  }
-  
-  .shelter-nav-item span {
-    display: none;
-  }
-  
-  .shelter-title {
-    font-size: 40px;
-  }
-  
-  .shelter-cards {
-    grid-template-columns: 1fr;
-  }
-  
   .shelter-header {
-    padding: 0 16px;
-  }
-  
-  .shelter-content {
-    padding: 16px;
+    backdrop-filter: none; /* Disable blur on mobile for massive FPS boost */
+    background-color: #0b0f1a;
   }
 }
 
-/* 3D Utilities for Flipping Sidebar */
-.perspective-1000 {
-  perspective: 1000px;
+/* 3D Utilities */
+.backface-hidden {
+  backface-visibility: hidden !important;
+  -webkit-backface-visibility: hidden !important;
+  transform: translateZ(0); /* Force GPU */
 }
 
 .preserve-3d {
   transform-style: preserve-3d;
+  will-change: transform;
 }
 
-.backface-hidden {
-  backface-visibility: hidden !important;
-  -webkit-backface-visibility: hidden !important;
-}
-
-.rotate-y-180 {
-  transform: rotateY(180deg);
-}
-
-.robust-rounded-20 {
-  border-radius: 20px;
-}

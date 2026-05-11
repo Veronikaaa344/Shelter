@@ -11,6 +11,7 @@ import scenarioRoutes from './routes/scenarios.js';
 import statsRouter from './routes/stats.js';
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
+import diagnosticRoutes from "./routes/diagnostic.js";
 
 const app = express();
 
@@ -88,6 +89,7 @@ app.use("/api/materials", materialRoutes);
 app.use("/api/scenarios", scenarioRoutes);
 app.use("/api/stats", statsRouter);
 app.use("/api/users", userRoutes);
+app.use("/api/diagnostic", diagnosticRoutes);
 
 // Health check endpoint for Vercel
 app.get("/api/health", async (req, res) => {

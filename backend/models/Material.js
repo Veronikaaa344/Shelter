@@ -11,6 +11,7 @@ const MaterialSchema = new Schema({
 	type: { type: String, enum: ["text", "video", "audio"], default: "text" },
 	icon: { type: String, default: "📖" },
 	image: { type: String }, // URL зображення для карточки
+	url: { type: String },   // URL для відео або аудіо
 	content: { type: String, required: true },
 	duration: { type: String, default: "5 хв" },
 });

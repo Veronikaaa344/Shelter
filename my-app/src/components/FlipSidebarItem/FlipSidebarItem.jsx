@@ -25,7 +25,19 @@ const FlipSidebarItem = ({
     onClickAction = () => {}, 
     onBackAction = () => {} 
 }) => {
-  const isFlipped = isSpecialMode;
+  const [actuallyFlipped, setActuallyFlipped] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isSpecialMode) {
+      // Delay slightly to ensure mount happens before animation
+      const timer = setTimeout(() => setActuallyFlipped(true), 100);
+      return () => clearTimeout(timer);
+    } else {
+      setActuallyFlipped(false);
+    }
+  }, [isSpecialMode]);
+
+  const isFlipped = actuallyFlipped;
   const isActive = currentView === id && !isSpecialMode;
 
   // Stagger the flip animation based on index
@@ -39,7 +51,8 @@ const FlipSidebarItem = ({
     marginBottom: isFlipped && !isDashboard ? '0px' : '12px',
     pointerEvents: isFlipped && !isDashboard ? 'none' : 'auto',
     position: 'relative',
-    zIndex: 10 - index
+    zIndex: 10 - index,
+    willChange: 'height, opacity, margin-bottom'
   };
 
   const innerStyle = {
@@ -48,7 +61,8 @@ const FlipSidebarItem = ({
     height: '56px',
     transformStyle: 'preserve-3d',
     transition: `transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${baseDelay}s`,
-    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
+    transform: isFlipped ? 'rotateY(180deg) translateZ(0)' : 'rotateY(0deg) translateZ(0)',
+    willChange: 'transform'
   };
 
   const faceStyle = {
@@ -57,11 +71,12 @@ const FlipSidebarItem = ({
     height: '100%',
     backfaceVisibility: 'hidden',
     WebkitBackfaceVisibility: 'hidden',
+    transform: 'translateZ(0)'
   };
 
   const backFaceStyle = {
     ...faceStyle,
-    transform: 'rotateY(180deg)'
+    transform: 'rotateY(180deg) translateZ(0)'
   };
 
   return (

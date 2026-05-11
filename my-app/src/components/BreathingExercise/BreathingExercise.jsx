@@ -81,13 +81,6 @@ const BreathingExercise = ({
 
     return (
         <div className="fixed inset-0 z-[100] bg-[#070a12] flex flex-col items-center justify-center overflow-hidden animate-in fade-in duration-500">
-            {/* Ambient Background Elements */}
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-[800px] h-[800px] rounded-full border border-emerald-500/5 animate-pulse" />
-                <div className="absolute w-[600px] h-[600px] rounded-full border border-emerald-500/5" style={{ animationDelay: '1s' }} />
-                <div className="absolute w-[400px] h-[400px] rounded-full border border-emerald-500/10" />
-            </div>
-
             {/* Top Bar */}
             <div className="absolute top-8 left-8 right-8 flex items-center justify-between z-10">
                 <button
@@ -110,53 +103,33 @@ const BreathingExercise = ({
                 </div>
 
                 {/* Breathing Circle Container */}
-                <div className="relative flex items-center justify-center w-80 h-80">
-                    {/* Animated Glow Overlay */}
+                <div className="relative flex items-center justify-center w-80 h-80 my-8">
+                    {/* Animated Breathing Circle (Background) */}
                     <div
-                        className="absolute inset-0 rounded-full transition-all ease-in-out"
+                        className="absolute rounded-full transition-all ease-in-out"
                         style={{
-                            background: `radial-gradient(circle, ${phase.color} 0%, transparent 70%)`,
-                            transform: `scale(${scale * 1.2})`,
-                            transitionDuration: `${phase.duration * 1000}ms`,
-                        }}
-                    />
-
-                    {/* Main Circle Component */}
-                    <div
-                        className="relative w-56 h-56 rounded-full flex flex-col items-center justify-center transition-all ease-in-out"
-                        style={{
-                            background: 'rgba(16,185,129,0.08)',
-                            border: '2px solid rgba(16,185,129,0.3)',
-                            boxShadow: isActive ? `0 0 60px ${phase.color}` : 'none',
+                            width: '260px',
+                            height: '260px',
+                            background: 'radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 80%)',
+                            border: '2px solid rgba(16,185,129,0.4)',
+                            boxShadow: isActive ? `0 0 80px ${phase.color}` : 'none',
                             transform: `scale(${scale})`,
-                            transitionDuration: `${phase.duration * 1000}ms`,
+                            transitionDuration: isActive ? `${phase.duration * 1000}ms` : '300ms',
                         }}
-                    >
-                        <Wind size={28} className="text-emerald-400 mb-2 opacity-60" />
-                        <span className="text-6xl font-black text-white italic leading-none">{seconds}</span>
+                    ></div>
+
+                    {/* Static Text Container */}
+                    <div className="relative z-10 flex flex-col items-center justify-center w-64 h-64 rounded-full bg-[#0b0f1a]/40 border border-emerald-500/10 backdrop-blur-sm shadow-2xl">
+                        <Wind size={36} className="text-emerald-400 mb-4 opacity-80" />
+                        <span className="text-[100px] font-black text-white italic leading-none drop-shadow-2xl">{seconds}</span>
                         <span
                             key={phaseIndex}
-                            className="text-sm font-black text-emerald-400 uppercase tracking-[0.2em] mt-2"
+                            className="text-lg font-black text-emerald-400 uppercase tracking-[0.2em] mt-2"
                             style={{ animation: 'fadeUp 0.4s ease-out' }}
                         >
                             {phase.label}
                         </span>
                     </div>
-
-                    {/* Circular Progress Path */}
-                    <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 320 320">
-                        <circle cx="160" cy="160" r="150" fill="none" stroke="rgba(16,185,129,0.05)" strokeWidth="2" />
-                        <circle
-                            cx="160" cy="160" r="150"
-                            fill="none"
-                            stroke="rgba(16,185,129,0.4)"
-                            strokeWidth="2"
-                            strokeDasharray={`${2 * Math.PI * 150}`}
-                            strokeDashoffset={`${2 * Math.PI * 150 * (1 - progress / 100)}`}
-                            strokeLinecap="round"
-                            style={{ transition: isActive ? 'stroke-dashoffset 1s linear' : 'none' }}
-                        />
-                    </svg>
                 </div>
 
                 {/* Instructional Hint */}
