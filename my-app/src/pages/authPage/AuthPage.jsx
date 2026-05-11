@@ -14,7 +14,7 @@ export default function AuthPage() {
 
     const handleSosClick = () => {
         setIsLeaving(true);
-        setTimeout(() => navigate('/sos'), 600);
+        setTimeout(() => navigate('/main', { state: { showSOS: true } }), 600);
     };
 
     const handleSubmit = async (e) => {

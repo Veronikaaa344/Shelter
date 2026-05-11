@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   AlertCircle, BarChart3, Bell, BookOpen, ChevronLeft, ClipboardList,
   FileText, Headphones, Layout, Lightbulb, LogOut, PenLine, Search,
@@ -49,6 +49,7 @@ const resilienceHistory = [
 
 const ShelterAppComplete = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const isGuest = localStorage.getItem("dr_token") === "guest_mode";
   const [currentView, setCurrentView] = useState('home');
   const [visitedViews, setVisitedViews] = useState(['home']);
@@ -56,7 +57,7 @@ const ShelterAppComplete = () => {
   const [isSimulatorMode, setIsSimulatorMode] = useState(false);
   const [isFindDifferencesMode, setIsFindDifferencesMode] = useState(false);
   const [isSortingMode, setIsSortingMode] = useState(false);
-  const [showSOS, setShowSOS] = useState(false);
+  const [showSOS, setShowSOS] = useState(location.state?.showSOS || false);
   const [showSOSPhones, setShowSOSPhones] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [libraryFilter, setLibraryFilter] = useState('Всі');
