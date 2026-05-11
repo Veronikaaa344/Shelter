@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../api/api';
 import { ShieldCheck, Mail, Lock, User, ChevronLeft, Sparkles } from 'lucide-react';
+import HoldSOSButton from '../../components/HoldSOSButton/HoldSOSButton';
 
 export default function AuthPage() {
     const [isLogin, setIsLogin] = useState(true);
@@ -200,12 +201,9 @@ export default function AuthPage() {
 
                 {/* SOS */}
                 <div className="mt-8 text-center">
-                    <button
-                        onClick={handleSosClick}
-                        className="bg-rose-600 hover:bg-rose-500 text-white px-8 py-3 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-rose-900/40 transition-all transform hover:scale-105"
-                    >
+                    <HoldSOSButton onActivate={handleSosClick}>
                         SOS — Потрібна допомога
-                    </button>
+                    </HoldSOSButton>
                 </div>
             </div>
         </div>
