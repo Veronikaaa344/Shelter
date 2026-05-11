@@ -129,7 +129,7 @@ export default function MaterialPage() {
                         </div>
                         <div className="hidden lg:block text-left">
                             <p className="text-xs font-black text-white font-bold">{username}</p>
-                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Resilience: 50%</p>
+                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Стійкість: 50%</p>
                         </div>
                     </div>
                 </div>

@@ -41,7 +41,7 @@ const MainSidebar = React.memo(({
                     </div>
                     <div className="hidden lg:block text-left">
                         <p className="text-xs font-black text-white font-bold">{username}</p>
-                        <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Resilience: {resilience}%</p>
+                        <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Стійкість: {resilience}%</p>
                     </div>
                 </div>
                 {isGuest ? (
