@@ -6,7 +6,7 @@
   height: 100vh;
   background-color: #0b0f1a;
   color: #94a3b8;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  font-family: 'Comfortaa', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
   overflow: hidden;
   /* Use hardware acceleration for the whole app container */
   transform: translateZ(0);
@@ -46,7 +46,7 @@
   font-size: 24px;
   font-weight: 900;
   color: white;
-  font-style: italic;
+  font-family: 'Montserrat', sans-serif;
   text-transform: uppercase;
   letter-spacing: -0.025em;
 }
@@ -143,7 +143,7 @@
   font-size: 60px;
   font-weight: 900;
   color: white;
-  font-style: italic;
+  font-family: 'Montserrat', sans-serif;
   text-transform: uppercase;
   letter-spacing: -0.05em;
   line-height: 1;
@@ -244,7 +244,7 @@
 
 /* SOS Button */
 .shelter-sos-button {
-  background-color: #dc2626;
+  background-color: #D17A6A;
   color: white;
   padding: 12px 32px;
   border-radius: 16px;

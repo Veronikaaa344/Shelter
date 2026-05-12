@@ -148,8 +148,9 @@ const LibraryView = ({
     }, []);
 
     const handleMaterialClick = (material) => {
+      const mid = material.materialId || material.id || material._id;
       if (userId) {
-        api.recordMaterialView(userId, material.id)
+        api.recordMaterialView(userId, mid)
           .then(() => {
             if (userStats) {
               setUserStats({
@@ -163,7 +164,7 @@ const LibraryView = ({
           })
           .catch((err) => console.error('Error recording material view:', err));
       }
-      navigate(`/material/${material.id}`);
+      navigate(`/material/${mid}`);
     };
 
     return (

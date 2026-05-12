@@ -35,7 +35,9 @@ const QuestsView = ({
         let dayCounter = 1;
         
         // Фільтруємо матеріали за типом сторінки
+        // Фільтруємо матеріали за типом сторінки
         const filteredMaterials = materials.filter(m => {
+            if (m.type === 'dialogue' || m.materialId === 'anxiety-dialogue-1') return false; 
             if (pageType === "default") return m.category === "general";
             return m.category === pageType || m.category === "general";
         });
@@ -62,8 +64,7 @@ const QuestsView = ({
                     const typeLabels = {
                         'video': 'відео-сценарій',
                         'audio': 'аудіо-практика',
-                        'find-differences': 'тренажер уваги',
-                        'dialogue': 'симулятор'
+                        'sorting': 'тренажер'
                     };
                     questsList.push({
                         id: `exercise-${scenario._id || i}`,
@@ -102,7 +103,7 @@ const QuestsView = ({
                     title: material.title || `Матеріал дня ${dayCounter}`,
                     thought: thoughts[(dayCounter - 2) % thoughts.length],
                     task: `${material.type === 'video' ? 'відео' : material.type === 'audio' ? 'аудіо' : 'стаття'} • ${material.duration || "5 хв"}`,
-                    materialId: material._id,
+                    materialId: material?.materialId || material?._id,
                     questType: "material",
                     status: "locked"
                 });
@@ -191,7 +192,12 @@ const QuestsView = ({
 
     const handleQuestAction = (quest) => {
         if (quest.questType === "sorting") {
-            setSimulatorScenarioId(quest.scenarioId || "chaos-unloading");
+            const sortingScenarios = simulatorScenariosList.filter(s => s.type === "sorting");
+            const randomScenario = sortingScenarios.length > 0 
+                ? sortingScenarios[Math.floor(Math.random() * sortingScenarios.length)]
+                : null;
+            
+            setSimulatorScenarioId(randomScenario?.scenarioId || randomScenario?._id || "chaos-unloading");
             setIsSortingMode(true);
         } else if (quest.questType === "exercise") {
             if (quest.type === "find-differences" || quest.type === "findDifferences") {

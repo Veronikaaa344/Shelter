@@ -106,12 +106,15 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
             }, 500);
 
             if (sortedCount + 1 >= totalItems) {
+                // ПЕРЕВІРКА: щоб не відправляти декілька разів
+                if (showCompletionMenu) return; 
+
                 const userId = localStorage.getItem("userId");
                 if (userId) {
-                    api.updateResilience(userId, 15, "exercise_complete", scenario?.name || "Сортування");
-                    api.completeScenario(id, 100);
+                    api.updateResilience(userId, 4, "exercise_complete", scenario?.name || "Сортування");
                 }
-                setTimeout(() => setShowCompletionMenu(true), 800);
+                api.completeScenario(id, 100);
+                setShowCompletionMenu(true);
             }
         } else {
             // Wrong

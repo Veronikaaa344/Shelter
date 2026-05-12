@@ -1,6 +1,7 @@
 import { Schema, model } from "mongoose";
 
 const MaterialSchema = new Schema({
+	materialId: { type: String, required: true, unique: true },
 	title: { type: String, required: true },
 	desc: { type: String, required: true },
 	category: {

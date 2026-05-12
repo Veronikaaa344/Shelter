@@ -73,20 +73,13 @@ const HomeView = ({
       { title: "Діагностика", cat: "Тестування", icon: <Brain/>, color: "from-blue-500 to-blue-600", onClick: () => navigateTo('testing') },
       { title: "Поради", cat: "Корисні поради", icon: <Lightbulb/>, color: "from-orange-500 to-orange-600", onClick: () => navigateTo('advice') },
       { title: "Щоденник", cat: "Рефлексія", icon: <PenLine/>, color: "from-purple-500 to-purple-600", onClick: () => navigateTo('diary') },
-      { title: "Чат-тренування", cat: "Практика", icon: <MessageCircle/>, color: "from-rose-500 to-rose-600", onClick: () => navigateTo('chat') },
-      { title: "Відмінності", cat: "Практика", icon: <Search/>, color: "from-teal-500 to-teal-600", onClick: () => { 
-          const diffScenario = simulatorScenariosList.find(s => s.type === 'findDifferences');
-          if (diffScenario) setSimulatorScenarioId(diffScenario._id);
-          setIsFindDifferencesMode(true); 
-      } },
-      { title: "Сортування", cat: "Практика", icon: <Layout/>, color: "from-amber-500 to-amber-600", onClick: () => { 
-          const sortScenario = simulatorScenariosList.find(s => s.type === 'sorting');
-          if (sortScenario) setSimulatorScenarioId(sortScenario._id);
-          setIsSortingMode(true); 
-      } }
+      { title: "Чат-тренування", cat: "Практика", icon: <MessageCircle/>, color: "from-rose-500 to-rose-600", onClick: () => navigateTo('chat') }
     ];
 
-    const simulatorCards = simulatorScenariosList.map((scenario, i) => {
+    const simulatorCards = simulatorScenariosList
+      .filter(s => s.type !== 'find-differences' && s.type !== 'findDifferences' && s.type !== 'dialogue')
+      .filter(s => s.scenarioId !== 'anxiety-dialogue-1')
+      .map((scenario, i) => {
       const colors = ["from-indigo-500 to-indigo-600", "from-violet-500 to-violet-600", "from-fuchsia-500 to-fuchsia-600", "from-cyan-500 to-cyan-600"];
       return {
         id: scenario._id,
@@ -95,11 +88,9 @@ const HomeView = ({
         icon: <Activity/>,
         color: colors[i % colors.length],
         onClick: () => {
-          setSimulatorScenarioId(scenario._id);
+          setSimulatorScenarioId(scenario.scenarioId || scenario._id);
           if (scenario.type === 'sorting') {
               setIsSortingMode(true);
-          } else if (scenario.type === 'find-differences' || scenario.type === 'findDifferences') {
-              setIsFindDifferencesMode(true);
           } else {
               setIsSimulatorMode(true);
           }
@@ -121,11 +112,6 @@ const HomeView = ({
         if (resilience >= 40 && resilience <= 70) {
             return [
                 { title: "Щоденник", cat: "РЕФЛЕКСІЯ", icon: <PenLine/>, color: "from-purple-500 to-purple-600", onClick: () => navigateTo('diary') },
-                { title: "Відмінності", cat: "ЛЕГКА ПРАКТИКА", icon: <Search/>, color: "from-teal-500 to-teal-600", onClick: () => { 
-                    const diffScenario = simulatorScenariosList.find(s => s.type === 'findDifferences');
-                    if (diffScenario) setSimulatorScenarioId(diffScenario._id);
-                    setIsFindDifferencesMode(true); 
-                } },
                 { title: "Поради", cat: "КОРИСНО", icon: <Lightbulb/>, color: "from-orange-500 to-orange-600", onClick: () => navigateTo('advice') },
                 ...baseCards.filter(c => c.title === "Дихання"),
                 ...simulatorCards.slice(0, 2)

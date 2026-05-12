@@ -27,7 +27,14 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
 	try {
 		console.log(`[${new Date().toISOString()}] Fetching material by ID: ${req.params.id}`);
-		const material = await Material.findById(req.params.id);
+		let material;
+		if (mongoose.Types.ObjectId.isValid(req.params.id)) {
+			material = await Material.findById(req.params.id);
+		}
+		if (!material) {
+			material = await Material.findOne({ materialId: req.params.id });
+		}
+
 		if (!material) {
 			console.log(`[${new Date().toISOString()}] ❌ Material not found: ${req.params.id}`);
 			return res.status(404).json({ message: "Матеріал не знайдено" });

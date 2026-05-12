@@ -374,7 +374,7 @@ const ShelterAppComplete = () => {
                 <SimulatorPage
                   isEmbedded={true}
                   embeddedId={simulatorScenarioId}
-                  onBack={() => setIsSimulatorMode(false)}
+                  onBack={() => { setIsSimulatorMode(false); refreshStats(); }}
                   applyResilienceChange={applyResilienceChange}
                 />
               </div>
@@ -385,7 +385,7 @@ const ShelterAppComplete = () => {
                 <UpdatedFindDifferencesPage
                   isEmbedded={true}
                   embeddedId={simulatorScenarioId}
-                  onBack={() => setIsFindDifferencesMode(false)}
+                  onBack={() => { setIsFindDifferencesMode(false); refreshStats(); }}
                   applyResilienceChange={applyResilienceChange}
                 />
               </div>
@@ -396,7 +396,7 @@ const ShelterAppComplete = () => {
                 <UpdatedSortingPage
                   isEmbedded={true}
                   embeddedId={simulatorScenarioId}
-                  onBack={() => setIsSortingMode(false)}
+                  onBack={() => { setIsSortingMode(false); refreshStats(); }}
                   applyResilienceChange={applyResilienceChange}
                 />
               </div>

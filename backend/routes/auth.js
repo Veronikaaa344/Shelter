@@ -598,7 +598,7 @@ router.post("/migrate-guest", async (req, res) => {
 // Get user profile with gamification data
 router.get("/profile", async (req, res) => {
 	try {
-		const token = req.cookies?.dr_token;
+		const token = req.cookies?.dr_token || req.header("x-auth-token");
 		if (!token) {
 			return res.status(401).json({ message: "Not authenticated" });
 		}
@@ -632,7 +632,7 @@ router.get("/profile", async (req, res) => {
 // Update streak and check for badges
 router.post("/activity", async (req, res) => {
 	try {
-		const token = req.cookies?.dr_token;
+		const token = req.cookies?.dr_token || req.header("x-auth-token");
 		if (!token) {
 			return res.status(401).json({ message: "Not authenticated" });
 		}
@@ -716,6 +716,7 @@ router.post("/activity", async (req, res) => {
 router.post("/complete-scenario", async (req, res) => {
 	try {
         const token = req.cookies?.dr_token || req.header("x-auth-token");
+        console.log(`[AUTH] Complete Scenario request received. Token present: ${!!token}, Scenario: ${req.body.scenarioId}`);
         const guestCookie = req.cookies?.dr_guest;
         const { scenarioId, score } = req.body;
 
@@ -775,11 +776,26 @@ router.post("/complete-scenario", async (req, res) => {
 			}
 	
 			// Add to completed
-			const alreadyCompleted = user.completedScenarios.find(s => s.scenarioId.toString() === scenarioId);
+			const alreadyCompleted = user.completedScenarios.some(s => 
+				s.scenarioId === scenarioId || (s._id && s._id.toString() === scenarioId)
+			);
+			
 			if (!alreadyCompleted) {
-				user.completedScenarios.push({ scenarioId, score, date: new Date() });
+				user.completedScenarios.push({ 
+					scenarioId: scenarioId, 
+					score: score, 
+					completedAt: new Date() 
+				});
+				console.log(`[AUTH] Added scenario ${scenarioId} to completed list for user ${user.username}`);
 			}
 	
+			let scenario;
+			if (mongoose.Types.ObjectId.isValid(scenarioId)) {
+				scenario = await Scenario.findById(scenarioId);
+			} else {
+				scenario = await Scenario.findOne({ scenarioId: scenarioId });
+			}
+
 			// Sync with UserStats model for consistency in history/charts
 			try {
 				const UserStats = (await import('../models/UserStats.js')).default;
@@ -787,12 +803,6 @@ router.post("/complete-scenario", async (req, res) => {
 				if (!userStats) userStats = new UserStats({ userId: user._id });
 				
 				const resilienceChange = score >= 50 ? 4 : -4;
-				let scenario;
-				if (mongoose.Types.ObjectId.isValid(scenarioId)) {
-					scenario = await Scenario.findById(scenarioId);
-				} else {
-					scenario = await Scenario.findOne({ scenarioId: scenarioId });
-				}
 				
 				userStats.resilience.current = Math.max(0, Math.min(100, userStats.resilience.current + resilienceChange));
 				userStats.resilience.history.push({ value: userStats.resilience.current, date: new Date() });
@@ -835,7 +845,6 @@ router.post("/complete-scenario", async (req, res) => {
 			}
 	
 			// Progressive unlocking - unlock next scenario based on category
-			const scenario = await Scenario.findById(scenarioId);
 			if (scenario && scenario.nextUnlock) {
 				if (!user.unlockedScenarios.includes(scenario.nextUnlock)) {
 					user.unlockedScenarios.push(scenario.nextUnlock);
