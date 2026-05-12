@@ -511,7 +511,7 @@ const ShelterAppComplete = () => {
         </footer>
       </main>
 
-      {/* Character Companion - Adaptive Support Module */}
+      {/* Character Companion - Adaptive Support Module (Temporarily disabled)
       <CharacterCompanion
         resilience={resilience}
         auraColor={resilience < 35 ? 'rose' : resilience < 60 ? 'amber' : 'emerald'}
@@ -523,6 +523,7 @@ const ShelterAppComplete = () => {
           if (action === 'sos') setShowSOS(true);
         }}
       />
+      */}
 
       {showSOS && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 animate-in fade-in duration-300">
