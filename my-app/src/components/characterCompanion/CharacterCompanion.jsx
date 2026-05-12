@@ -135,7 +135,8 @@ const CharacterCompanion = forwardRef(({
 	pageType = 'default',
 	auraColor = 'emerald', // emerald, amber, rose, blue, purple
 	isBreathing = false,
-	forceSpeakMode = null
+	forceSpeakMode = null,
+	onAction
 }, ref) => {
 	// Expose method to trigger achievement praise
 	useImperativeHandle(ref, () => ({
@@ -232,6 +233,15 @@ const CharacterCompanion = forwardRef(({
 		<div className={`character-companion ${position} ${isSpeaking ? 'speaking' : ''} ${isBreathing ? 'breathing-sync' : ''}`}>
 			<div className="character-bubble">
 				<p className="character-text">{currentPhrase}</p>
+				
+				{/* Personalized exercises block when resilience is low */}
+				{(resilience < 35 || forceSpeakMode === 'main-hints') && (
+					<div className="character-quick-actions">
+						<button onClick={() => onAction && onAction('breathing')} className="qa-btn">🫁 Дихання</button>
+						<button onClick={() => onAction && onAction('sorting')} className="qa-btn">🧩 Сортування</button>
+						<button onClick={() => onAction && onAction('sos')} className="qa-btn sos">🆘 SOS</button>
+					</div>
+				)}
 			</div>
 			<div className={`character-avatar aura-${auraColor}`}>
 				<img

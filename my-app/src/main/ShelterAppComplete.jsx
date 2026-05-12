@@ -511,13 +511,18 @@ const ShelterAppComplete = () => {
         </footer>
       </main>
 
-      {/* Character Companion (Temporarily disabled)
+      {/* Character Companion - Adaptive Support Module */}
       <CharacterCompanion
         resilience={resilience}
-        auraColor={resilience > 70 ? 'emerald' : resilience > 40 ? 'amber' : 'rose'}
+        auraColor={resilience < 35 ? 'rose' : resilience < 60 ? 'amber' : 'emerald'}
         context={currentView}
+        forceSpeakMode={showStabilizationHint ? 'main-hints' : null}
+        onAction={(action) => {
+          if (action === 'breathing') navigateTo('practice');
+          if (action === 'sorting') { setSimulatorScenarioId('chaos-unloading'); setIsSortingMode(true); }
+          if (action === 'sos') setShowSOS(true);
+        }}
       />
-      */}
 
       {showSOS && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 animate-in fade-in duration-300">
