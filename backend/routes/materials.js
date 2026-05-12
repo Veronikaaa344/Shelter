@@ -5,27 +5,14 @@ const router = Router();
 
 router.get("/", async (req, res) => {
 	try {
-		console.log(`[${new Date().toISOString()}] Fetching materials...`);
-		console.log(`[${new Date().toISOString()}] MongoDB connection state:`, mongoose.connection.readyState);
-		console.log(`[${new Date().toISOString()}] MongoDB connected:`, mongoose.connection.readyState === 1);
-
 		const startTime = Date.now();
-
-		// Додаємо тайм-аут для запиту
 		const materials = await Material.find()
-			.maxTimeMS(30000) // 30 секунд тайм-аут
-			.lean() // швидший запит без Mongoose документів
+			.maxTimeMS(30000) 
+			.lean() 
 			.exec();
 
 		const duration = Date.now() - startTime;
-
-		console.log(`[${new Date().toISOString()}] ✅ Materials found:`, materials.length, `(${duration}ms)`);
-		console.log(`[${new Date().toISOString()}] Materials data:`, JSON.stringify(materials.map(m => ({
-			_id: m._id,
-			title: m.title,
-			type: m.type,
-			content_length: m.content?.length || 0
-		})), null, 2));
+		console.log(`[${new Date().toISOString()}] ✅ Materials fetched: ${materials.length} (${duration}ms)`);
 
 		res.json(materials);
 	} catch (err) {

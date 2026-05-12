@@ -5,7 +5,7 @@ const ScenarioSchema = new Schema({
 	name: { type: String, required: true },
 	type: {
 		type: String,
-		enum: ["dialogue", "find-differences", "video", "audio"],
+		enum: ["dialogue", "find-differences", "video", "audio", "sorting"],
 		default: "dialogue",
 	},
 	category: {
@@ -30,6 +30,7 @@ const ScenarioSchema = new Schema({
 			radius: { type: Number },
 		}],
 	}],
+	content: { type: Schema.Types.Mixed },
 });
 
 export default model("Scenario", ScenarioSchema);

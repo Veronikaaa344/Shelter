@@ -6,27 +6,14 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
 	try {
-		console.log(`[${new Date().toISOString()}] Fetching scenarios...`);
-		console.log(`[${new Date().toISOString()}] MongoDB connection state:`, mongoose.connection.readyState);
-		console.log(`[${new Date().toISOString()}] MongoDB connected:`, mongoose.connection.readyState === 1);
-
 		const startTime = Date.now();
-
-		// Додаємо тайм-аут для запиту
 		const scenarios = await Scenario.find()
-			.maxTimeMS(30000) // 30 секунд тайм-аут
-			.lean() // швидший запит без Mongoose документів
+			.maxTimeMS(30000) 
+			.lean() 
 			.exec();
 
 		const duration = Date.now() - startTime;
-
-		console.log(`[${new Date().toISOString()}] ✅ Scenarios found:`, scenarios.length, `(${duration}ms)`);
-		console.log(`[${new Date().toISOString()}] Scenarios data:`, JSON.stringify(scenarios.map(s => ({
-			_id: s._id,
-			scenarioId: s.scenarioId,
-			name: s.name,
-			type: s.type
-		})), null, 2));
+		console.log(`[${new Date().toISOString()}] ✅ Scenarios fetched: ${scenarios.length} (${duration}ms)`);
 
 		res.json(scenarios);
 	} catch (err) {
@@ -40,7 +27,17 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
 	try {
-		const scenario = await Scenario.findOne({ scenarioId: req.params.id });
+		const { id } = req.params;
+		let scenario;
+		
+		// Спробуємо знайти за scenarioId (як у квестах)
+		scenario = await Scenario.findOne({ scenarioId: id });
+		
+		// Якщо не знайшли і ID схожий на MongoDB ObjectId, спробуємо знайти за ним
+		if (!scenario && mongoose.Types.ObjectId.isValid(id)) {
+			scenario = await Scenario.findById(id);
+		}
+
 		if (!scenario)
 			return res.status(404).json({ message: "Сценарій не знайдено" });
 		res.json(scenario);

@@ -80,8 +80,8 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
         setHistory([...newHistory, { role: "bot", text: nextNode.text }]);
         setCurrentNodeId(nextId);
 
-        if (nextNode.isFinal) {
-            finishSession([...newHistory, { role: "bot", text: nextNode.text }], currentTotalScore, currentTotalChoices);
+        if (nextNode.options && nextNode.options.length === 0 || nextNode.isFinal || nextNode.score !== undefined) {
+            finishSession([...newHistory, { role: "bot", text: nextNode.text }], currentTotalScore, currentTotalChoices, nextNode.score);
         } else {
             setProgress((prev) => Math.min(prev + 15, 90));
         }
@@ -104,13 +104,16 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
         }
     };
 
-    const finishSession = (finalHistory, totalPoints, totalChoices) => {
+    const finishSession = (finalHistory, totalPoints, totalChoices, forcedScore) => {
         setHistory(finalHistory);
         setIsFinished(true);
         setProgress(100);
         
-        const score = totalChoices > 0 ? Math.round((totalPoints / totalChoices) * 100) : 0;
+        const calculatedScore = totalChoices > 0 ? Math.round((totalPoints / totalChoices) * 100) : 0;
+        const score = forcedScore !== undefined ? forcedScore : calculatedScore;
         
+        setSessionScore(score); // Store the final actual score
+
         const isSuccess = score >= 50;
         const finalImpact = isSuccess ? 4 : -4;
         
@@ -197,11 +200,24 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
                                 <button className="dr-choice-btn" onClick={() => handleChoice('continue')}>Продовжити цей</button>
                             </>
                         ) : (
-                            currentNode?.options?.map((opt, idx) => (
-                                <button key={idx} className="dr-choice-btn" onClick={() => handleOption(opt)}>
+                            currentNode?.options?.map((opt, idx) => {
+                            const colors = ['#4d7cfe', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+                            const btnColor = opt.next === 'explosion' || opt.next === 'angry_end' ? '#ef4444' : colors[idx % colors.length];
+                            return (
+                                <button 
+                                    key={idx} 
+                                    className="dr-choice-btn" 
+                                    style={{ 
+                                        '--tile-color': btnColor,
+                                        borderColor: btnColor,
+                                        color: btnColor
+                                    }}
+                                    onClick={() => handleOption(opt)}
+                                >
                                     {opt.text}
                                 </button>
-                            ))
+                            );
+                        })
                         )
                     )}
                 </div>
@@ -213,12 +229,26 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
             {showCompletionMenu && (
                 <div className="dr-completion-overlay">
                     <div className="dr-completion-menu">
-                        <h2>🌟 Вправа завершена!</h2>
-                        <p className="dr-card-description">Кожна практика робить тебе сильнішим.</p>
+                        <h2>{sessionScore < 30 ? "😟 Потрібна пауза" : "🌟 Вправа завершена!"}</h2>
+                        <p className="dr-card-description">
+                            {sessionScore < 30 
+                                ? "Схоже, цей діалог був складним. Давай відновимо спокій?" 
+                                : "Кожна практика робить тебе сильнішим."}
+                        </p>
                         <div className="dr-completion-buttons grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
-                            <button className="dr-completion-btn secondary" onClick={() => isEmbedded && onBack ? onBack() : navigate("/exercises")}>Вийти</button>
-                            <button className="dr-completion-btn primary pulse" onClick={() => navigate("/main")}>Прогрес</button>
-                            <button className="dr-completion-btn secondary" onClick={() => window.location.reload()}>Ще раз</button>
+                            {sessionScore < 30 ? (
+                                <>
+                                    <button className="dr-completion-btn primary pulse" onClick={() => navigate("/breathing")}>Заспокоїтися</button>
+                                    <button className="dr-completion-btn secondary" onClick={() => navigate("/main")}>На головну</button>
+                                    <button className="dr-completion-btn secondary" onClick={() => window.location.reload()}>Спробувати ще раз</button>
+                                </>
+                            ) : (
+                                <>
+                                    <button className="dr-completion-btn secondary" onClick={() => isEmbedded && onBack ? onBack() : navigate("/exercises")}>Вийти</button>
+                                    <button className="dr-completion-btn primary pulse" onClick={() => navigate("/main")}>Прогрес</button>
+                                    <button className="dr-completion-btn secondary" onClick={() => window.location.reload()}>Ще раз</button>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

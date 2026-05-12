@@ -40,19 +40,18 @@ const QuestsView = ({
             return m.category === pageType || m.category === "general";
         });
 
-        const maxLength = Math.max(scenarios.length, filteredMaterials.length);
+        const maxLength = Math.max(scenarios.length, filteredMaterials.length, 5); // Minimum 5 days
         
         for (let i = 0; i < maxLength; i++) {
-            // Додаємо вправу
-            if (i < scenarios.length) {
+            // 1. Сценарій (Вправа/Тренажер) - Always add sorting quest for Day 1
+            if (i < scenarios.length || (i === 0 && dayCounter === 1)) {
                 if (dayCounter === 1) {
-                    // Перше завдання - сортування
                     questsList.push({
                         id: `sorting-day-1`,
                         day: dayCounter++,
-                        title: "Сортування емоцій",
+                        title: "Сортування хаосу",
                         thought: "Емоції — це хвилі. Ти не можеш їх зупинити, але можеш навчитися серфити.",
-                        task: "5 хв",
+                        task: "тренажер • 5 хв",
                         scenarioId: "chaos-unloading",
                         type: "sorting",
                         questType: "sorting",
@@ -60,12 +59,18 @@ const QuestsView = ({
                     });
                 } else {
                     const scenario = scenarios[i];
+                    const typeLabels = {
+                        'video': 'відео-сценарій',
+                        'audio': 'аудіо-практика',
+                        'find-differences': 'тренажер уваги',
+                        'dialogue': 'симулятор'
+                    };
                     questsList.push({
                         id: `exercise-${scenario._id || i}`,
                         day: dayCounter++,
                         title: scenario.name || scenario.title || `Вправа дня ${dayCounter}`,
                         thought: thoughts[(dayCounter - 2) % thoughts.length],
-                        task: `${scenario.duration || "5"} хв`,
+                        task: `${typeLabels[scenario.type] || 'вправа'} • ${scenario.duration || "5"} хв`,
                         scenarioId: scenario.scenarioId || scenario._id,
                         type: scenario.type,
                         questType: "exercise",
@@ -74,7 +79,21 @@ const QuestsView = ({
                 }
             }
             
-            // Додаємо матеріал
+            // 2. Спеціальне завдання (Щоденник/Дихання) кожні 2 дні
+            if (dayCounter % 3 === 0) {
+                const isDiary = i % 2 === 0;
+                questsList.push({
+                    id: isDiary ? `task-diary-${i}` : `task-breath-${i}`,
+                    day: dayCounter++,
+                    title: isDiary ? "Рефлексія дня" : "Хвилина спокою",
+                    thought: isDiary ? "Записане слово має силу звільнення." : "Твій подих — твій якір.",
+                    task: isDiary ? "запис у щоденнику" : "дихальна вправа",
+                    questType: isDiary ? "diary_task" : "breathing_task",
+                    status: "locked"
+                });
+            }
+
+            // 3. Матеріал (Стаття/Медіа)
             if (i < filteredMaterials.length) {
                 const material = filteredMaterials[i];
                 questsList.push({
@@ -82,7 +101,7 @@ const QuestsView = ({
                     day: dayCounter++,
                     title: material.title || `Матеріал дня ${dayCounter}`,
                     thought: thoughts[(dayCounter - 2) % thoughts.length],
-                    task: `${material.type || "стаття"} • ${material.duration || "5 хв"}`,
+                    task: `${material.type === 'video' ? 'відео' : material.type === 'audio' ? 'аудіо' : 'стаття'} • ${material.duration || "5 хв"}`,
                     materialId: material._id,
                     questType: "material",
                     status: "locked"
@@ -93,7 +112,7 @@ const QuestsView = ({
         return questsList;
     }, [pageType, thoughts]);
 
-    const updateQuestStatuses = useCallback((compScenarios, compMaterials, initialQuests) => {
+    const updateQuestStatuses = useCallback((compScenarios, compMaterials, initialQuests, profile) => {
         const updatedQuests = [...initialQuests];
         let foundCurrent = false;
 
@@ -108,14 +127,23 @@ const QuestsView = ({
                     (c._id && c._id === quest.scenarioId)
                 );
             } else if (quest.questType === "material") {
-                // Match by materialId or _id
-                isCompleted = compMaterials.some(m => 
-                    (m.materialId && m.materialId === quest.materialId) || 
-                    (m.id && m.id === quest.materialId) ||
-                    (m._id && m._id === quest.materialId)
-                );
+                // Match by materialId or _id (handles both string and object formats)
+                isCompleted = compMaterials.some(m => {
+                    if (typeof m === 'string') return m === quest.materialId;
+                    return (m.materialId && m.materialId === quest.materialId) || 
+                           (m.id && m.id === quest.materialId) ||
+                           (m._id && m._id === quest.materialId);
+                });
             } else if (quest.questType === "sorting") {
-                isCompleted = compScenarios.some(c => c.type === "sorting" || c.scenarioId === "chaos-unloading");
+                const sortingScenario = simulatorScenariosList.find(s => s.scenarioId === "chaos-unloading" || s.type === "sorting");
+                isCompleted = compScenarios.some(c => 
+                    c.scenarioId === "chaos-unloading" || 
+                    (sortingScenario && (c.scenarioId === sortingScenario._id || c.scenarioId === sortingScenario.scenarioId))
+                );
+            } else if (quest.questType === "diary_task") {
+                isCompleted = profile.diaryEntries && profile.diaryEntries.length > 0;
+            } else if (quest.questType === "breathing_task") {
+                isCompleted = (profile.history && profile.history.some(h => h.activityType === 'breathing')) || (resilience > 70);
             }
 
             if (isCompleted) {
@@ -140,13 +168,14 @@ const QuestsView = ({
         Promise.all([
             api.getScenarios().catch(() => []),
             api.getMaterials().catch(() => []),
-            api.getProfile().catch(() => ({ completedScenarios: [], completedMaterials: [] }))
+            api.getProfile().catch(() => ({ completedScenarios: [], completedMaterials: [], history: [], diaryEntries: [] }))
         ]).then(([scenariosData, materialsData, profile]) => {
             const mixedQuests = createMixedQuests(scenariosData, materialsData);
             const updated = updateQuestStatuses(
                 profile.completedScenarios || [], 
                 profile.completedMaterials || [], 
-                mixedQuests
+                mixedQuests,
+                profile
             );
             setQuests(updated);
         });
@@ -158,7 +187,7 @@ const QuestsView = ({
         // Listen for focus to refresh progress
         window.addEventListener('focus', loadData);
         return () => window.removeEventListener('focus', loadData);
-    }, [loadData]);
+    }, [resilience, loadData]);
 
     const handleQuestAction = (quest) => {
         if (quest.questType === "sorting") {
@@ -174,6 +203,10 @@ const QuestsView = ({
             }
         } else if (quest.questType === "material") {
             navigateTo('material', quest.materialId);
+        } else if (quest.questType === "diary_task") {
+            navigateTo('diary');
+        } else if (quest.questType === "breathing_task") {
+            navigateTo('breathing');
         }
     };
 

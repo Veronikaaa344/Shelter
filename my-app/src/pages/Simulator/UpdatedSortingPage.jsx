@@ -46,28 +46,19 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
                 if (data && !data.message) {
                     setScenario(data);
                     
-                    // Use categories and items from DB or fallback
-                    const dbBoxes = (data.categories || [
-                        { id: 0, name: 'Корисні', color: '#10b981' },
-                        { id: 1, name: 'Шкідливі', color: '#ef4444' }
+                    // Use categories and items from DB content or fallback
+                    const dbBoxes = (data.content?.categories || data.categories || [
+                        { id: 'positive', name: 'Корисні', color: '#10b981' },
+                        { id: 'negative', name: 'Шкідливі', color: '#ef4444' }
                     ]).map(b => ({ ...b, items: [], isHighlighted: false }));
                     
-                    const dbItems = (data.items || [
-                        { text: "Ця ситуація — лише досвід, а не вирок для мого майбутнього", categoryId: 0 },
-                        { text: "Я повинен завжди бути сильним і ніколи не показувати слабкість", categoryId: 1 },
-                        { text: "Я маю право на втому та можливість просити про підтримку", categoryId: 0 },
-                        { text: "Якщо я не впорався ідеально, значить я повний невдаха", categoryId: 1 },
-                        { text: "Моя цінність як людини не залежить від продуктивності сьогодні", categoryId: 0 },
-                        { text: "Усі навколо справляються набагато краще, ніж я зараз", categoryId: 1 },
-                        { text: "Я можу контролювати свою реакцію, навіть якщо події поза контролем", categoryId: 0 },
-                        { text: "Один поганий день означає, що весь мій прогрес назавжди втрачено", categoryId: 1 },
-                        { text: "Кожна маленька перемога сьогодні — це міцний фундамент моєї стійкості", categoryId: 0 },
-                        { text: "Я ніколи не зможу повернутися до нормального та щасливого життя", categoryId: 1 },
-                        { text: "Помилка — це лише цінний зворотний зв'язок, а не ознака невдачі", categoryId: 0 },
-                        { text: "Краще взагалі нічого не починати, щоб не відчувати розчарування", categoryId: 1 }
+                    const dbItems = (data.content?.items || data.items || [
+                        { text: "Ця ситуація — лише досвід", categoryId: 'positive' },
+                        { text: "Я повинен бути сильним", categoryId: 'negative' }
                     ]).map((item, index) => ({
                         ...item,
-                        id: index,
+                        id: item.id || index,
+                        categoryId: item.categoryId || item.category,
                         scale: 1,
                         rotation: Math.random() * 10 - 5
                     })).sort(() => Math.random() - 0.5);
@@ -118,6 +109,7 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
                 const userId = localStorage.getItem("userId");
                 if (userId) {
                     api.updateResilience(userId, 15, "exercise_complete", scenario?.name || "Сортування");
+                    api.completeScenario(id, 100);
                 }
                 setTimeout(() => setShowCompletionMenu(true), 800);
             }
@@ -157,10 +149,6 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
                         <div className="dr-stat-item">
                             <Sparkles size={16} />
                             <span>{score}</span>
-                        </div>
-                        <div className="dr-stat-item">
-                            <Clock size={16} />
-                            <span>{formatTime(sessionTime)}</span>
                         </div>
                     </div>
                 </div>
@@ -219,10 +207,6 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
                         <div className="dr-completion-icon">🏆</div>
                         <h2>Вправа завершена!</h2>
                         <div className="dr-completion-stats">
-                            <div className="dr-stat-row">
-                                <span>Час:</span>
-                                <span>{formatTime(sessionTime)}</span>
-                            </div>
                             <div className="dr-stat-row">
                                 <span>Рахунок:</span>
                                 <span>{score}</span>

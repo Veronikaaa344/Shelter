@@ -116,24 +116,27 @@
 
 /* ВИДИМІ КНОПКИ */
 .dr-choice-btn {
-  background: #f8fbff;
-  border: 2px solid #e3f2fd;
+  background: white;
+  border: 2px solid var(--tile-color, #e3f2fd);
   padding: 1.2rem 2rem;
   border-radius: 20px;
   font-weight: 700;
-  color: #1e88e5;
+  color: var(--tile-color, #1e88e5);
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 15px rgba(30, 136, 229, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   max-width: 450px;
   text-align: left;
+  position: relative;
+  overflow: hidden;
 }
 
 .dr-choice-btn:hover {
-  background: #1e88e5;
+  background: var(--tile-color, #1e88e5);
   color: white;
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(30, 136, 229, 0.2);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  border-color: transparent;
 }
 
 /* Утиліти */

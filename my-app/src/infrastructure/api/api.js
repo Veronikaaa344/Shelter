@@ -154,7 +154,7 @@ export const api = {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				credentials: 'include',
-				body: JSON.stringify({ 
+				body: JSON.stringify({
 					stats: { resilience: score },
 					diagnostic: { answers, completedAt: new Date() }
 				})
@@ -197,10 +197,12 @@ export const api = {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
-				body: JSON.stringify({ 
-					amount: 2, 
-					type: `complete_${type}`, 
-					name: `Завершено: ${type === 'material' ? 'Матеріал' : 'Вправу'}` 
+				body: JSON.stringify({
+					amount: 2,
+					type: `complete_${type}`,
+					name: `Завершено: ${type === 'material' ? 'Матеріал' : 'Вправу'}`,
+					itemId,
+					type
 				}),
 			}).then((res) => res.ok ? res.json() : res.text().then(t => { throw new Error(t) }));
 		}
@@ -231,7 +233,7 @@ export const api = {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				credentials: 'include',
-			body: JSON.stringify({ mood, content, tags })
+				body: JSON.stringify({ mood, content, tags })
 			}).then((res) => res.json());
 		}
 		return fetch(`${API_URL}/stats/diary/${userId}`, {
@@ -310,18 +312,18 @@ export const api = {
 			credentials: "include",
 			body: JSON.stringify({ scenarioId, score }),
 		})
-		.then(async (res) => {
-			if (!res.ok) {
-				const errorText = await res.text();
-				console.error(`❌ FRONTEND (api.js): completeScenario request failed with status ${res.status}.`, errorText);
-				throw new Error(errorText);
-			}
-			return res.json();
-		})
-		.then((data) => {
-			console.log('✅ FRONTEND (api.js): Received response from completeScenario:', data);
-			return data;
-		});
+			.then(async (res) => {
+				if (!res.ok) {
+					const errorText = await res.text();
+					console.error(`❌ FRONTEND (api.js): completeScenario request failed with status ${res.status}.`, errorText);
+					return { error: errorText };
+				}
+				return res.json();
+			})
+			.then((data) => {
+				console.log('✅ FRONTEND (api.js): Received response from completeScenario:', data);
+				return data;
+			});
 	},
 
 

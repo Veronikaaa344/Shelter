@@ -12,6 +12,7 @@ import statsRouter from './routes/stats.js';
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
 import diagnosticRoutes from "./routes/diagnostic.js";
+import adviceRoutes from "./routes/advice.js";
 
 const app = express();
 
@@ -42,27 +43,16 @@ app.use(cookieParser());
 // Logging middleware
 app.use((req, res, next) => {
 	const start = Date.now();
-	console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
-	console.log(`Headers:`, JSON.stringify(req.headers, null, 2));
-	console.log(`Query:`, JSON.stringify(req.query, null, 2));
-	console.log(`Body:`, JSON.stringify(req.body, null, 2));
-
-	// Log response
 	res.on('finish', () => {
 		const duration = Date.now() - start;
 		console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} - ${res.statusCode} (${duration}ms)`);
 	});
-
 	next();
 });
 
 const dbURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/shelter_db";
 
 console.log(`[${new Date().toISOString()}] 🚀 Server starting...`);
-console.log(`[${new Date().toISOString()}] 🌍 Environment:`, process.env.NODE_ENV);
-console.log(`[${new Date().toISOString()}] 📡 Port:`, process.env.PORT || 5000);
-console.log(`[${new Date().toISOString()}] 🔗 MongoDB URI:`, dbURI.replace(/:[^:]+@/, ":****@"));
-console.log(`[${new Date().toISOString()}] 📦 MONGO_URI exists:`, !!process.env.MONGO_URI);
 
 mongoose
 	.connect(dbURI, {
@@ -91,6 +81,7 @@ app.use("/api/scenarios", scenarioRoutes);
 app.use("/api/stats", statsRouter);
 app.use("/api/users", userRoutes);
 app.use("/api/diagnostic", diagnosticRoutes);
+app.use("/api/advice", adviceRoutes);
 
 // Health check endpoint for Vercel
 app.get("/api/health", async (req, res) => {

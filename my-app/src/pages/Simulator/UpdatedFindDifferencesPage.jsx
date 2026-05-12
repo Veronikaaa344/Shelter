@@ -9,7 +9,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
     const params = useParams();
     const id = isEmbedded ? embeddedId : params.id;
     const navigate = useNavigate();
-    
+
     const handleClose = () => {
         if (isEmbedded && onBack) {
             onBack();
@@ -108,7 +108,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                         api.updateResilience(userId, 10, "level_complete", scenario.name);
                         api.completeScenario(id, 10);
                     }
-                    
+
                     // Trigger achievement praise from companion
                     if (companionRef.current && companionRef.current.speakAchievement) {
                         companionRef.current.speakAchievement();
@@ -122,7 +122,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
             clickEffect.style.left = `${e.clientX - rect.left}px`;
             clickEffect.style.top = `${e.clientY - rect.top}px`;
             imageRef.current.parentElement.appendChild(clickEffect);
-            
+
             setTimeout(() => {
                 clickEffect.remove();
             }, 600);
@@ -155,21 +155,21 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
 
     const useHint = () => {
         if (hintsUsed >= 3 || isFinished) return;
-        
+
         const currentLevel = scenario.levels?.[currentLevelIndex];
         const differences = currentLevel?.differences || [];
-        
+
         // Знайти першу не знайдену різницю
         const unfoundDifference = differences.find((diff, index) => {
             const diffId = `${currentLevelIndex}-${diff.x}-${diff.y}`;
             return !foundDifferences.includes(diffId);
         });
-        
+
         if (unfoundDifference) {
             setHintsUsed(prev => prev + 1);
             setScore(prev => Math.max(0, prev - 5));
             setShowHint(true);
-            
+
             // Показати підказку на 3 секунди
             setTimeout(() => {
                 setShowHint(false);
@@ -195,7 +195,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
             </div>
         </div>
     );
-    
+
     if (!scenario) return (
         <div className="dr-updated-find-layout">
             <div className="dr-error-container">
@@ -223,7 +223,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
             </div>
         );
     }
-    
+
     if (!currentLevel.image) {
         return (
             <div className="dr-updated-find-layout">
@@ -237,7 +237,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
             </div>
         );
     }
-    
+
     const differences = currentLevel?.differences || [];
     const foundCount = foundDifferences.filter(id => id.startsWith(`${currentLevelIndex}-`)).length;
 
@@ -250,12 +250,12 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                         <ArrowLeft size={20} />
                         <span>До вправ</span>
                     </button>
-                    
+
                     <div className="dr-header-info">
                         <h1 className="dr-scenario-title">{scenario.name}</h1>
                         <p className="dr-level-info">Рівень {currentLevelIndex + 1} з {scenario.levels?.length || 1}</p>
                     </div>
-                    
+
                     <div className="dr-header-stats">
                         <div className="dr-stat-item">
                             <Target size={16} />
@@ -318,16 +318,16 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                         {/* Controls */}
                         <div className="dr-game-controls">
                             <div className="dr-zoom-controls">
-                                <button 
-                                    className="dr-control-btn" 
+                                <button
+                                    className="dr-control-btn"
                                     onClick={() => setImageZoom(prev => Math.min(3, prev + 0.2))}
                                     disabled={imageZoom >= 3}
                                 >
                                     <ZoomIn size={18} />
                                 </button>
                                 <span className="dr-zoom-level">{Math.round(imageZoom * 100)}%</span>
-                                <button 
-                                    className="dr-control-btn" 
+                                <button
+                                    className="dr-control-btn"
                                     onClick={() => setImageZoom(prev => Math.max(0.5, prev - 0.2))}
                                     disabled={imageZoom <= 0.5}
                                 >
@@ -337,9 +337,9 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                                     <RotateCcw size={18} />
                                 </button>
                             </div>
-                            
+
                             <div className="dr-hint-control">
-                                <button 
+                                <button
                                     className={`dr-hint-btn ${hintsUsed >= 3 ? 'disabled' : ''}`}
                                     onClick={useHint}
                                     disabled={hintsUsed >= 3}
@@ -370,7 +370,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                                     onClick={handleImageClick}
                                     onWheel={handleWheel}
                                 />
-                                
+
                                 {/* Difference Markers */}
                                 {differences.map((diff, idx) => {
                                     const diffId = `${currentLevelIndex}-${diff.x}-${diff.y}`;
@@ -379,13 +379,13 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                                         const dId = `${currentLevelIndex}-${d.x}-${d.y}`;
                                         return !foundDifferences.includes(dId);
                                     });
-                                    
+
                                     const img = imageRef.current;
                                     if (!img) return null;
                                     const rect = img.getBoundingClientRect();
                                     const scaleX = rect.width / img.naturalWidth;
                                     const scaleY = rect.height / img.naturalHeight;
-                                    
+
                                     return (
                                         <div
                                             key={idx}

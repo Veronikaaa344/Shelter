@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import Account from "../models/Account.js";
 import User from "../models/User.js";
 import Scenario from "../models/Scenario.js";
+import mongoose from "mongoose";
 
 const router = Router();
 
@@ -228,7 +229,6 @@ router.post("/guest", async (req, res) => {
 			...guestData
 		};
 
-		console.log('🍪 COOKIE DEBUG: Creating new guest cookie:', JSON.stringify(guestDataToSave).substring(0, 100) + '...');
 		res
 			.status(200)
 			.cookie("dr_guest", JSON.stringify(guestDataToSave), {
@@ -292,7 +292,6 @@ router.post("/guest/update", (req, res) => {
 			history: (updatedData.history || []).filter(h => h.activityType !== "wrong_answer").slice(0, 10),
 		};
 
-		console.log(`📝 GUEST BACKEND (Update): Saving cookie. History length: ${updatedDataToSave.history.length}, Resilience: ${updatedDataToSave.stats?.resilience}`);
 		res
 			.cookie("dr_guest", JSON.stringify(updatedDataToSave), {
 				expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -355,17 +354,30 @@ router.get("/guest/stats-volume", (req, res) => {
 
 router.post("/guest/update-resilience", (req, res) => {
 	try {
-		const { amount, type, name } = req.body;
-		console.log('📥 GUEST BACKEND: Resilience update request', { amount, type, name });
+		const { amount, type, name, itemId } = req.body;
 		
 		const guestCookie = req.cookies?.dr_guest;
-		console.log('🍪 GUEST BACKEND: Incoming cookie length:', guestCookie ? guestCookie.length : 0);
 		if (!guestCookie) {
-			console.log('❌ GUEST BACKEND: No guest cookie found!');
 			return res.status(404).json({ message: "Guest not found" });
 		}
 		
 		const guestData = JSON.parse(guestCookie);
+
+		// Track completion if itemId and type provided
+		if (itemId && type) {
+			if (type === 'material') {
+				if (!guestData.completedMaterials) guestData.completedMaterials = [];
+				if (!guestData.completedMaterials.includes(itemId)) {
+					guestData.completedMaterials.push(itemId);
+				}
+			} else if (type === 'scenario') {
+				if (!guestData.completedScenarios) guestData.completedScenarios = [];
+				if (!guestData.completedScenarios.find(s => s.scenarioId === itemId)) {
+					guestData.completedScenarios.push({ scenarioId: itemId, date: new Date() });
+				}
+			}
+		}
+
 		let currentRes = (guestData.stats?.resilience || 50) + amount;
 		if (currentRes > 100) currentRes = 100;
 		if (currentRes < 0) currentRes = 0;
@@ -382,7 +394,6 @@ router.post("/guest/update-resilience", (req, res) => {
 			date: new Date(),
 		};
 		guestData.history.unshift(historyEntry);
-		console.log(`📝 GUEST BACKEND: Logged activity \"${name}\". Total history count: ${guestData.history.length}`);
 
 		if (guestData.history.length > 10) {
 			guestData.history = guestData.history.slice(0, 10);
@@ -394,8 +405,6 @@ router.post("/guest/update-resilience", (req, res) => {
 		};
 
 		const cookieString = JSON.stringify(guestDataToSave);
-		console.log(`📝 GUEST BACKEND: Final cookie string length: ${cookieString.length}`);
-		console.log(`📝 GUEST BACKEND: Saving history count: ${guestDataToSave.history.length}`);
 		
 		res
 			.cookie("dr_guest", cookieString, {
@@ -405,7 +414,6 @@ router.post("/guest/update-resilience", (req, res) => {
 				path: "/",
 			})
 			.json(guestData);
-		console.log('✅ GUEST BACKEND: Cookie updated and response sent.');
 	} catch (err) {
 		console.error('❌ GUEST BACKEND ERROR:', err);
 		res.status(500).json({ message: err.message });
@@ -533,6 +541,8 @@ router.post("/migrate-guest", async (req, res) => {
 			stats: guestData?.stats || { resilience: 50, stabilityDays: 0 },
 			history: guestData?.history || [],
 			diagnostic: guestData?.diagnostic || { answers: [], completedAt: null },
+			completedScenarios: guestData?.completedScenarios || [],
+			completedMaterials: guestData?.completedMaterials || [],
 		});
 		const savedUser = await userProfile.save();
 
@@ -552,7 +562,6 @@ router.post("/migrate-guest", async (req, res) => {
 		// Send token response
 		sendTokenResponse(savedUser, 201, res);
 	} catch (err) {
-		console.error('Migration error:', err);
 		
 		// Обробка специфічних помилок MongoDB
 		if (err.code === 11000) {
@@ -609,8 +618,11 @@ router.get("/profile", async (req, res) => {
 			stats: user.stats,
 			badges: user.badges || [],
 			completedScenarios: user.completedScenarios || [],
+			completedMaterials: user.completedMaterials || [],
 			unlockedScenarios: user.unlockedScenarios || [],
 			diagnostic: user.diagnostic,
+			history: user.history || [],
+			diaryEntries: user.diaryEntries || [],
 		});
 	} catch (err) {
 		res.status(500).json({ message: err.message });
@@ -703,17 +715,12 @@ router.post("/activity", async (req, res) => {
 // Complete scenario and unlock next
 router.post("/complete-scenario", async (req, res) => {
 	try {
-        console.log("📥 BACKEND (/complete-scenario): Received a request.");
-        const token = req.cookies?.dr_token;
+        const token = req.cookies?.dr_token || req.header("x-auth-token");
         const guestCookie = req.cookies?.dr_guest;
         const { scenarioId, score } = req.body;
 
-        console.log("📋 BACKEND: Request Body:", { scenarioId, score });
-        console.log(`🍪 BACKEND: Guest cookie present: ${!!guestCookie}, Token present: ${!!token}`);
-
 		// Handle Guest User FIRST
 		if (guestCookie && (!token || token === 'guest_mode')) {
-            console.log("👤 BACKEND: Guest user detected. Processing guest completion...");
 			const guestData = JSON.parse(guestCookie);
 
 			if (!guestData.completedScenarios) {
@@ -722,17 +729,19 @@ router.post("/complete-scenario", async (req, res) => {
 
 			const alreadyCompleted = guestData.completedScenarios.find(s => s.scenarioId === scenarioId);
 			if (!alreadyCompleted) {
-                console.log(`✨ BACKEND: Guest has not completed scenario ${scenarioId} before. Adding to list.`);
 				guestData.completedScenarios.push({ scenarioId, score, date: new Date() });
 				
 				// Also update resilience history
-				const scenario = await Scenario.findById(scenarioId);
+				let scenario;
+				if (mongoose.Types.ObjectId.isValid(scenarioId)) {
+					scenario = await Scenario.findById(scenarioId);
+				} else {
+					scenario = await Scenario.findOne({ scenarioId: scenarioId });
+				}
 				const resilienceChange = score >= 50 ? 4 : -4;
 				if (!guestData.stats) guestData.stats = { resilience: 50 };
-                const oldResilience = guestData.stats.resilience || 50;
+				const oldResilience = guestData.stats.resilience || 50;
 				guestData.stats.resilience = Math.max(0, Math.min(100, oldResilience + resilienceChange));
-				
-                console.log(`💪 BACKEND: Resilience changed for guest. From ${oldResilience} to ${guestData.stats.resilience}`);
 
 				if (!guestData.history) guestData.history = [];
 				guestData.history.unshift({
@@ -742,11 +751,8 @@ router.post("/complete-scenario", async (req, res) => {
 					newScore: guestData.stats.resilience,
 					date: new Date()
 				});
-			} else {
-                console.log(`✅ BACKEND: Guest has already completed scenario ${scenarioId}. No changes made.`);
-            }
+			}
 			
-            console.log("🍪 BACKEND: Saving updated guest data to cookie.");
 			res.cookie("dr_guest", JSON.stringify(guestData), {
 				expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
 				secure: process.env.NODE_ENV === "production",
@@ -761,24 +767,49 @@ router.post("/complete-scenario", async (req, res) => {
 		
 		// Handle Registered User
 		if (token) {
-            console.log("👤 BACKEND: Registered user detected. Processing user completion...");
 			const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret_key");
 			const user = await User.findById(decoded.id);
 	
 			if (!user) {
-                console.error("❌ BACKEND: User not found for token.");
 				return res.status(404).json({ message: "User not found" });
 			}
 	
 			// Add to completed
 			const alreadyCompleted = user.completedScenarios.find(s => s.scenarioId.toString() === scenarioId);
 			if (!alreadyCompleted) {
-                console.log(`✨ BACKEND: User has not completed scenario ${scenarioId} before. Adding to list.`);
 				user.completedScenarios.push({ scenarioId, score, date: new Date() });
-			} else {
-                console.log(`✅ BACKEND: User has already completed scenario ${scenarioId}. No changes made.`);
-            }
+			}
 	
+			// Sync with UserStats model for consistency in history/charts
+			try {
+				const UserStats = (await import('../models/UserStats.js')).default;
+				let userStats = await UserStats.findOne({ userId: user._id });
+				if (!userStats) userStats = new UserStats({ userId: user._id });
+				
+				const resilienceChange = score >= 50 ? 4 : -4;
+				let scenario;
+				if (mongoose.Types.ObjectId.isValid(scenarioId)) {
+					scenario = await Scenario.findById(scenarioId);
+				} else {
+					scenario = await Scenario.findOne({ scenarioId: scenarioId });
+				}
+				
+				userStats.resilience.current = Math.max(0, Math.min(100, userStats.resilience.current + resilienceChange));
+				userStats.resilience.history.push({ value: userStats.resilience.current, date: new Date() });
+				userStats.activities.push({
+					type: 'exercise_finish',
+					name: `Тренажер: ${scenario ? scenario.name : 'Вправа'}`,
+					change: resilienceChange,
+					date: new Date()
+				});
+				await userStats.save();
+				
+				// Also update resilience in User model stats for getProfile() consistency
+				user.stats.resilience = userStats.resilience.current;
+			} catch (statsErr) {
+				console.error("Failed to sync UserStats during scenario completion:", statsErr);
+			}
+
 			// Check for completion badges
 			const newBadges = [];
 			const completedCount = user.completedScenarios.length;
@@ -811,7 +842,6 @@ router.post("/complete-scenario", async (req, res) => {
 				}
 			}
 	
-            console.log("💾 BACKEND: Saving updated user data to database.");
 			await user.save();
 	
 			return res.json({
@@ -821,11 +851,9 @@ router.post("/complete-scenario", async (req, res) => {
 			});
 		}
 
-        console.error("❌ BACKEND: No token or guest cookie found. Authentication failed.");
 		return res.status(401).json({ message: "Not authenticated" });
 
 	} catch (err) {
-		console.error("❌ BACKEND (/complete-scenario): An error occurred:", err);
 		res.status(500).json({ message: err.message });
 	}
 });

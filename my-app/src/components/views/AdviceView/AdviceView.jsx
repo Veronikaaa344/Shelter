@@ -4,47 +4,38 @@ import { api } from '../../../infrastructure/api/api';
 import { useNavigate } from 'react-router-dom';
 
 const AdviceView = () => {
+    const [advices, setAdvices] = useState([]);
     const [materials, setMaterials] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        api.getMaterials()
-            .then(data => {
-                if (Array.isArray(data)) {
-                    setMaterials(data);
-                }
-            })
-            .catch(err => console.error("Error loading materials:", err))
-            .finally(() => setLoading(false));
-    }, []);
-
-    const staticAdvices = [
-        { 
-            title: "Полівагальна теорія: Безпека тіла", 
-            text: "Ваша нервова система реагує на загрози швидше, ніж мозок. Використовуйте техніку 'Полоскання горла' або холодної води на обличчя, щоб миттєво активувати блукаючий нерв та заспокоїтись.",
-            color: "from-blue-500/20 to-indigo-600/20",
-            icon: <Activity className="text-blue-400" />
-        },
-        { 
-            title: "Принцип маленьких перемог", 
-            text: "Дофамін виділяється не від результату, а від очікування успіху. Розбивайте великі цілі на завдання по 5 хвилин. Кожна галочка в списку — це біологічне паливо для вашої стійкості.",
-            color: "from-emerald-500/20 to-teal-600/20",
-            icon: <Trophy className="text-emerald-400" />
-        },
-        { 
-            title: "Вікно толерантності", 
-            text: "Навчіться розпізнавати стани гіперзбудження (гнів) та гіпозбудження (апатія). Ваша мета — залишатися в 'вікні', де ви можете обробляти емоції, не втрачаючи контроль.",
-            color: "from-orange-500/20 to-rose-600/20",
-            icon: <Brain className="text-orange-400" />
-        },
-        { 
-            title: "Цифрова резильєнтність", 
-            text: "Ми часто використовуємо скролінг як спосіб втечі, але це лише виснажує ресурс уваги. Спробуйте 'Правило 20-20-20': кожні 20 хв дивіться на 20 метрів вдалину протягом 20 секунд.",
-            color: "from-purple-500/20 to-fuchsia-600/20",
-            icon: <Sparkles className="text-purple-400" />
-        }
+    const colors = [
+        "from-blue-500/20 to-indigo-600/20",
+        "from-emerald-500/20 to-teal-600/20",
+        "from-orange-500/20 to-rose-600/20",
+        "from-purple-500/20 to-fuchsia-600/20",
+        "from-cyan-500/20 to-blue-600/20"
     ];
+
+    useEffect(() => {
+        const loadAll = async () => {
+            try {
+                const [advicesRes, materialsRes] = await Promise.all([
+                    fetch('http://localhost:5000/api/advice'),
+                    api.getMaterials()
+                ]);
+                
+                const advicesData = await advicesRes.json();
+                if (Array.isArray(advicesData)) setAdvices(advicesData);
+                if (Array.isArray(materialsRes)) setMaterials(materialsRes);
+            } catch (err) {
+                console.error("Error loading knowledge:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadAll();
+    }, []);
 
     if (loading) {
         return (
@@ -61,16 +52,16 @@ const AdviceView = () => {
                 <p className="text-slate-500 font-medium text-lg">Науково обґрунтовані методи зміцнення вашої ментальної броні.</p>
             </header>
 
-            {/* Static Pro Advices */}
+            {/* Dynamic Advices from DB */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {staticAdvices.map((advice, i) => (
+                {advices.map((advice, i) => (
                     <div 
-                        key={i} 
-                        className={`p-10 rounded-[48px] border border-white/5 bg-gradient-to-br ${advice.color} backdrop-blur-md relative overflow-hidden group hover:border-white/10 transition-all duration-500`}
+                        key={advice._id || i} 
+                        className={`p-10 rounded-[48px] border border-white/5 bg-gradient-to-br ${colors[i % colors.length]} backdrop-blur-md relative overflow-hidden group hover:border-white/10 transition-all duration-500`}
                     >
                         <div className="relative z-10 space-y-6">
                             <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center">
-                                {advice.icon}
+                                <Lightbulb className="text-white/80" />
                             </div>
                             <div className="space-y-3">
                                 <h4 className="text-2xl font-black text-white uppercase tracking-tight italic leading-tight">{advice.title}</h4>
@@ -78,7 +69,7 @@ const AdviceView = () => {
                             </div>
                         </div>
                         <div className="absolute -right-8 -bottom-8 opacity-5 group-hover:opacity-10 transition-opacity">
-                            {React.cloneElement(advice.icon, { size: 160 })}
+                            <Lightbulb size={160} className="text-white" />
                         </div>
                     </div>
                 ))}

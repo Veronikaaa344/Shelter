@@ -1,15 +1,13 @@
-// Using global fetch (Node 22+)
-
-async function testApi() {
+async function test() {
     try {
-        const res = await fetch('http://localhost:5000/api/diagnostic/questions');
+        const res = await fetch('http://localhost:5000/api/scenarios/chaos-unloading');
         const data = await res.json();
-        console.log("--- API RESPONSE ---");
-        console.log(JSON.stringify(data, null, 2));
-        console.log("Count:", Array.isArray(data) ? data.length : "not an array");
+        console.log('SCENARIO:', data.name);
+        console.log('CONTENT ITEMS COUNT:', data.content?.items?.length || 0);
+        console.log('FIRST ITEM:', data.content?.items?.[0]?.text);
     } catch (err) {
-        console.error("API Error:", err.message);
+        console.error('ERROR:', err.message);
     }
 }
 
-testApi();
+test();

@@ -21,7 +21,7 @@ const HomeView = ({
     mediaLibraryData,
     showStabilizationHint
 }) => {
-    const [advice, setAdvice] = useState("");
+    const [advice, setAdvice] = useState("Завантаження поради...");
     
     const moods = [
         { id: 'anxiety', label: 'Тривога', emoji: '😰', color: 'from-blue-400 to-blue-600', resilienceMod: -5 },
@@ -30,16 +30,21 @@ const HomeView = ({
         { id: 'happy', label: 'Радість', emoji: '😊', color: 'from-amber-400 to-amber-600', resilienceMod: 10 },
         { id: 'exhausted', label: 'Втома', emoji: '😴', color: 'from-indigo-400 to-indigo-600', resilienceMod: -3 },
     ];
-
-    const dynamicAdvices = [
-        "Ви практикуєте вже 3 дні поспіль — ваш мозок стає стійкішим до кортизолу.",
-        "Кожна хвилина усвідомленого дихання знижує рівень стресу на 15%.",
-        "Сьогодні чудовий день, щоб спробувати нову техніку заземлення.",
-        "Ваш індекс стійкості зростає, коли ви приділяєте час собі."
-    ];
-
+    
     useEffect(() => {
-        setAdvice(dynamicAdvices[Math.floor(Math.random() * dynamicAdvices.length)]);
+        const fetchAdvice = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/advice/random');
+                const data = await response.json();
+                if (data && data.text) {
+                    setAdvice(data.text);
+                }
+            } catch (err) {
+                console.error("Failed to fetch advice:", err);
+                setAdvice("Кожна хвилина усвідомленого дихання знижує рівень стресу.");
+            }
+        };
+        fetchAdvice();
     }, [currentMood]);
 
     const handleMoodSelect = (mood) => {
@@ -91,7 +96,13 @@ const HomeView = ({
         color: colors[i % colors.length],
         onClick: () => {
           setSimulatorScenarioId(scenario._id);
-          setIsSimulatorMode(true);
+          if (scenario.type === 'sorting') {
+              setIsSortingMode(true);
+          } else if (scenario.type === 'find-differences' || scenario.type === 'findDifferences') {
+              setIsFindDifferencesMode(true);
+          } else {
+              setIsSimulatorMode(true);
+          }
         }
       };
     });

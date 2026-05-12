@@ -5,7 +5,7 @@ const MaterialSchema = new Schema({
 	desc: { type: String, required: true },
 	category: {
 		type: String,
-		enum: ["general", "anxiety", "stress", "apathy"],
+		enum: ["general", "anxiety", "stress", "apathy", "resilience", "support", "mindfulness"],
 		default: "general",
 	},
 	type: { type: String, enum: ["text", "video", "audio"], default: "text" },

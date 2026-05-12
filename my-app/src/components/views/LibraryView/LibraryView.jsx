@@ -220,7 +220,7 @@ const LibraryView = ({
                                 {/* Always Visible iOS-style Slider */}
                                 <div className="relative flex flex-col items-center gap-4 py-2">
                                     <div 
-                                        className="relative w-24 h-48 bg-[#f8fafc] rounded-[44px] overflow-hidden cursor-pointer group shadow-[0_20px_40px_-10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,1)] border-2 border-[#f1f5f9]"
+                                        className="relative w-24 h-48 bg-[#0f172a] rounded-[44px] overflow-hidden cursor-pointer group shadow-[0_20px_40px_-10px_rgba(0,0,0,0.8),inset_0_2px_4px_rgba(255,255,255,0.05)] border-2 border-[#1e293b]"
                                         onMouseDown={(e) => {
                                             const rect = e.currentTarget.getBoundingClientRect();
                                             const updateVolume = (clientY) => {
@@ -253,15 +253,15 @@ const LibraryView = ({
                                         }}
                                     >
                                         <div 
-                                            className="absolute bottom-0 left-0 w-full bg-[#22c55e] transition-all duration-75 ease-out"
+                                            className="absolute bottom-0 left-0 w-full bg-[#10b981] transition-all duration-75 ease-out"
                                             style={{ height: `${volume * 100}%` }}
                                         >
-                                            <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+                                            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"></div>
                                         </div>
                                         <div className="absolute bottom-6 left-0 w-full flex justify-center pointer-events-none">
                                             <Music 
                                                 size={24} 
-                                                className={`${volume > 0.18 ? 'text-white' : 'text-slate-900/40'} transition-all duration-300`} 
+                                                className={`${volume > 0.18 ? 'text-[#0f172a]' : 'text-slate-500'} transition-all duration-300`} 
                                                 strokeWidth={2.5}
                                             />
                                         </div>
