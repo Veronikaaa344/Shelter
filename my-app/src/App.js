@@ -16,6 +16,13 @@ function App() {
 
 	useEffect(() => {
 		const initSession = async () => {
+			console.log("🍪 [DEBUG] Browser Cookies:", document.cookie);
+			console.log("📂 [DEBUG] Local Storage:", {
+				token: localStorage.getItem("dr_token"),
+				userId: localStorage.getItem("userId"),
+				username: localStorage.getItem("username")
+			});
+
 			const token = localStorage.getItem("dr_token");
 			const userId = localStorage.getItem("userId");
 
@@ -28,9 +35,24 @@ function App() {
 				userId !== "undefined";
 
 			const isGuestMode = token === "guest_mode";
+			const isMissingId = !userId || userId === "null" || userId === "undefined";
 
-			if (!hasValidSession && !isGuestMode) {
+			if (isGuestMode && isMissingId) {
+				console.log("🔍 [DEBUG] Guest mode active but userId missing. Fetching profile...");
+				try {
+					const data = await api.getProfile();
+					if (data && data.id) {
+						localStorage.setItem("userId", data.id);
+						localStorage.setItem("username", data.username || "Гість");
+						console.log("✅ [DEBUG] Restored guest userId from profile:", data.id);
+					}
+				} catch (e) {
+					console.error("❌ [DEBUG] Failed to restore guest session:", e);
+					localStorage.removeItem("dr_token"); // Reset if failed
+				}
+			} else if (!hasValidSession && !isGuestMode) {
 				// Немає сесії — автоматично входимо як гість
+				console.log("🆕 [DEBUG] No session found. Logging in as guest...");
 				localStorage.removeItem("dr_token");
 				localStorage.removeItem("userId");
 				try {
@@ -41,6 +63,7 @@ function App() {
 						localStorage.setItem("dr_token", "guest_mode");
 						localStorage.setItem("userId", guestUser.id);
 						localStorage.setItem("username", guestUser.username || "Гість");
+						console.log("✅ [DEBUG] Guest session established. Current cookies:", document.cookie);
 					}
 				} catch (e) {
 					console.error(e);

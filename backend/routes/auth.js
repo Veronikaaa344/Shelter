@@ -271,12 +271,17 @@ router.post("/guest/update", (req, res) => {
 		
 		// Якщо оновлюються статси (наприклад діагностика), додаємо в історію
 		if (req.body.stats && req.body.stats.resilience !== undefined) {
+			const score = req.body.stats.resilience;
+			let resilienceChange = 0;
+			if (score >= 60) resilienceChange = 2;
+			else if (score <= 40) resilienceChange = -2;
+
 			if (!updatedData.history) updatedData.history = [];
 			updatedData.history.unshift({
 				activityType: 'diagnostic',
-				activityName: 'Первинна діагностика',
-				change: 0,
-				newScore: req.body.stats.resilience,
+				activityName: 'Діагностика стану',
+				change: resilienceChange,
+				newScore: score,
 				date: new Date()
 			});
 		}

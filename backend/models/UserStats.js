@@ -86,18 +86,30 @@ userStatsSchema.methods.recordDiagnostic = function(score, answers) {
   this.diagnosticsTaken.lastDate = new Date();
   this.diagnosticsTaken.history.push({ score, answers });
   
-  // Обновляем резильентность
+  // Визначаємо зміну резильєнтності на основі результату
+  let resilienceChange = 0;
+  if (score >= 60) resilienceChange = 2;
+  else if (score <= 40) resilienceChange = -2;
+
+  // Оновлюємо резильєнтність: 
+  // Якщо це перша діагностика - встановлюємо базовий бал
+  // Якщо ні - додаємо зміну до існуючого балу (або теж коригуємо)
+  // Для спрощеної гейміфікації: встановлюємо score як новий бал, 
+  // але в історію записуємо вплив події.
+  
+  const oldResilience = this.resilience.current;
   this.resilience.current = score;
   this.resilience.history.push({ value: score });
+  
   this.activities.push({
     type: 'diagnostic',
-    name: 'Діагностика',
-    change: 0, // Diagnostic sets the base score
+    name: 'Діагностика стану',
+    change: resilienceChange,
     date: new Date()
   });
   
   this.lastActiveDate = new Date();
-  console.log(`💾 DB: Saving Diagnostic Result for user ${this.userId}. Score: ${score}`);
+  console.log(`💾 DB: Saving Diagnostic Result for user ${this.userId}. Score: ${score}, Change: ${resilienceChange}`);
   return this.save();
 };
 

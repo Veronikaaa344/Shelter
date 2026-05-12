@@ -35,7 +35,38 @@ router.post("/update-resilience", async (req, res) => {
 	}
 });
 
+router.post("/update-progress", async (req, res) => {
+	try {
+		const { userId, itemId, type } = req.body;
+
+		if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+			return res.status(400).json({ message: "Invalid ID" });
+		}
+
+		const user = await User.findById(userId);
+		if (!user) return res.status(404).json({ message: "User not found" });
+
+		if (type === "material") {
+			if (!user.completedMaterials.includes(itemId)) {
+				user.completedMaterials.push(itemId);
+			}
+		} else if (type === "scenario") {
+			const exists = user.completedScenarios.find(s => s.scenarioId === itemId);
+			if (!exists) {
+				user.completedScenarios.push({ scenarioId: itemId });
+			}
+		}
+
+		await user.save();
+		res.json(user);
+	} catch (err) {
+		console.error("Error in update-progress:", err);
+		res.status(500).json({ message: err.message });
+	}
+});
+
 router.get("/:id/profile", async (req, res) => {
+
 	try {
 		if (!req.params.id || !mongoose.Types.ObjectId.isValid(req.params.id)) {
 			return res.status(400).json({ message: "Invalid ID" });

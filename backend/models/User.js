@@ -32,6 +32,7 @@ const UserSchema = new mongoose.Schema({
 			score: { type: Number },
 		},
 	],
+	completedMaterials: [{ type: String }],
 	unlockedScenarios: [{ type: String }],
 	history: [
 		{

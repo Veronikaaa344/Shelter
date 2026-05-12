@@ -135,7 +135,7 @@ const StatsView = ({ userStats, resilience = 50, completedCount = 0 }) => {
                     <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">Аналітика прогресу</h2>
                 </div>
                 <div className="bg-slate-900/30 border border-slate-800 p-10 rounded-[48px] shadow-2xl backdrop-blur-xl h-96 min-h-[400px]">
-                    <ResponsiveContainer width="100%" height="100%" debounce={100}>
+                    <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0} debounce={100}>
                         <AreaChart data={historyData}>
                             <defs><linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/><stop offset="95%" stopColor="#10b981" stopOpacity={0}/></linearGradient></defs>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />

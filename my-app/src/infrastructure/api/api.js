@@ -192,12 +192,24 @@ export const api = {
 		}).then((res) => res.json()),
 
 	updateUserProgress: (userId, itemId, type) => {
+		if (isGuest()) {
+			return fetch(`${API_URL}/auth/guest/update-resilience`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				credentials: "include",
+				body: JSON.stringify({ 
+					amount: 2, 
+					type: `complete_${type}`, 
+					name: `Завершено: ${type === 'material' ? 'Матеріал' : 'Вправу'}` 
+				}),
+			}).then((res) => res.ok ? res.json() : res.text().then(t => { throw new Error(t) }));
+		}
 		if (!isValidId(userId)) return Promise.reject("Invalid ID");
 		return fetch(`${API_URL}/users/update-progress`, {
 			method: "POST",
 			headers: getHeaders(),
 			body: JSON.stringify({ userId, itemId, type }),
-		}).then((res) => res.json());
+		}).then((res) => res.ok ? res.json() : res.text().then(t => { throw new Error(t) }));
 	},
 
 	getUserStats: (userId) => {
