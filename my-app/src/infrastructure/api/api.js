@@ -219,7 +219,7 @@ export const api = {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				credentials: 'include',
-				body: JSON.stringify({ mood, content, tags })
+			body: JSON.stringify({ mood, content, tags })
 			}).then((res) => res.json());
 		}
 		return fetch(`${API_URL}/stats/diary/${userId}`, {
@@ -288,12 +288,28 @@ export const api = {
 	},
 
 	completeScenario: (scenarioId, score) => {
+		console.log(`🚀 FRONTEND (api.js): Sending completeScenario request.`, { scenarioId, score });
+		const userMode = isGuest() ? "guest" : "registered";
+		console.log(`👤 User mode: ${userMode}`);
+
 		return fetch(`${API_URL}/auth/complete-scenario`, {
 			method: "POST",
 			headers: getHeaders(),
 			credentials: "include",
 			body: JSON.stringify({ scenarioId, score }),
-		}).then((res) => res.json());
+		})
+		.then(async (res) => {
+			if (!res.ok) {
+				const errorText = await res.text();
+				console.error(`❌ FRONTEND (api.js): completeScenario request failed with status ${res.status}.`, errorText);
+				throw new Error(errorText);
+			}
+			return res.json();
+		})
+		.then((data) => {
+			console.log('✅ FRONTEND (api.js): Received response from completeScenario:', data);
+			return data;
+		});
 	},
 
 

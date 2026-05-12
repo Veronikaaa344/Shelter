@@ -377,7 +377,7 @@ router.post("/guest/update-resilience", (req, res) => {
 			date: new Date(),
 		};
 		guestData.history.unshift(historyEntry);
-		console.log(`📝 GUEST BACKEND: Logged activity "${name}". Total history count: ${guestData.history.length}`);
+		console.log(`📝 GUEST BACKEND: Logged activity \"${name}\". Total history count: ${guestData.history.length}`);
 
 		if (guestData.history.length > 10) {
 			guestData.history = guestData.history.slice(0, 10);
@@ -698,65 +698,129 @@ router.post("/activity", async (req, res) => {
 // Complete scenario and unlock next
 router.post("/complete-scenario", async (req, res) => {
 	try {
-		const token = req.cookies?.dr_token;
-		if (!token) {
-			return res.status(401).json({ message: "Not authenticated" });
-		}
+        console.log("📥 BACKEND (/complete-scenario): Received a request.");
+        const token = req.cookies?.dr_token;
+        const guestCookie = req.cookies?.dr_guest;
+        const { scenarioId, score } = req.body;
 
-		const { scenarioId, score } = req.body;
-		const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret_key");
-		const user = await User.findById(decoded.id);
+        console.log("📋 BACKEND: Request Body:", { scenarioId, score });
+        console.log(`🍪 BACKEND: Guest cookie present: ${!!guestCookie}, Token present: ${!!token}`);
 
-		if (!user) {
-			return res.status(404).json({ message: "User not found" });
-		}
+		// Handle Guest User FIRST
+		if (guestCookie && (!token || token === 'guest_mode')) {
+            console.log("👤 BACKEND: Guest user detected. Processing guest completion...");
+			const guestData = JSON.parse(guestCookie);
 
-		// Add to completed
-		const alreadyCompleted = user.completedScenarios.find(s => s.scenarioId === scenarioId);
-		if (!alreadyCompleted) {
-			user.completedScenarios.push({ scenarioId, score });
-		}
-
-		// Check for completion badges
-		const newBadges = [];
-		const completedCount = user.completedScenarios.length;
-
-		if (completedCount === 1 && !user.badges.find(b => b.id === "first_scenario")) {
-			user.badges.push({
-				id: "first_scenario",
-				name: "Перша перемога",
-				icon: "🎯",
-				description: "Завершено перший сценарій",
-			});
-			newBadges.push(user.badges[user.badges.length - 1]);
-		}
-
-		if (completedCount === 5 && !user.badges.find(b => b.id === "expert_5")) {
-			user.badges.push({
-				id: "expert_5",
-				name: "Експерт",
-				icon: "🏆",
-				description: "Завершено 5 сценаріїв",
-			});
-			newBadges.push(user.badges[user.badges.length - 1]);
-		}
-
-		// Progressive unlocking - unlock next scenario based on category
-		const scenario = await Scenario.findOne({ scenarioId });
-		if (scenario && scenario.nextUnlock) {
-			if (!user.unlockedScenarios.includes(scenario.nextUnlock)) {
-				user.unlockedScenarios.push(scenario.nextUnlock);
+			if (!guestData.completedScenarios) {
+				guestData.completedScenarios = [];
 			}
+
+			const alreadyCompleted = guestData.completedScenarios.find(s => s.scenarioId === scenarioId);
+			if (!alreadyCompleted) {
+                console.log(`✨ BACKEND: Guest has not completed scenario ${scenarioId} before. Adding to list.`);
+				guestData.completedScenarios.push({ scenarioId, score, date: new Date() });
+				
+				// Also update resilience history
+				const scenario = await Scenario.findById(scenarioId);
+				const resilienceChange = score >= 50 ? 4 : -4;
+				if (!guestData.stats) guestData.stats = { resilience: 50 };
+                const oldResilience = guestData.stats.resilience || 50;
+				guestData.stats.resilience = Math.max(0, Math.min(100, oldResilience + resilienceChange));
+				
+                console.log(`💪 BACKEND: Resilience changed for guest. From ${oldResilience} to ${guestData.stats.resilience}`);
+
+				if (!guestData.history) guestData.history = [];
+				guestData.history.unshift({
+					activityType: 'exercise_finish',
+					activityName: `Тренажер: ${scenario ? scenario.name : ''}`,
+					change: resilienceChange,
+					newScore: guestData.stats.resilience,
+					date: new Date()
+				});
+			} else {
+                console.log(`✅ BACKEND: Guest has already completed scenario ${scenarioId}. No changes made.`);
+            }
+			
+            console.log("🍪 BACKEND: Saving updated guest data to cookie.");
+			res.cookie("dr_guest", JSON.stringify(guestData), {
+				expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+				secure: process.env.NODE_ENV === "production",
+				sameSite: "lax",
+				path: "/",
+			});
+
+			return res.json({
+				completedScenarios: guestData.completedScenarios,
+			});
+		}
+		
+		// Handle Registered User
+		if (token) {
+            console.log("👤 BACKEND: Registered user detected. Processing user completion...");
+			const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret_key");
+			const user = await User.findById(decoded.id);
+	
+			if (!user) {
+                console.error("❌ BACKEND: User not found for token.");
+				return res.status(404).json({ message: "User not found" });
+			}
+	
+			// Add to completed
+			const alreadyCompleted = user.completedScenarios.find(s => s.scenarioId.toString() === scenarioId);
+			if (!alreadyCompleted) {
+                console.log(`✨ BACKEND: User has not completed scenario ${scenarioId} before. Adding to list.`);
+				user.completedScenarios.push({ scenarioId, score, date: new Date() });
+			} else {
+                console.log(`✅ BACKEND: User has already completed scenario ${scenarioId}. No changes made.`);
+            }
+	
+			// Check for completion badges
+			const newBadges = [];
+			const completedCount = user.completedScenarios.length;
+	
+			if (completedCount === 1 && !user.badges.find(b => b.id === "first_scenario")) {
+				user.badges.push({
+					id: "first_scenario",
+					name: "Перша перемога",
+					icon: "🎯",
+					description: "Завершено перший сценарій",
+				});
+				newBadges.push(user.badges[user.badges.length - 1]);
+			}
+	
+			if (completedCount === 5 && !user.badges.find(b => b.id === "expert_5")) {
+				user.badges.push({
+					id: "expert_5",
+					name: "Експерт",
+					icon: "🏆",
+					description: "Завершено 5 сценаріїв",
+				});
+				newBadges.push(user.badges[user.badges.length - 1]);
+			}
+	
+			// Progressive unlocking - unlock next scenario based on category
+			const scenario = await Scenario.findById(scenarioId);
+			if (scenario && scenario.nextUnlock) {
+				if (!user.unlockedScenarios.includes(scenario.nextUnlock)) {
+					user.unlockedScenarios.push(scenario.nextUnlock);
+				}
+			}
+	
+            console.log("💾 BACKEND: Saving updated user data to database.");
+			await user.save();
+	
+			return res.json({
+				completedScenarios: user.completedScenarios,
+				unlockedScenarios: user.unlockedScenarios,
+				newBadges,
+			});
 		}
 
-		await user.save();
+        console.error("❌ BACKEND: No token or guest cookie found. Authentication failed.");
+		return res.status(401).json({ message: "Not authenticated" });
 
-		res.json({
-			completedScenarios: user.completedScenarios,
-			unlockedScenarios: user.unlockedScenarios,
-			newBadges,
-		});
 	} catch (err) {
+		console.error("❌ BACKEND (/complete-scenario): An error occurred:", err);
 		res.status(500).json({ message: err.message });
 	}
 });

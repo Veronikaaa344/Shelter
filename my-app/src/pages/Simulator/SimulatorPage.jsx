@@ -109,30 +109,39 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
         setIsFinished(true);
         setProgress(100);
         
-        const score = Math.round((totalPoints / totalChoices) * 100);
+        const score = totalChoices > 0 ? Math.round((totalPoints / totalChoices) * 100) : 0;
         
         const isSuccess = score >= 50;
         const finalImpact = isSuccess ? 4 : -4;
         
-        console.log('🏁 SimulatorPage: Session Finished', { 
-            score, 
+        console.log('🏁 FRONTEND (SimulatorPage): Session Finished. Preparing to send data.', { 
+            scenarioId: id,
+            calculatedScore: score, 
             isSuccess, 
-            finalImpact, 
-            scenario: scenario.name 
+            resilienceImpact: finalImpact, 
+            scenarioName: scenario.name 
         });
 
         if (applyResilienceChange) {
-            console.log('📡 SimulatorPage: Calling applyResilienceChange...');
+            console.log('📡 FRONTEND (SimulatorPage): Calling applyResilienceChange...');
             applyResilienceChange('exercise_finish', { score, delta: finalImpact, name: scenario.name });
         } else {
             const userId = localStorage.getItem("userId");
             if (userId) {
-                console.log('📡 SimulatorPage: Calling api.updateResilience...');
+                console.log('📡 FRONTEND (SimulatorPage): Calling api.updateResilience for registered user...');
                 api.updateResilience(userId, finalImpact, "exercise", scenario.name);
             }
         }
         
-        api.completeScenario(id, score);
+        console.log(`📡 FRONTEND (SimulatorPage): Calling api.completeScenario with scenarioId: ${id} and score: ${score}`);
+        api.completeScenario(id, score)
+            .then(response => {
+                console.log('✅ FRONTEND (SimulatorPage): api.completeScenario successful!', response);
+            })
+            .catch(error => {
+                console.error('❌ FRONTEND (SimulatorPage): api.completeScenario failed!', error);
+            });
+
         setTimeout(() => setShowCompletionMenu(true), 1500);
     };
 
