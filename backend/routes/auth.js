@@ -198,7 +198,8 @@ router.post("/guest", async (req, res) => {
 				.cookie("dr_guest", existingCookie, {
 					expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
 					secure: process.env.NODE_ENV === "production",
-					sameSite: "strict",
+					sameSite: "lax",
+					path: "/",
 				})
 				.json({
 					user: { id: existingData.id, username: existingData.username, isGuest: true },
@@ -224,16 +225,17 @@ router.post("/guest", async (req, res) => {
 		};
 
 		const guestDataToSave = {
-			...guestData,
-			history: [], // Не сохраняем историю в куки
+			...guestData
 		};
 
+		console.log('🍪 COOKIE DEBUG: Creating new guest cookie:', JSON.stringify(guestDataToSave).substring(0, 100) + '...');
 		res
 			.status(200)
 			.cookie("dr_guest", JSON.stringify(guestDataToSave), {
 				expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
 				secure: process.env.NODE_ENV === "production",
-				sameSite: "strict",
+				sameSite: "lax",
+				path: "/",
 			})
 			.json({
 				id: guestData.id,
@@ -266,18 +268,32 @@ router.post("/guest/update", (req, res) => {
 		}
 		const currentData = JSON.parse(guestCookie);
 		const updatedData = { ...currentData, ...req.body };
+		
+		// Якщо оновлюються статси (наприклад діагностика), додаємо в історію
+		if (req.body.stats && req.body.stats.resilience !== undefined) {
+			if (!updatedData.history) updatedData.history = [];
+			updatedData.history.unshift({
+				activityType: 'diagnostic',
+				activityName: 'Первинна діагностика',
+				change: 0,
+				newScore: req.body.stats.resilience,
+				date: new Date()
+			});
+		}
 
 		// Сохраняем в куки только записи, кроме wrong_answer (промежуточные ответы в тестах)
 		const updatedDataToSave = {
 			...updatedData,
-			history: (updatedData.history || []).filter(h => h.activityType !== "wrong_answer"),
+			history: (updatedData.history || []).filter(h => h.activityType !== "wrong_answer").slice(0, 10),
 		};
 
+		console.log(`📝 GUEST BACKEND (Update): Saving cookie. History length: ${updatedDataToSave.history.length}, Resilience: ${updatedDataToSave.stats?.resilience}`);
 		res
 			.cookie("dr_guest", JSON.stringify(updatedDataToSave), {
 				expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
 				secure: process.env.NODE_ENV === "production",
-				sameSite: "strict",
+				sameSite: "lax",
+				path: "/",
 			})
 			.json(updatedData);
 	} catch (err) {
@@ -301,6 +317,7 @@ router.get("/guest/stats", (req, res) => {
 router.get("/guest/stats-volume", (req, res) => {
 	try {
 		const guestCookie = req.cookies?.dr_guest;
+		console.log('📊 GUEST BACKEND: stats-volume request. Cookie length:', guestCookie ? guestCookie.length : 0);
 		if (!guestCookie) {
 			return res.status(404).json({ message: "Guest not found" });
 		}
@@ -334,10 +351,15 @@ router.get("/guest/stats-volume", (req, res) => {
 router.post("/guest/update-resilience", (req, res) => {
 	try {
 		const { amount, type, name } = req.body;
+		console.log('📥 GUEST BACKEND: Resilience update request', { amount, type, name });
+		
 		const guestCookie = req.cookies?.dr_guest;
+		console.log('🍪 GUEST BACKEND: Incoming cookie length:', guestCookie ? guestCookie.length : 0);
 		if (!guestCookie) {
+			console.log('❌ GUEST BACKEND: No guest cookie found!');
 			return res.status(404).json({ message: "Guest not found" });
 		}
+		
 		const guestData = JSON.parse(guestCookie);
 		let currentRes = (guestData.stats?.resilience || 50) + amount;
 		if (currentRes > 100) currentRes = 100;
@@ -355,26 +377,32 @@ router.post("/guest/update-resilience", (req, res) => {
 			date: new Date(),
 		};
 		guestData.history.unshift(historyEntry);
+		console.log(`📝 GUEST BACKEND: Logged activity "${name}". Total history count: ${guestData.history.length}`);
 
-		// Ограничиваем историю для гостей до 15 записей
-		if (guestData.history.length > 15) {
-			guestData.history = guestData.history.slice(0, 15);
+		if (guestData.history.length > 10) {
+			guestData.history = guestData.history.slice(0, 10);
 		}
 
-		// Сохраняем в куки только записи, кроме wrong_answer (промежуточные ответы в тестах)
 		const guestDataToSave = {
 			...guestData,
-			history: guestData.history.filter(h => h.activityType !== "wrong_answer"),
+			history: (guestData.history || []).filter(h => h.activityType !== "wrong_answer").slice(0, 10),
 		};
 
+		const cookieString = JSON.stringify(guestDataToSave);
+		console.log(`📝 GUEST BACKEND: Final cookie string length: ${cookieString.length}`);
+		console.log(`📝 GUEST BACKEND: Saving history count: ${guestDataToSave.history.length}`);
+		
 		res
-			.cookie("dr_guest", JSON.stringify(guestDataToSave), {
+			.cookie("dr_guest", cookieString, {
 				expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-				secure: process.env.NODE_ENV === "production",
-				sameSite: "strict",
+				secure: false, // For localhost development
+				sameSite: "lax",
+				path: "/",
 			})
 			.json(guestData);
+		console.log('✅ GUEST BACKEND: Cookie updated and response sent.');
 	} catch (err) {
+		console.error('❌ GUEST BACKEND ERROR:', err);
 		res.status(500).json({ message: err.message });
 	}
 });
@@ -410,7 +438,8 @@ router.post("/guest/diary", (req, res) => {
 			.cookie("dr_guest", JSON.stringify(guestData), {
 				expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
 				secure: process.env.NODE_ENV === "production",
-				sameSite: "strict",
+				sameSite: "lax",
+				path: "/",
 			})
 			.json({ success: true, entry: newEntry });
 	} catch (err) {
@@ -613,6 +642,17 @@ router.post("/activity", async (req, res) => {
 
 			if (diffDays === 1) {
 				newStreak += 1;
+				// Бонус +6 за 2+ дні поспіль
+				if (newStreak >= 2) {
+					user.stats.resilience = Math.min(100, (user.stats.resilience || 50) + 6);
+					user.history.unshift({
+						activityType: 'streak_bonus',
+						activityName: `${newStreak} дні поспіль`,
+						change: 6,
+						newScore: user.stats.resilience,
+						date: new Date()
+					});
+				}
 			} else if (diffDays > 1) {
 				newStreak = 1;
 			}

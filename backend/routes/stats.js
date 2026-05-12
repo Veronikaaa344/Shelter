@@ -190,4 +190,46 @@ router.get('/dashboard/:userId', auth, async (req, res) => {
   }
 });
 
+// Оновити резильєнтність та записати в історію
+router.post('/resilience/:userId', auth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { amount, type, name } = req.body;
+    console.log(`📥 BACKEND: Resilience update request for user ${userId}`, { amount, type, name });
+    
+    let userStats = await UserStats.findOne({ userId });
+    if (!userStats) {
+      console.log('📝 BACKEND: No stats found, creating new UserStats...');
+      userStats = new UserStats({ userId });
+    }
+    
+    const oldScore = userStats.resilience.current;
+    userStats.resilience.current = Math.max(0, Math.min(100, userStats.resilience.current + amount));
+    userStats.resilience.history.push({ 
+      value: userStats.resilience.current, 
+      date: new Date() 
+    });
+    
+    userStats.activities.push({
+      type,
+      name,
+      change: amount,
+      date: new Date()
+    });
+    
+    await userStats.save();
+    console.log(`💾 DB: UserStats SAVED successfully for user ${userId}. New resilience: ${userStats.resilience.current}`);
+    console.log(`✅ BACKEND: Resilience updated from ${oldScore} to ${userStats.resilience.current}`);
+    
+    res.json({ 
+      success: true, 
+      currentResilience: userStats.resilience.current,
+      activities: userStats.activities.slice(-5)
+    });
+  } catch (error) {
+    console.error('❌ BACKEND ERROR updating resilience:', error);
+    res.status(500).json({ error: 'Failed to update resilience' });
+  }
+});
+
 export default router;

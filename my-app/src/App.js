@@ -1,19 +1,15 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import api from "./api/api";
-import AdminPage from "./pages/adminPage/AdminPage";
-import AuthPage from "./pages/authPage/AuthPage";
-import ProfilePage from "./pages/profilePage/ProfilePage";
-import SosPage from "./pages/sosPage/sosPage";
-import ShelterAppComplete from "./components/ShelterAppComplete";
-import StatsPage from "./pages/statsPage/StatsPage";
-import ExercisesPage from "./pages/trainerSimulator/exercisesPage/ExercisesPage";
-import SimulatorPage from "./pages/trainerSimulator/simulatorPage/SimulatorPage";
-import MaterialPage from "./pages/materialPage/MaterialPage";
-import ChatTrainingPage from "./pages/chatTraining/ChatTrainingPage";
-import UpdatedSortingPage from "./pages/trainerSimulator/sortingPage/UpdatedSortingPage";
-import UpdatedFindDifferencesPage from "./pages/trainerSimulator/findDifferencesPage/UpdatedFindDifferencesPage";
-import UpdatedVideoScenarioPage from "./pages/trainerSimulator/videoScenarioPage/UpdatedVideoScenarioPage";
+import api from "./infrastructure/api/api";
+import AdminPage from "./pages/Admin/AdminPage";
+import AuthPage from "./pages/Auth/AuthPage";
+import SosPage from "./pages/SOS/sosPage";
+import ShelterAppComplete from "./main/ShelterAppComplete";
+import SimulatorPage from "./pages/Simulator/SimulatorPage";
+import MaterialPage from "./pages/Material/MaterialPage";
+import UpdatedSortingPage from "./pages/Simulator/UpdatedSortingPage";
+import UpdatedFindDifferencesPage from "./pages/Simulator/UpdatedFindDifferencesPage";
+import UpdatedVideoScenarioPage from "./pages/Simulator/UpdatedVideoScenarioPage";
 
 function App() {
 	const [isReady, setIsReady] = useState(false);
@@ -40,8 +36,11 @@ function App() {
 				try {
 					const data = await api.loginAsGuest();
 					// Гостева сесія в куках, локально позначаємо
-					if (data.id || data.user) {
+					const guestUser = data.user || data;
+					if (guestUser.id) {
 						localStorage.setItem("dr_token", "guest_mode");
+						localStorage.setItem("userId", guestUser.id);
+						localStorage.setItem("username", guestUser.username || "Гість");
 					}
 				} catch (e) {
 					console.error(e);
@@ -60,14 +59,10 @@ function App() {
 				<Route path="/" element={<Navigate to="/main" replace />} />
 				<Route path="/main" element={<ShelterAppComplete />} />
 				<Route path="/auth" element={<AuthPage />} />
-				<Route path="/sos" element={<SosPage />} />
-				<Route path="/profile" element={<ProfilePage />} />
+				<Route path="/sos/:answers?" element={<SosPage />} />
 				<Route path="/admin" element={<AdminPage />} />
-				<Route path="/exercises" element={<ExercisesPage />} />
 				<Route path="/exercises/:id" element={<SimulatorPage />} />
 				<Route path="/material/:id" element={<MaterialPage />} />
-				<Route path="/chat" element={<ChatTrainingPage />} />
-				<Route path="/stats" element={<StatsPage />} />
 				<Route path="/sorting/:id" element={<UpdatedSortingPage />} />
 				<Route path="/find-differences/:id" element={<UpdatedFindDifferencesPage />} />
 				<Route path="/video-scenario/:id" element={<UpdatedVideoScenarioPage />} />

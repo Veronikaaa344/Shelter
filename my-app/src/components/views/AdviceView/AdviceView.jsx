@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ChevronRight, Activity, Trophy, Brain, Sparkles, Lightbulb, Clock } from 'lucide-react';
-import { api } from '../../../api/api';
+import { api } from '../../../infrastructure/api/api';
 import { useNavigate } from 'react-router-dom';
 
 const AdviceView = () => {

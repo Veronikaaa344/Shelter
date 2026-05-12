@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Smile, Meh, Frown, BookOpen, Calendar } from 'lucide-react';
-import { api } from '../../../api/api';
+import { api } from '../../../infrastructure/api/api';
 
 const MOOD_CONFIG = [
     { icon: Smile, color: 'text-emerald-500', bg: 'bg-emerald-500/20', border: 'border-emerald-500', label: 'Добре' },

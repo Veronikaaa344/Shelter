@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { api } from "../../../api/api";
-import { getDiagnosticConfig } from "../../../diagnosticLogic";
+import { api } from "../../../infrastructure/api/api";
+import { getDiagnosticConfig } from "../../../infrastructure/utils/diagnosticLogic";
 import { Check, Lock, Play, MapPin, Grid3X3, Trophy, Sparkles } from 'lucide-react';
 import "./QuestsView.css";
 

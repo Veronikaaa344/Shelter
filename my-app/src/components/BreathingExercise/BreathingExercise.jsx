@@ -9,13 +9,13 @@ const PHASES = [
 ];
 
 const HINTS = [
-    "Повільно вдихай через ніс, наповнюй живіт...",
-    "Затримай дихання, відчуй тишу всередині...",
-    "Повільно видихай через рот, відпускай напругу...",
-    "Відпочинь перед наступним вдихом...",
+    "Повільно вдихайте через ніс, наповнюйте живіт...",
+    "Затримайте дихання, відчуйте тишу всередині...",
+    "Повільно видихайте через рот, відпускайте напругу...",
+    "Відпочиньте перед наступним вдихом...",
 ];
 
-const BreathingExercise = ({ 
+export default function BreathingExercise({ 
     onExit, 
     onFinishSession, 
     autoStart = false, 
@@ -23,7 +23,7 @@ const BreathingExercise = ({
     requireCycles = 0, // After how many cycles to trigger finish check (for SOS)
     onCyclesComplete,
     title = "Техніка дихання"
-}) => {
+}) {
     const [isActive, setIsActive] = useState(autoStart);
     const [phaseIndex, setPhaseIndex] = useState(0);
     const [seconds, setSeconds] = useState(PHASES[0].duration);
@@ -54,7 +54,7 @@ const BreathingExercise = ({
         return () => clearTimeout(t);
     }, [isActive, seconds, phaseIndex, cycles, requireCycles]);
 
-    const handleStart = () => {
+    const handleStart = async () => {
         setIsActive(true);
         if (!startTime) setStartTime(Date.now());
     };
@@ -80,7 +80,8 @@ const BreathingExercise = ({
     const progress = ((phase.duration - seconds) / phase.duration) * 100;
 
     return (
-        <div className="fixed inset-0 z-[100] bg-[#070a12] flex flex-col items-center justify-center overflow-hidden animate-in fade-in duration-500">
+        <>
+            <div className="fixed inset-0 z-[100] bg-[#070a12] flex flex-col items-center justify-center overflow-hidden animate-in fade-in duration-500">
             {/* Top Bar */}
             <div className="absolute top-8 left-8 right-8 flex items-center justify-between z-10">
                 <button
@@ -98,7 +99,7 @@ const BreathingExercise = ({
             {/* Main Content */}
             <div className="flex flex-col items-center gap-12 z-10">
                 <div className="text-center">
-                    <p className="text-slate-500 text-xs font-black uppercase tracking-[0.3em] mb-3">Ти в безпеці</p>
+                    <p className="text-slate-500 text-xs font-black uppercase tracking-[0.3em] mb-3">Тиша та спокій</p>
                     <h1 className="text-5xl font-black text-white italic uppercase tracking-tighter leading-none">{title}</h1>
                 </div>
 
@@ -217,7 +218,6 @@ const BreathingExercise = ({
                 }
             `}</style>
         </div>
+        </>
     );
-};
-
-export default BreathingExercise;
+}

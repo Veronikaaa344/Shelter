@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback, useRef, useImperativeHandle, forwardRef } from "react";
 import "./characterCompanion.css";
 
-import capybara1 from "../../images/capybara/1111111111111111.png";
-import capybara2 from "../../images/capybara/222222222.png";
-import capybara3 from "../../images/capybara/33333333.png";
+import capybara1 from "../../infrastructure/assets/images/capybara/1111111111111111.png";
+import capybara2 from "../../infrastructure/assets/images/capybara/222222222.png";
+import capybara3 from "../../infrastructure/assets/images/capybara/33333333.png";
 
 const characters = [
 	{ image: capybara1, type: 'distant' },

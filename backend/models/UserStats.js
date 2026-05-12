@@ -56,7 +56,14 @@ const userStatsSchema = new mongoose.Schema({
       value: Number,
       date: { type: Date, default: Date.now }
     }]
-  }
+  },
+  
+  activities: [{
+    type: { type: String }, // e.g., 'material_feedback', 'chat_training'
+    name: { type: String }, // e.g., 'Назва матеріалу'
+    change: { type: Number }, // e.g., +2, -2
+    date: { type: Date, default: Date.now }
+  }]
 }, {
   timestamps: true
 });
@@ -69,6 +76,7 @@ userStatsSchema.methods.recordBreathingSession = function(minutes) {
   this.totalSessions += 1;
   this.totalMinutes += minutes;
   this.lastActiveDate = new Date();
+  console.log(`💾 DB: Saving Breathing Session for user ${this.userId}. Total minutes: ${this.totalMinutes}`);
   return this.save();
 };
 
@@ -81,8 +89,15 @@ userStatsSchema.methods.recordDiagnostic = function(score, answers) {
   // Обновляем резильентность
   this.resilience.current = score;
   this.resilience.history.push({ value: score });
+  this.activities.push({
+    type: 'diagnostic',
+    name: 'Діагностика',
+    change: 0, // Diagnostic sets the base score
+    date: new Date()
+  });
   
   this.lastActiveDate = new Date();
+  console.log(`💾 DB: Saving Diagnostic Result for user ${this.userId}. Score: ${score}`);
   return this.save();
 };
 
@@ -106,6 +121,7 @@ userStatsSchema.methods.recordMaterialView = function(materialId, minutes = 0) {
   
   this.materialsViewed.count += 1;
   this.lastActiveDate = new Date();
+  console.log(`💾 DB: Saving Material View for user ${this.userId}. Material ID: ${materialId}`);
   return this.save();
 };
 
@@ -123,21 +139,35 @@ userStatsSchema.methods.addDiaryEntry = function(mood, content, tags = []) {
 
 userStatsSchema.methods.updateStreak = function() {
   const today = new Date();
-  const lastActive = this.lastActiveDate;
+  today.setHours(0, 0, 0, 0);
+  const lastActive = this.lastActiveDate ? new Date(this.lastActiveDate) : null;
+  if (lastActive) lastActive.setHours(0, 0, 0, 0);
   
   if (!lastActive) {
     this.streak = 1;
   } else {
-    const daysDiff = Math.floor((today - lastActive) / (1000 * 60 * 60 * 24));
+    const diffTime = today - lastActive;
+    const daysDiff = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     
     if (daysDiff === 1) {
       this.streak += 1;
+      // Бонус +6 за 2+ дні поспіль
+      if (this.streak >= 2) {
+        this.resilience.current = Math.min(100, this.resilience.current + 6);
+        this.resilience.history.push({ value: this.resilience.current, date: new Date() });
+        this.activities.push({
+          type: 'streak_bonus',
+          name: `${this.streak} дні поспіль`,
+          change: 6,
+          date: new Date()
+        });
+      }
     } else if (daysDiff > 1) {
       this.streak = 1;
     }
   }
   
-  this.lastActiveDate = today;
+  this.lastActiveDate = new Date();
   return this.save();
 };
 

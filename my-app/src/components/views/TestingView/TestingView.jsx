@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle2, ChevronRight } from 'lucide-react';
-import { api } from '../../../api/api';
+import { api } from '../../../infrastructure/api/api';
 
 const TestingView = ({ 
     testStep, 

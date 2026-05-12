@@ -17,6 +17,7 @@ const app = express();
 
 const allowedOrigins = [
 	"http://localhost:3000",
+	"http://127.0.0.1:3000",
 	"https://shelter-1-rhi3.onrender.com"
 ];
 

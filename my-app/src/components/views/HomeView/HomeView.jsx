@@ -44,8 +44,6 @@ const HomeView = ({
 
     const handleMoodSelect = (mood) => {
         setCurrentMood(mood.id);
-        const newRes = Math.min(100, Math.max(0, resilience + mood.resilienceMod));
-        setResilience(newRes);
     };
 
     // Адаптивні рекомендації
@@ -143,8 +141,8 @@ const HomeView = ({
                         <Activity size={40} />
                     </div>
                     <div className="flex-1 text-center md:text-left space-y-2">
-                        <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">Потрібна стабілізація?</h2>
-                        <p className="text-rose-200/60 font-medium">Ваш рівень стійкості знизився. Рекомендуємо коротку практику заземлення.</p>
+                        <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">Потрібна підтримка?</h2>
+                        <p className="text-rose-200/60 font-medium">Ваш рівень стійкості зараз низький. Рекомендуємо коротку практику заземлення для відновлення ресурсу.</p>
                     </div>
                     <button 
                         onClick={() => navigateTo('practice')}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { api } from '../../api/api';
+import { api } from '../../infrastructure/api/api';
 import CharacterCompanion from '../../components/characterCompanion/CharacterCompanion';
 import { Bot, User, MessageSquare, Sparkles, ChevronRight, Play, LayoutGrid, ChevronLeft, Clock, Zap, Target } from 'lucide-react';
 import './mainChat.css';
@@ -54,9 +54,7 @@ const baseNodes = {
     },
     ok: {
         text: "Це чудово! Я завжди тут, якщо знадоблюся. Бажаю тобі гарного та спокійного дня!",
-        options: [
-            { text: "Почати спочатку", next: "start" }
-        ]
+        options: []
     }
 };
 
@@ -69,6 +67,9 @@ export default function MainChat({ onBack, username, resilience }) {
     const [currentNodeId, setCurrentNodeId] = useState('start');
     const [isChatMode, setIsChatMode] = useState('ai'); 
     const [loading, setLoading] = useState(false);
+    const [flyingMessage, setFlyingMessage] = useState(null);
+    const [isFinished, setIsFinished] = useState(false);
+    const [showCompletionMenu, setShowCompletionMenu] = useState(false);
     
     const messagesEndRef = useRef(null);
 
@@ -104,49 +105,81 @@ export default function MainChat({ onBack, username, resilience }) {
         setChatView("chat");
     };
 
-    const handleOptionSelect = (option) => {
-        if (isTyping) return;
+    const handleOptionSelect = (option, e) => {
+        if (isTyping || flyingMessage) return;
 
-        const nextId = option.next;
-        const userMessage = {
-            id: messages.length + 1,
-            text: option.text,
-            sender: 'user',
-            timestamp: new Date()
+        const rect = e.currentTarget.getBoundingClientRect();
+        const targetRect = messagesEndRef.current.getBoundingClientRect();
+
+        const startPos = {
+            top: rect.top,
+            left: rect.left,
+            width: rect.width,
+            height: rect.height
         };
 
-        setMessages(prev => [...prev, userMessage]);
-        setIsTyping(true);
+        const targetPos = {
+            top: targetRect.top - 100,
+            left: targetRect.right - (rect.width / 2) - 80 // Ціль - права сторона
+        };
 
+        setFlyingMessage({
+            text: option.text,
+            startPos,
+            targetPos
+        });
+
+        // Пряма анімація "перельоту"
         setTimeout(() => {
-            setIsTyping(false);
-            
-            let nextNode = isChatMode === 'ai' ? baseNodes[nextId] : scenario.nodes[nextId];
+            const nextId = option.next;
+            const userMessage = {
+                id: messages.length + 1,
+                text: option.text,
+                sender: 'user',
+                timestamp: new Date()
+            };
 
-            if (!nextNode) {
-                const endText = isChatMode === 'scenario' 
-                    ? "🌟 Вправу завершено! Дякую за практику." 
-                    : "Я завжди тут. Бажаєш ще щось обговорити?";
-                
+            setMessages(prev => [...prev, userMessage]);
+            setFlyingMessage(null);
+            setIsTyping(true);
+
+            setTimeout(() => {
+                setIsTyping(false);
+                let nextNode = isChatMode === 'ai' ? baseNodes[nextId] : scenario.nodes[nextId];
+
+                if (!nextNode) {
+                    const endText = isChatMode === 'scenario' 
+                        ? "🌟 Вправу завершено! Дякую за практику." 
+                        : "Я завжди тут. Бажаєш ще щось обговорити?";
+                    
+                    setMessages(prev => [...prev, {
+                        id: prev.length + 1,
+                        text: endText,
+                        sender: 'bot',
+                        timestamp: new Date()
+                    }]);
+                    setIsFinished(true);
+                    
+                    // Бонус +4 за завершення чату
+                    const userId = localStorage.getItem("userId");
+                    if (userId) {
+                        api.updateResilience(userId, 4, "chat_finish", isChatMode === 'ai' ? 'AI Помічник' : scenario?.name);
+                    }
+                    
+                    setTimeout(() => setShowCompletionMenu(true), 1500);
+                    return;
+                }
+
+                setCurrentNodeId(nextId);
                 setMessages(prev => [...prev, {
                     id: prev.length + 1,
-                    text: endText,
+                    text: nextNode.text,
                     sender: 'bot',
-                    timestamp: new Date()
+                    timestamp: new Date(),
+                    isScenario: isChatMode === 'scenario'
                 }]);
-                return;
-            }
-
-            setCurrentNodeId(nextId);
-            setMessages(prev => [...prev, {
-                id: prev.length + 1,
-                text: nextNode.text,
-                sender: 'bot',
-                timestamp: new Date(),
-                isScenario: isChatMode === 'scenario'
-            }]);
-
-        }, 1000);
+            }, 1000);
+        }, 600); // Час "польоту"
     };
 
     if (chatView === "selection") {
@@ -210,7 +243,7 @@ export default function MainChat({ onBack, username, resilience }) {
                         ))}
                     </div>
                 </div>
-                <CharacterCompanion context="chat" position="bottom-right" />
+                {/* <CharacterCompanion context="chat" position="bottom-right" /> */}
             </div>
         );
     }
@@ -238,7 +271,7 @@ export default function MainChat({ onBack, username, resilience }) {
                 {messages.map((message) => (
                     <div
                         key={message.id}
-                        className={`dr-message ${message.sender === 'user' ? 'user' : 'bot'} ${message.isSystem ? 'system' : ''} animate-in fade-in slide-in-from-bottom-2 duration-300`}
+                        className={`dr-message ${message.sender === 'user' ? 'user' : 'bot'} ${message.isSystem ? 'system' : ''}`}
                     >
                         <div className="dr-message-header">
                             {message.sender === 'bot' ? (isChatMode === 'ai' ? 'AI Assistant' : 'Помічник') : username}
@@ -268,21 +301,77 @@ export default function MainChat({ onBack, username, resilience }) {
                         <button
                             key={index}
                             className="dr-option-btn"
-                            onClick={() => handleOptionSelect(option)}
-                            disabled={isTyping}
+                            onClick={(e) => handleOptionSelect(option, e)}
+                            disabled={isTyping || flyingMessage}
                         >
                             {option.text}
                         </button>
                     ))}
-                    {isTyping && (
-                        <div className="h-10 flex items-center justify-center opacity-20 italic text-xs text-slate-500">
-                            Чекаю на відповідь...
-                        </div>
-                    )}
+                    {isTyping && <div className="h-4" />}
                 </div>
             </div>
 
-            <CharacterCompanion context="chat" position="bottom-right" resilience={resilience} />
+            {/* <CharacterCompanion context="chat" position="bottom-right" resilience={resilience} /> */}
+            
+            {flyingMessage && (
+                <div 
+                    className="dr-flying-element"
+                    style={{
+                        position: 'fixed',
+                        top: flyingMessage.startPos.top,
+                        left: flyingMessage.startPos.left,
+                        width: flyingMessage.startPos.width,
+                        height: flyingMessage.startPos.height,
+                        '--target-x': `${flyingMessage.targetPos.left - flyingMessage.startPos.left - (flyingMessage.startPos.width / 2)}px`,
+                        '--target-y': `${flyingMessage.targetPos.top - flyingMessage.startPos.top}px`,
+                    }}
+                >
+                    {flyingMessage.text}
+                </div>
+            )}
+            {showCompletionMenu && (
+                <div className="absolute inset-0 z-[100] flex items-center justify-center p-6 bg-[#0b0f1a]/80 backdrop-blur-2xl animate-in fade-in duration-500">
+                    <div className="bg-slate-900/80 border border-slate-800 p-10 rounded-[48px] max-w-lg w-full text-center shadow-3xl transform animate-in zoom-in-95 duration-500">
+                        <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6 text-emerald-500">
+                            <Sparkles size={40} />
+                        </div>
+                        <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-2">Чудова розмова!</h2>
+                        <p className="text-slate-400 mb-8 text-sm uppercase tracking-widest font-bold">Дякую, що поділилися своїми почуттями.</p>
+                        <div className="grid grid-cols-1 gap-3">
+                            <button 
+                                onClick={() => {
+                                    setShowCompletionMenu(false);
+                                    setChatView("selection");
+                                }}
+                                className="bg-slate-800 hover:bg-slate-700 text-white py-4 rounded-[20px] font-black uppercase text-[10px] tracking-widest transition-all"
+                            >
+                                Вийти
+                            </button>
+                            <button 
+                                onClick={() => onBack()} // Перехід до Home/Dashboard
+                                className="bg-emerald-500 hover:bg-emerald-400 text-[#0b0f1a] py-4 rounded-[20px] font-black uppercase text-[10px] tracking-widest transition-all shadow-lg shadow-emerald-500/20"
+                            >
+                                До прогресу
+                            </button>
+                            <button 
+                                onClick={() => {
+                                    setIsFinished(false);
+                                    setShowCompletionMenu(false);
+                                    if (isChatMode === 'ai') {
+                                        setMessages([{ id: 1, text: baseNodes.start.text, sender: 'bot', timestamp: new Date() }]);
+                                        setCurrentNodeId('start');
+                                    } else {
+                                        selectScenario(scenario);
+                                    }
+                                }}
+                                className="bg-slate-800 hover:bg-slate-700 text-white py-4 rounded-[20px] font-black uppercase text-[10px] tracking-widest transition-all"
+                            >
+                                Почати знову
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

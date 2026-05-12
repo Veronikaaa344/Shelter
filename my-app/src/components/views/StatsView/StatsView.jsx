@@ -6,32 +6,41 @@ import {
     ResponsiveContainer,
     Tooltip,
     XAxis,
-    TrendingUp,
-    Zap,
-    Heart
+    YAxis
 } from 'recharts';
-import { Leaf, TreeDeciduous } from 'lucide-react';
+import { Leaf, TreeDeciduous, TrendingUp, Zap, Heart } from 'lucide-react';
 
 const StatsView = ({ userStats, resilience = 50, completedCount = 0 }) => {
+    console.log('📊 StatsView: Received Props', { userStats, resilience, completedCount });
+    
     // Формуємо дані для графіка з історії резильєнтності
-    // Формуємо дані для графіка з історії резильєнтності
-    const historyData = (userStats?.resilience?.history && userStats.resilience.history.length > 0) 
-        ? userStats.resilience.history.map(h => {
-            const date = new Date(h.date);
-            const days = ['Нд', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-            return {
-                day: days[date.getDay()],
-                val: h.value
-            };
-        }) 
-        : [{ day: 'Сьогодні', val: resilience }]; // Якщо історії немає, показуємо лише поточну точку
+    // Нормалізація даних історії
+    let rawHistory = [];
+    if (userStats?.resilience?.history) {
+        rawHistory = userStats.resilience.history.map(h => ({ date: h.date, val: h.value }));
+    } else if (userStats?.history) {
+        rawHistory = userStats.history.map(h => ({ date: h.date, val: h.newScore || h.value }));
+    }
+    
+    console.log('📈 StatsView: Normalized History for Graph', rawHistory);
+
+    const historyData = (rawHistory.length > 0) 
+        ? [...rawHistory].slice().reverse().slice(0, 10).reverse().map(h => ({
+            date: h.date,
+            val: h.val
+        })) 
+        : [{ date: new Date(), val: resilience }]; 
 
     // Розрахунок росту дерева (Resilience Garden)
     const treeScale = 0.5 + (resilience / 100) * 0.5;
-    const leafCount = Math.max(0, completedCount); // Використовуємо реальну кількість виконаних завдань
+    const leafCount = Math.max(0, completedCount); 
 
     return (
         <div className="p-8 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-24">
+           <style>{`
+               .recharts-cartesian-grid-horizontal line { stroke: #1e293b; }
+               .recharts-cartesian-grid-vertical line { display: none; }
+           `}</style>
            {/* Section 1: Garden Visualization */}
            <section className="space-y-6">
                 <div className="flex items-center gap-3">
@@ -86,19 +95,83 @@ const StatsView = ({ userStats, resilience = 50, completedCount = 0 }) => {
                 </div>
            </section>
 
-           {/* Section 2: Resilience Graph */}
-           <section className="space-y-6">
+            {/* Section 2: Activity History */}
+            <section className="space-y-6">
+                <div className="flex items-center gap-3">
+                    <div className="w-2 h-8 bg-amber-500 rounded-full"></div>
+                    <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">Історія активності</h2>
+                </div>
+                
+                <div className="space-y-4">
+                    {(userStats?.activities || userStats?.history || []).slice().reverse().slice(0, 5).map((act, i) => (
+                        <div key={i} className="bg-slate-900/40 border border-slate-800 p-6 rounded-[32px] flex items-center justify-between backdrop-blur-md animate-in fade-in slide-in-from-left duration-500" style={{ animationDelay: `${i * 100}ms` }}>
+                            <div className="flex items-center gap-4">
+                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${act.change >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'}`}>
+                                    <Zap size={20} />
+                                </div>
+                                <div>
+                                    <p className="text-sm font-black text-white uppercase tracking-tight">{act.name || act.activityName || 'Активність'}</p>
+                                    <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{new Date(act.date).toLocaleDateString()} • {act.type || act.activityType}</p>
+                                </div>
+                            </div>
+                            <div className={`text-xl font-black italic ${act.change >= 0 ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                {act.change >= 0 ? `+${act.change}` : act.change}
+                            </div>
+                        </div>
+                    ))}
+                    
+                    {!(userStats?.activities || userStats?.history || []).length && (
+                        <div className="p-12 text-center bg-slate-900/20 border border-dashed border-slate-800 rounded-[40px]">
+                            <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Історія поки порожня</p>
+                        </div>
+                    )}
+                </div>
+           </section>
+
+           {/* Section 3: Resilience Graph */}
+           <section className="space-y-6 pb-12">
                 <div className="flex items-center gap-3">
                     <div className="w-2 h-8 bg-blue-500 rounded-full"></div>
                     <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter leading-none">Аналітика прогресу</h2>
                 </div>
-                <div className="bg-slate-900/30 border border-slate-800 p-10 robust-rounded-48 shadow-2xl backdrop-blur-xl h-96">
-                    <ResponsiveContainer width="100%" height="100%">
+                <div className="bg-slate-900/30 border border-slate-800 p-10 rounded-[48px] shadow-2xl backdrop-blur-xl h-96 min-h-[400px]">
+                    <ResponsiveContainer width="100%" height="100%" debounce={100}>
                         <AreaChart data={historyData}>
                             <defs><linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/><stop offset="95%" stopColor="#10b981" stopOpacity={0}/></linearGradient></defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                            <XAxis dataKey="day" stroke="#475569" fontSize={12} tickLine={false} axisLine={false} />
-                            <Tooltip contentStyle={{backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '16px'}} />
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
+                            <XAxis 
+                                dataKey="date" 
+                                stroke="#475569" 
+                                fontSize={10} 
+                                tickLine={false} 
+                                axisLine={false}
+                                tickFormatter={(str) => {
+                                    try {
+                                        const d = new Date(str);
+                                        return isNaN(d.getTime()) ? '?' : d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
+                                    } catch (e) {
+                                        return '?';
+                                    }
+                                }}
+                            />
+                            <YAxis 
+                                domain={[0, 100]} 
+                                stroke="#475569" 
+                                fontSize={10} 
+                                tickLine={false} 
+                                axisLine={false} 
+                            />
+                            <Tooltip 
+                                contentStyle={{
+                                    backgroundColor: '#0f172a', 
+                                    border: 'none', 
+                                    borderRadius: '16px',
+                                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                                    fontSize: '12px',
+                                    color: '#fff'
+                                }}
+                                itemStyle={{ color: '#10b981' }}
+                            />
                             <Area type="monotone" dataKey="val" stroke="#10b981" strokeWidth={4} fillOpacity={1} fill="url(#colorVal)" />
                         </AreaChart>
                     </ResponsiveContainer>

@@ -1,6 +1,6 @@
 import React from 'react';
 import BreathingExercise from '../../BreathingExercise/BreathingExercise';
-import { api } from '../../../api/api';
+import { api } from '../../../infrastructure/api/api';
 
 const PracticeView = ({ userId, navigateTo }) => {
     const handleFinishSession = (mins, cycles) => {

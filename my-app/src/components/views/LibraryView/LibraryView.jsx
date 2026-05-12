@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, Wind, Play, Pause, Camera } from 'lucide-react';
-import { api } from '../../../api/api';
+import { ChevronRight, Wind, Play, Pause, Camera, Volume2, Music } from 'lucide-react';
+import { api } from '../../../infrastructure/api/api';
 import { useNavigate } from 'react-router-dom';
 
 // Import grounding images
-import grounding1 from '../../../images/forVideo/grounding_1.png';
-import grounding2 from '../../../images/forVideo/grounding_2.jpg';
-import grounding3 from '../../../images/forVideo/grounding_3.png';
-import grounding4 from '../../../images/forVideo/grounding_4.jpg';
-import grounding5 from '../../../images/forVideo/grounding_5.jpg';
-import grounding6 from '../../../images/forVideo/grounding_6.png';
+import grounding1 from '../../../infrastructure/assets/images/forVideo/grounding_1.png';
+import grounding2 from '../../../infrastructure/assets/images/forVideo/grounding_2.jpg';
+import grounding3 from '../../../infrastructure/assets/images/forVideo/grounding_3.png';
+import grounding4 from '../../../infrastructure/assets/images/forVideo/grounding_4.jpg';
+import grounding5 from '../../../infrastructure/assets/images/forVideo/grounding_5.jpg';
+import grounding6 from '../../../infrastructure/assets/images/forVideo/grounding_6.png';
 
 const LibraryView = ({ 
     mediaLibraryData, 
@@ -23,6 +23,7 @@ const LibraryView = ({
     const navigate = useNavigate();
     const [activeNoise, setActiveNoise] = useState(null);
     const [isNoisePlaying, setIsNoisePlaying] = useState(false);
+    const [volume, setVolume] = useState(0.1);
     
     // Audio API refs
     const audioCtx = useRef(null);
@@ -100,7 +101,7 @@ const LibraryView = ({
 
         const gain = audioCtx.current.createGain();
         gain.gain.setValueAtTime(0, audioCtx.current.currentTime);
-        gain.gain.linearRampToValueAtTime(0.3, audioCtx.current.currentTime + 0.5);
+        gain.gain.linearRampToValueAtTime(volume, audioCtx.current.currentTime + 0.5);
 
         source.connect(gain);
         gain.connect(audioCtx.current.destination);
@@ -131,6 +132,12 @@ const LibraryView = ({
         }
         setIsNoisePlaying(false);
     };
+
+    useEffect(() => {
+        if (gainNode.current && audioCtx.current) {
+            gainNode.current.gain.setTargetAtTime(volume, audioCtx.current.currentTime, 0.1);
+        }
+    }, [volume]);
 
     useEffect(() => {
         return () => {
@@ -190,25 +197,81 @@ const LibraryView = ({
                                 <p className="text-slate-400 max-w-md">Оберіть частотний діапазон, який найкраще підходить для вашого стану.</p>
                             </div>
                             
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                {[
-                                    { name: 'Білий', desc: 'Фокус та концентрація', color: 'bg-white/10', border: 'hover:border-white' },
-                                    { name: 'Рожевий', desc: 'Заспокоєння та релакс', color: 'bg-rose-500/10', border: 'hover:border-rose-500' },
-                                    { name: 'Коричневий', desc: 'Глибокий сон', color: 'bg-amber-900/20', border: 'hover:border-amber-700' }
-                                ].map((noise) => (
-                                    <button 
-                                        key={noise.name} 
-                                        onClick={() => toggleNoise(noise.name)}
-                                        className={`p-6 rounded-[32px] border transition-all ${activeNoise === noise.name && isNoisePlaying ? 'border-blue-500 bg-blue-500/10' : 'border-slate-800 ' + noise.color + ' ' + noise.border} text-left group`}
+                            <div className="flex flex-col xl:flex-row gap-10 items-center">
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1 w-full">
+                                    {[
+                                        { name: 'Білий', desc: 'Фокус та концентрація', color: 'bg-white/10', border: 'hover:border-white' },
+                                        { name: 'Рожевий', desc: 'Заспокоєння та релакс', color: 'bg-rose-500/10', border: 'hover:border-rose-500' },
+                                        { name: 'Коричневий', desc: 'Глибокий сон', color: 'bg-amber-900/20', border: 'hover:border-amber-700' }
+                                    ].map((noise) => (
+                                        <button 
+                                            key={noise.name} 
+                                            onClick={() => {
+                                                toggleNoise(noise.name);
+                                            }}
+                                            className={`p-6 rounded-[32px] border transition-all ${activeNoise === noise.name && isNoisePlaying ? 'border-blue-500 bg-blue-500/10' : 'border-slate-800 ' + noise.color + ' ' + noise.border} text-left group`}
+                                        >
+                                            <p className="text-lg font-black text-white uppercase italic mb-1">{noise.name}</p>
+                                            <p className="text-[10px] text-slate-500 font-bold uppercase">{noise.desc}</p>
+                                        </button>
+                                    ))}
+                                </div>
+
+                                {/* Always Visible iOS-style Slider */}
+                                <div className="relative flex flex-col items-center gap-4 py-2">
+                                    <div 
+                                        className="relative w-24 h-48 bg-[#f8fafc] rounded-[44px] overflow-hidden cursor-pointer group shadow-[0_20px_40px_-10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,1)] border-2 border-[#f1f5f9]"
+                                        onMouseDown={(e) => {
+                                            const rect = e.currentTarget.getBoundingClientRect();
+                                            const updateVolume = (clientY) => {
+                                                const val = Math.max(0, Math.min(1, 1 - (clientY - rect.top) / rect.height));
+                                                setVolume(val);
+                                            };
+                                            updateVolume(e.clientY);
+                                            const onMouseMove = (moveEvent) => updateVolume(moveEvent.clientY);
+                                            const onMouseUp = () => {
+                                                window.removeEventListener('mousemove', onMouseMove);
+                                                window.removeEventListener('mouseup', onMouseUp);
+                                            };
+                                            window.addEventListener('mousemove', onMouseMove);
+                                            window.addEventListener('mouseup', onMouseUp);
+                                        }}
+                                        onTouchStart={(e) => {
+                                            const rect = e.currentTarget.getBoundingClientRect();
+                                            const updateVolume = (clientY) => {
+                                                const val = Math.max(0, Math.min(1, 1 - (clientY - rect.top) / rect.height));
+                                                setVolume(val);
+                                            };
+                                            updateVolume(e.touches[0].clientY);
+                                            const onTouchMove = (moveEvent) => updateVolume(moveEvent.touches[0].clientY);
+                                            const onTouchEnd = () => {
+                                                window.removeEventListener('touchmove', onTouchMove);
+                                                window.removeEventListener('touchend', onTouchEnd);
+                                            };
+                                            window.addEventListener('touchmove', onTouchMove);
+                                            window.addEventListener('touchend', onTouchEnd);
+                                        }}
                                     >
-                                        <p className="text-lg font-black text-white uppercase italic mb-1">{noise.name}</p>
-                                        <p className="text-[10px] text-slate-500 font-bold uppercase">{noise.desc}</p>
-                                    </button>
-                                ))}
+                                        <div 
+                                            className="absolute bottom-0 left-0 w-full bg-[#22c55e] transition-all duration-75 ease-out"
+                                            style={{ height: `${volume * 100}%` }}
+                                        >
+                                            <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+                                        </div>
+                                        <div className="absolute bottom-6 left-0 w-full flex justify-center pointer-events-none">
+                                            <Music 
+                                                size={24} 
+                                                className={`${volume > 0.18 ? 'text-white' : 'text-slate-900/40'} transition-all duration-300`} 
+                                                strokeWidth={2.5}
+                                            />
+                                        </div>
+                                    </div>
+                                    <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">{Math.round(volume * 100)}%</span>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="w-full lg:w-72 h-48 bg-slate-900/80 rounded-[32px] border border-slate-800 p-6 flex flex-col justify-between">
+                        <div className="w-full lg:w-72 min-h-[192px] h-auto bg-slate-900/80 rounded-[32px] border border-slate-800 p-6 flex flex-col gap-4">
                             <div className="flex justify-between items-center">
                                 <span className="text-[10px] font-black text-blue-500 uppercase tracking-widest">Visualizer</span>
                                 <div className="flex gap-1">
@@ -235,7 +298,13 @@ const LibraryView = ({
                             </div>
 
                             <button 
-                                onClick={() => activeNoise && toggleNoise(activeNoise)}
+                                onClick={() => {
+                                    if (activeNoise) {
+                                        toggleNoise(activeNoise);
+                                    } else {
+                                        toggleNoise('Білий'); // Default to White noise if none selected
+                                    }
+                                }}
                                 className={`w-full py-3 ${isNoisePlaying ? 'bg-rose-600' : 'bg-blue-600'} hover:opacity-90 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all shadow-lg flex items-center justify-center gap-2`}
                             >
                                 {isNoisePlaying ? <><Pause size={14} /> Вимкнути</> : <><Play size={14} /> Активувати звук</>}
