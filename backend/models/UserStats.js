@@ -1,13 +1,16 @@
 import mongoose from 'mongoose';
+import ActivityLog from './ActivityLog.js';
+import DiaryEntry from './DiaryEntry.js';
+import DiagnosticResult from './DiagnosticResult.js';
 
 const userStatsSchema = new mongoose.Schema({
   userId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
-    ref: 'Account'
+    ref: 'User'
   },
   
-  // Статистика использования
+  // Статистика використання (агреговані дані)
   breathingSessions: {
     count: { type: Number, default: 0 },
     totalMinutes: { type: Number, default: 0 },
@@ -17,12 +20,7 @@ const userStatsSchema = new mongoose.Schema({
   diagnosticsTaken: {
     count: { type: Number, default: 0 },
     lastScore: { type: Number },
-    lastDate: { type: Date },
-    history: [{
-      score: Number,
-      date: { type: Date, default: Date.now },
-      answers: [Number]
-    }]
+    lastDate: { type: Date }
   },
   
   materialsViewed: {
@@ -31,89 +29,89 @@ const userStatsSchema = new mongoose.Schema({
       materialId: { type: String, ref: 'Material' },
       viewCount: { type: Number, default: 0 },
       lastViewed: { type: Date, default: Date.now },
-      totalTime: { type: Number, default: 0 } // в минутах
+      totalTime: { type: Number, default: 0 } // в хвилинах
     }]
   },
   
-  diaryEntries: [{
-    date: { type: Date, default: Date.now },
-    mood: { type: Number }, // 0 - позитивный, 1 - нейтральный, 2 - негативный
-    content: { type: String },
-    tags: [String],
-    wordCount: { type: Number }
-  }],
-  
-  // Общая статистика
+  // Загальна статистика
   totalSessions: { type: Number, default: 0 },
   totalMinutes: { type: Number, default: 0 },
-  streak: { type: Number, default: 0 }, // дней подряд
-  lastActiveDate: { type: Date },
-  
-  // Резильентность
-  resilience: {
-    current: { type: Number, default: 50 },
-    history: [{
-      value: Number,
-      date: { type: Date, default: Date.now }
-    }]
-  },
-  
-  activities: [{
-    type: { type: String }, // e.g., 'material_feedback', 'chat_training'
-    name: { type: String }, // e.g., 'Назва матеріалу'
-    change: { type: Number }, // e.g., +2, -2
-    date: { type: Date, default: Date.now }
-  }]
+  lastActiveDate: { type: Date }
 }, {
   timestamps: true
 });
 
-// Методы для обновления статистики
-userStatsSchema.methods.recordBreathingSession = function(minutes) {
+// Методи для оновлення статистики
+userStatsSchema.methods.recordBreathingSession = async function(minutes) {
   this.breathingSessions.count += 1;
   this.breathingSessions.totalMinutes += minutes;
   this.breathingSessions.lastSession = new Date();
   this.totalSessions += 1;
   this.totalMinutes += minutes;
   this.lastActiveDate = new Date();
-  console.log(`💾 DB: Saving Breathing Session for user ${this.userId}. Total minutes: ${this.totalMinutes}`);
+  
+  await ActivityLog.create({
+    userId: this.userId,
+    type: 'breathing',
+    name: 'Дихальна практика',
+    change: 2 
+  });
+
   return this.save();
 };
 
-userStatsSchema.methods.recordDiagnostic = function(score, answers) {
+userStatsSchema.methods.recordDiagnostic = async function(score, answers) {
   this.diagnosticsTaken.count += 1;
   this.diagnosticsTaken.lastScore = score;
   this.diagnosticsTaken.lastDate = new Date();
-  this.diagnosticsTaken.history.push({ score, answers });
   
-  // Визначаємо зміну резильєнтності на основі результату
   let resilienceChange = 0;
   if (score >= 60) resilienceChange = 2;
   else if (score <= 40) resilienceChange = -2;
 
-  // Оновлюємо резильєнтність: 
-  // Якщо це перша діагностика - встановлюємо базовий бал
-  // Якщо ні - додаємо зміну до існуючого балу (або теж коригуємо)
-  // Для спрощеної гейміфікації: встановлюємо score як новий бал, 
-  // але в історію записуємо вплив події.
-  
-  const oldResilience = this.resilience.current;
-  this.resilience.current = score;
-  this.resilience.history.push({ value: score });
-  
-  this.activities.push({
+  // 1. Створюємо детальний результат тесту
+  await DiagnosticResult.create({
+    userId: this.userId,
+    score,
+    answers
+  });
+
+  // 2. Створюємо лог активності для графіка
+  await ActivityLog.create({
+    userId: this.userId,
     type: 'diagnostic',
     name: 'Діагностика стану',
     change: resilienceChange,
-    date: new Date()
+    metadata: { score }
   });
   
   this.lastActiveDate = new Date();
-  console.log(`💾 DB: Saving Diagnostic Result for user ${this.userId}. Score: ${score}, Change: ${resilienceChange}`);
   return this.save();
 };
 
-userStatsSchema.methods.recordMaterialView = function(materialId, minutes = 0) {
+userStatsSchema.methods.addDiaryEntry = async function(mood, content, tags = []) {
+  // 1. Створюємо запис у щоденнику
+  await DiaryEntry.create({
+    userId: this.userId,
+    mood,
+    content,
+    tags,
+    wordCount: content.split(' ').filter(word => word.length > 0).length
+  });
+
+  // 2. Створюємо лог активності
+  await ActivityLog.create({
+    userId: this.userId,
+    type: 'diary',
+    name: 'Запис у щоденнику',
+    change: 1 // Невеликий бонус за рефлексію
+  });
+
+  this.lastActiveDate = new Date();
+  return this.save();
+};
+
+userStatsSchema.methods.recordMaterialView = async function(materialId, minutes = 0) {
   const existingMaterial = this.materialsViewed.materials.find(
     m => m.materialId.toString() === materialId.toString()
   );
@@ -133,52 +131,18 @@ userStatsSchema.methods.recordMaterialView = function(materialId, minutes = 0) {
   
   this.materialsViewed.count += 1;
   this.lastActiveDate = new Date();
-  console.log(`💾 DB: Saving Material View for user ${this.userId}. Material ID: ${materialId}`);
-  return this.save();
-};
 
-userStatsSchema.methods.addDiaryEntry = function(mood, content, tags = []) {
-  this.diaryEntries.push({
-    mood,
-    content,
-    tags,
-    wordCount: content.split(' ').length
+  await ActivityLog.create({
+    userId: this.userId,
+    type: 'material_view',
+    name: 'Перегляд матеріалу',
+    metadata: { materialId }
   });
-  
-  this.lastActiveDate = new Date();
+
   return this.save();
 };
 
-userStatsSchema.methods.updateStreak = function() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const lastActive = this.lastActiveDate ? new Date(this.lastActiveDate) : null;
-  if (lastActive) lastActive.setHours(0, 0, 0, 0);
-  
-  if (!lastActive) {
-    this.streak = 1;
-  } else {
-    const diffTime = today - lastActive;
-    const daysDiff = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (daysDiff === 1) {
-      this.streak += 1;
-      // Бонус +6 за 2+ дні поспіль
-      if (this.streak >= 2) {
-        this.resilience.current = Math.min(100, this.resilience.current + 6);
-        this.resilience.history.push({ value: this.resilience.current, date: new Date() });
-        this.activities.push({
-          type: 'streak_bonus',
-          name: `${this.streak} дні поспіль`,
-          change: 6,
-          date: new Date()
-        });
-      }
-    } else if (daysDiff > 1) {
-      this.streak = 1;
-    }
-  }
-  
+userStatsSchema.methods.updateLastActive = function() {
   this.lastActiveDate = new Date();
   return this.save();
 };

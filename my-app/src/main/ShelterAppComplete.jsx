@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
-  AlertCircle, BarChart3, Bell, BookOpen, ChevronLeft, ClipboardList,
-  FileText, Headphones, Layout, Lightbulb, LogOut, PenLine, Search,
-  ShieldCheck, TrendingUp, Trophy, Video, Wind, X
+  AlertCircle, ChevronLeft, FileText, Headphones, Video, Wind, X
 } from 'lucide-react';
 
 import '../infrastructure/assets/styles/index-tailwind.css';
@@ -14,10 +12,8 @@ import { calculateResilienceChange, clampResilience } from '../infrastructure/ut
 // Core Components
 import MainSidebar from '../components/MainSidebar/MainSidebar';
 import MainHeader from '../components/MainHeader/MainHeader';
-import HoldSOSButton from '../components/HoldSOSButton/HoldSOSButton';
 import HomeView from '../components/views/HomeView/HomeView';
 import MainChat from '../components/MainChat/MainChat';
-import CharacterCompanion from '../components/characterCompanion/CharacterCompanion';
 
 // Heavy View Components (Lazy)
 const LibraryView = React.lazy(() => import('../components/views/LibraryView/LibraryView'));
@@ -35,15 +31,7 @@ const UpdatedSortingPage = React.lazy(() => import('../pages/Simulator/UpdatedSo
 
 // --- ІМІТАЦІЯ ДАНИХ (MOCK DATA) ---
 
-const resilienceHistory = [
-  { day: 'Пн', val: 45 },
-  { day: 'Вт', val: 52 },
-  { day: 'Ср', val: 48 },
-  { day: 'Чт', val: 70 },
-  { day: 'Пт', val: 65 },
-  { day: 'Сб', val: 85 },
-  { day: 'Нд', val: 78 },
-];
+// --- ShelterApp ---
 
 
 
@@ -84,6 +72,8 @@ const ShelterAppComplete = () => {
   const [userId, setUserId] = useState(initialUserId);
 
   const initialUsername = localStorage.getItem("username") || "Гість";
+  const [completedScenariosCount, setCompletedScenariosCount] = useState(0);
+  const [completedMaterialsCount, setCompletedMaterialsCount] = useState(0);
   const [username, setUsername] = useState(initialUsername);
   const [showStabilizationHint, setShowStabilizationHint] = useState(false);
 
@@ -128,88 +118,9 @@ const ShelterAppComplete = () => {
     }
   }, [location, navigate]);
 
-  useEffect(() => {
-    // Завантаження медіатеки та іншого...
-    api.getMaterials()
-      .then((data) => {
-        console.log('📊 Завантажені матеріали з API:', data);
-        console.log('📏 Кількість матеріалів:', data?.length || 0);
+  const isFetchingRef = useRef(false);
 
-        if (Array.isArray(data)) {
-          const adviceTitles = [
-            "Гігієна сну в стресі",
-            "Емоційний інтелект",
-            "Медітація для новачків",
-            "Як працює кортизол"
-          ];
-
-          const mappedData = data
-            .filter(m => !adviceTitles.includes(m.title)) // Прибираємо поради з медіатеки
-            .map(m => ({
-              id: m._id,
-              title: m.title,
-              type: m.type === 'text' ? 'Стаття' : m.type === 'video' ? 'Відео' : 'Аудіо',
-              cat: m.category || 'Загальне',
-              duration: m.duration || '10 хв',
-              icon: m.type === 'text' ? <FileText size={20} /> : m.type === 'video' ? <Video size={20} /> : <Headphones size={20} />,
-              color: m.category === 'anxiety' ? 'bg-blue-500' : m.category === 'stress' ? 'bg-emerald-500' : m.category === 'apathy' ? 'bg-rose-500' : 'bg-purple-500'
-            }));
-
-          console.log('🔄 Перетворені матеріали для відображення:', mappedData);
-          console.log('📋 Список матеріалів:');
-          mappedData.forEach((material, index) => {
-            console.log(`${index + 1}. ${material.title} (${material.type}) - ${material.cat}`);
-          });
-
-          setMediaLibraryData(mappedData);
-        } else {
-          console.log('❌ Дані не є масивом:', data);
-        }
-      })
-      .catch((err) => console.error('Error loading materials:', err));
-
-    // Завантаження профілю
-    if (userId || (api.isGuest && api.isGuest())) {
-      api.getProfile()
-        .then((profile) => {
-          console.log('✅ Профіль отримано:', profile);
-          if (profile && profile.username) {
-            setUsername(profile.username);
-          }
-        })
-        .catch((err) => { 
-          console.error('❌ Помилка завантаження профілю:', err);
-        });
-    }
-
-    // Завантаження статистики
-    refreshStats();
-
-    // Завантаження сценаріїв для кубиків
-    api.getScenarios()
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setSimulatorScenariosList(data);
-        }
-      })
-      .catch((err) => console.error('Error loading scenarios:', err));
-
-    // Завантаження профілю для реальних даних
-    api.getProfile()
-      .then((profile) => {
-        if (profile) {
-          setCompletedScenariosCount(profile.completedScenarios?.length || 0);
-          setCompletedMaterialsCount(profile.completedMaterials?.length || 0);
-          if (profile.username) setUsername(profile.username);
-        }
-      })
-      .catch(() => {});
-  }, [userId]);
-
-  const [completedScenariosCount, setCompletedScenariosCount] = useState(0);
-  const [completedMaterialsCount, setCompletedMaterialsCount] = useState(0);
-
-  const refreshStats = () => {
+  const refreshStats = useCallback(() => {
     const isGuest = api.isGuest();
     const finalUserId = userId || localStorage.getItem("userId");
     
@@ -241,13 +152,68 @@ const ShelterAppComplete = () => {
           .catch(() => { });
       }
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+
+    console.log('🔄 [DEBUG] Main data fetch triggered for userId:', userId);
+
+    const fetchData = async () => {
+      try {
+        // 1. Materials
+        const materials = await api.getMaterials();
+        if (Array.isArray(materials)) {
+          const adviceTitles = ["Гігієна сну в стресі", "Емоційний інтелект", "Медітація для новачків", "Як працює кортизол"];
+          const mappedData = materials
+            .filter(m => !adviceTitles.includes(m.title))
+            .map(m => ({
+              id: m._id,
+              title: m.title,
+              type: m.type === 'text' ? 'Стаття' : m.type === 'video' ? 'Відео' : 'Аудіо',
+              cat: m.category || 'Загальне',
+              duration: m.duration || '10 хв',
+              icon: m.type === 'text' ? <FileText size={20} /> : m.type === 'video' ? <Video size={20} /> : <Headphones size={20} />,
+              color: m.category === 'anxiety' ? 'bg-blue-500' : m.category === 'stress' ? 'bg-emerald-500' : m.category === 'apathy' ? 'bg-rose-500' : 'bg-purple-500'
+            }));
+          setMediaLibraryData(mappedData);
+        }
+
+        // 2. Profile
+        if (userId || api.isGuest()) {
+          const profile = await api.getProfile();
+          if (profile) {
+            if (profile.username) setUsername(profile.username);
+            setCompletedScenariosCount(profile.completedScenarios?.length || 0);
+            setCompletedMaterialsCount(profile.completedMaterials?.length || 0);
+          }
+        }
+
+        // 3. Scenarios
+        const scenarios = await api.getScenarios();
+        if (Array.isArray(scenarios)) {
+          setSimulatorScenariosList(scenarios);
+        }
+
+        // 4. Stats
+        refreshStats();
+
+      } catch (err) {
+        console.error('❌ [DEBUG] Error in main data fetch:', err);
+      } finally {
+        isFetchingRef.current = false;
+      }
+    };
+
+    fetchData();
+  }, [userId, refreshStats]);
 
   useEffect(() => {
     if (userId) {
       refreshStats();
     }
-  }, [userId, currentView]); // Refresh when view changes or user changes
+  }, [userId, refreshStats]);
 
 
 
@@ -309,20 +275,6 @@ const ShelterAppComplete = () => {
     setIsFindDifferencesMode(false);
     setIsSortingMode(false);
     setCurrentView('home');
-  };
-
-  const startSimulator = async () => {
-    try {
-      const scenarios = await api.getScenarios();
-      const simulatorScenarios = scenarios.filter(s => s.category === 'general' || s.category === 'anxiety');
-
-      if (simulatorScenarios.length > 0) {
-        const randomScenario = simulatorScenarios[Math.floor(Math.random() * simulatorScenarios.length)];
-        setSimulatorScenarioId(randomScenario._id);
-      }
-    } catch (error) {
-      console.error('Error loading scenario:', error);
-    }
   };
 
   const isSpecialMode = isChatMode || isSimulatorMode || isFindDifferencesMode || isSortingMode;
@@ -476,6 +428,7 @@ const ShelterAppComplete = () => {
                       userStats={userStats}
                       resilience={resilience}
                       completedCount={completedScenariosCount + completedMaterialsCount}
+                      isVisible={currentView === 'stats'}
                     />
                   </div>
                 )}

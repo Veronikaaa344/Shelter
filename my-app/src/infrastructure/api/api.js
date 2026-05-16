@@ -55,6 +55,14 @@ export const api = {
 			body: JSON.stringify(data),
 		}).then((res) => res.json()),
 
+	googleLogin: (idToken) =>
+		fetch(`${API_URL}/auth/google`, {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify({ idToken }),
+		}).then((res) => res.json()),
+
 	register: (data) =>
 		fetch(`${API_URL}/auth/register`, {
 			method: "POST",
@@ -324,6 +332,14 @@ export const api = {
 				console.log('✅ FRONTEND (api.js): Received response from completeScenario:', data);
 				return data;
 			});
+	},
+
+	deleteDiaryEntry: (userId, entryId) => {
+		if (isGuest()) return Promise.resolve({ success: true });
+		return fetch(`${API_URL}/stats/diary/${userId}/${entryId}`, {
+			method: 'DELETE',
+			headers: getHeaders()
+		}).then((res) => res.json());
 	},
 
 

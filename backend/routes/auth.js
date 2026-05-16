@@ -5,7 +5,9 @@ import Account from "../models/Account.js";
 import User from "../models/User.js";
 import Scenario from "../models/Scenario.js";
 import mongoose from "mongoose";
+import { OAuth2Client } from "google-auth-library";
 
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const router = Router();
 
 const sendTokenResponse = (user, statusCode, res) => {
@@ -184,6 +186,53 @@ router.post("/login", async (req, res) => {
 			message: "Помилка сервера. Спробуйте пізніше",
 			type: "server"
 		});
+	}
+});
+
+router.post("/google", async (req, res) => {
+	try {
+		const { idToken } = req.body;
+		if (!idToken) {
+			return res.status(400).json({ message: "Token is required" });
+		}
+
+		const ticket = await client.verifyIdToken({
+			idToken,
+			audience: process.env.GOOGLE_CLIENT_ID,
+		});
+
+		const payload = ticket.getPayload();
+		const { email, name, picture, sub: googleId } = payload;
+
+		// Шукаємо акаунт за email
+		let account = await Account.findOne({ email }).populate("userId");
+
+		if (account) {
+			// Користувач вже існує
+			return sendTokenResponse(account.userId, 200, res);
+		}
+
+		// Створюємо нового користувача
+		const newUser = new User({
+			username: name || email.split("@")[0],
+			avatar: picture,
+		});
+		const savedUser = await newUser.save();
+
+		// Створюємо акаунт без пароля (або з рандомним, оскільки ми використовуємо bcrypt)
+		const randomPassword = await hash(Math.random().toString(36), 10);
+		const newAccount = new Account({
+			email,
+			password: randomPassword,
+			userId: savedUser._id,
+			googleId, // Можна додати в модель Account, якщо захочете
+		});
+		await newAccount.save();
+
+		sendTokenResponse(savedUser, 201, res);
+	} catch (err) {
+		console.error("Google Auth Error:", err);
+		res.status(500).json({ message: "Помилка авторизації Google" });
 	}
 });
 

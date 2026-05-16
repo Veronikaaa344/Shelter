@@ -1,10 +1,14 @@
 import express from 'express';
 import UserStats from '../models/UserStats.js';
-import Account from '../models/Account.js';
+import User from '../models/User.js';
+import DiaryEntry from '../models/DiaryEntry.js';
+import ActivityLog from '../models/ActivityLog.js';
+import DiagnosticResult from '../models/DiagnosticResult.js';
 import auth from '../middleware/auth.js';
 
 const router = express.Router();
-// Отримати статистику користувача
+
+// Отримати базову статистику користувача (лічильники)
 router.get('/user/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -12,7 +16,6 @@ router.get('/user/:userId', auth, async (req, res) => {
     let userStats = await UserStats.findOne({ userId }).populate('materialsViewed.materials.materialId');
     
     if (!userStats) {
-      // Створюємо нову статистику для користувача
       userStats = new UserStats({ userId });
       await userStats.save();
     }
@@ -31,11 +34,12 @@ router.post('/breathing/:userId', auth, async (req, res) => {
     const { minutes } = req.body;
     
     let userStats = await UserStats.findOne({ userId });
-    if (!userStats) {
-      userStats = new UserStats({ userId });
-    }
+    if (!userStats) userStats = new UserStats({ userId });
     
     await userStats.recordBreathingSession(minutes);
+    
+    // Оновлюємо також останню активність у профілі користувача
+    await User.findByIdAndUpdate(userId, { 'stats.lastActiveDate': new Date() });
     
     res.json({ success: true, message: 'Breathing session recorded' });
   } catch (error) {
@@ -51,11 +55,15 @@ router.post('/diagnostic/:userId', auth, async (req, res) => {
     const { score, answers } = req.body;
     
     let userStats = await UserStats.findOne({ userId });
-    if (!userStats) {
-      userStats = new UserStats({ userId });
-    }
+    if (!userStats) userStats = new UserStats({ userId });
     
     await userStats.recordDiagnostic(score, answers);
+
+    // Оновлюємо поточну резильєнтність у профілі
+    await User.findByIdAndUpdate(userId, { 
+      'stats.resilience': score,
+      'stats.lastActiveDate': new Date()
+    });
     
     res.json({ success: true, message: 'Diagnostic results recorded' });
   } catch (error) {
@@ -64,36 +72,34 @@ router.post('/diagnostic/:userId', auth, async (req, res) => {
   }
 });
 
-// Записати перегляд матеріалу
-router.post('/material-view/:userId', auth, async (req, res) => {
+// Щоденник: Отримати записи (тепер з окремої колекції)
+router.get('/diary/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
-    const { materialId, minutes = 0 } = req.body;
+    const { limit = 20, page = 1 } = req.query;
     
-    let userStats = await UserStats.findOne({ userId });
-    if (!userStats) {
-      userStats = new UserStats({ userId });
-    }
+    const entries = await DiaryEntry.find({ userId })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
     
-    await userStats.recordMaterialView(materialId, minutes);
+    const total = await DiaryEntry.countDocuments({ userId });
     
-    res.json({ success: true, message: 'Material view recorded' });
+    res.json({ entries, total });
   } catch (error) {
-    console.error('Error recording material view:', error);
-    res.status(500).json({ error: 'Failed to record material view' });
+    console.error('Error fetching diary entries:', error);
+    res.status(500).json({ error: 'Failed to fetch diary entries' });
   }
 });
 
-// Додати запис до щоденника
+// Щоденник: Додати запис
 router.post('/diary/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
     const { mood, content, tags = [] } = req.body;
     
     let userStats = await UserStats.findOne({ userId });
-    if (!userStats) {
-      userStats = new UserStats({ userId });
-    }
+    if (!userStats) userStats = new UserStats({ userId });
     
     await userStats.addDiaryEntry(mood, content, tags);
     
@@ -104,82 +110,64 @@ router.post('/diary/:userId', auth, async (req, res) => {
   }
 });
 
-// Отримати записи зі щоденника
-router.get('/diary/:userId', auth, async (req, res) => {
+// Щоденник: ВИДАЛИТИ запис
+router.delete('/diary/:userId/:entryId', auth, async (req, res) => {
   try {
-    const { userId } = req.params;
-    const { limit = 10, page = 1 } = req.query;
+    const { userId, entryId } = req.params;
     
-    const userStats = await UserStats.findOne({ userId });
-    if (!userStats) {
-      return res.json({ entries: [] });
+    // Перевіряємо, чи належить запис цьому користувачу
+    const entry = await DiaryEntry.findOne({ _id: entryId, userId });
+    if (!entry) {
+      return res.status(404).json({ error: 'Diary entry not found or unauthorized' });
     }
     
-    const sortedEntries = userStats.diaryEntries.sort((a, b) => b.date - a.date);
-    const start = (page - 1) * limit;
-    const entries = sortedEntries.slice(start, start + parseInt(limit));
+    await DiaryEntry.findByIdAndDelete(entryId);
     
-    res.json({ 
-      entries,
-      total: userStats.diaryEntries.length 
-    });
+    res.json({ success: true, message: 'Diary entry deleted' });
   } catch (error) {
-    console.error('Error fetching diary entries:', error);
-    res.status(500).json({ error: 'Failed to fetch diary entries' });
+    console.error('Error deleting diary entry:', error);
+    res.status(500).json({ error: 'Failed to delete diary entry' });
   }
 });
 
-// Оновити streak (послідовність днів)
-router.post('/streak/:userId', auth, async (req, res) => {
-  try {
-    const { userId } = req.params;
-    
-    let userStats = await UserStats.findOne({ userId });
-    if (!userStats) {
-      userStats = new UserStats({ userId });
-    }
-    
-    await userStats.updateStreak();
-    
-    res.json({ 
-      success: true, 
-      streak: userStats.streak,
-      message: 'Streak updated' 
-    });
-  } catch (error) {
-    console.error('Error updating streak:', error);
-    res.status(500).json({ error: 'Failed to update streak' });
-  }
-});
-
-// Отримати загальну статистику для дашборду
+// Отримати загальну статистику для дашборду (агрегація з різних колекцій)
 router.get('/dashboard/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
     
+    const user = await User.findById(userId);
     let userStats = await UserStats.findOne({ userId });
+    
     if (!userStats) {
       userStats = new UserStats({ userId });
       await userStats.save();
     }
     
-    // Формуємо дані для дашборду
+    // Отримуємо останні результати для графіка
+    const resilienceHistory = await ActivityLog.find({ userId, type: 'diagnostic' })
+      .sort({ createdAt: -1 })
+      .limit(7);
+
+    const diaryCount = await DiaryEntry.countDocuments({ userId });
+    
     const dashboardData = {
       totalSessions: userStats.totalSessions,
       totalMinutes: userStats.totalMinutes,
-      streak: userStats.streak,
-      currentResilience: userStats.resilience.current,
+      streak: user?.stats?.streak || 0,
+      currentResilience: user?.stats?.resilience || 50,
       breathingSessions: userStats.breathingSessions.count,
       diagnosticsTaken: userStats.diagnosticsTaken.count,
       materialsViewed: userStats.materialsViewed.count,
-      diaryEntries: userStats.diaryEntries.length,
+      diaryEntries: diaryCount,
       lastDiagnosticScore: userStats.diagnosticsTaken.lastScore,
-      resilienceHistory: userStats.resilience.history.slice(-7), // останні 7 записів
+      resilienceHistory: resilienceHistory.map(log => ({
+        value: log.metadata?.score || 50,
+        date: log.createdAt
+      })).reverse(),
       recentActivity: {
         lastBreathing: userStats.breathingSessions.lastSession,
         lastDiagnostic: userStats.diagnosticsTaken.lastDate,
-        lastDiaryEntry: userStats.diaryEntries.length > 0 ? 
-          userStats.diaryEntries[userStats.diaryEntries.length - 1].date : null
+        lastDiaryEntry: (await DiaryEntry.findOne({ userId }).sort({ createdAt: -1 }))?.createdAt
       }
     };
     
@@ -190,44 +178,35 @@ router.get('/dashboard/:userId', auth, async (req, res) => {
   }
 });
 
-// Оновити резильєнтність та записати в історію
+// Оновити резильєнтність (тепер через ActivityLog та User модель)
 router.post('/resilience/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
     const { amount, type, name } = req.body;
-    console.log(`📥 BACKEND: Resilience update request for user ${userId}`, { amount, type, name });
     
-    let userStats = await UserStats.findOne({ userId });
-    if (!userStats) {
-      console.log('📝 BACKEND: No stats found, creating new UserStats...');
-      userStats = new UserStats({ userId });
-    }
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+
+    // Оновлюємо поточне значення
+    user.stats.resilience = Math.max(0, Math.min(100, (user.stats.resilience || 50) + amount));
+    user.stats.lastActiveDate = new Date();
+    await user.save();
     
-    const oldScore = userStats.resilience.current;
-    userStats.resilience.current = Math.max(0, Math.min(100, userStats.resilience.current + amount));
-    userStats.resilience.history.push({ 
-      value: userStats.resilience.current, 
-      date: new Date() 
-    });
-    
-    userStats.activities.push({
+    // Створюємо запис в логах
+    const newLog = await ActivityLog.create({
+      userId,
       type,
       name,
-      change: amount,
-      date: new Date()
+      change: amount
     });
-    
-    await userStats.save();
-    console.log(`💾 DB: UserStats SAVED successfully for user ${userId}. New resilience: ${userStats.resilience.current}`);
-    console.log(`✅ BACKEND: Resilience updated from ${oldScore} to ${userStats.resilience.current}`);
     
     res.json({ 
       success: true, 
-      currentResilience: userStats.resilience.current,
-      activities: userStats.activities.slice(-5)
+      currentResilience: user.stats.resilience,
+      log: newLog
     });
   } catch (error) {
-    console.error('❌ BACKEND ERROR updating resilience:', error);
+    console.error('Error updating resilience:', error);
     res.status(500).json({ error: 'Failed to update resilience' });
   }
 });

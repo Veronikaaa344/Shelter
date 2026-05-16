@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../infrastructure/api/api';
 import { ShieldCheck, Mail, Lock, User, ChevronLeft, Sparkles } from 'lucide-react';
+import { GoogleLogin } from '@react-oauth/google';
 import HoldSOSButton from '../../components/HoldSOSButton/HoldSOSButton';
 
 export default function AuthPage() {
@@ -11,6 +12,26 @@ export default function AuthPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [isLeaving, setIsLeaving] = useState(false);
     const navigate = useNavigate();
+
+    const handleGoogleSuccess = async (credentialResponse) => {
+        setIsLoading(true);
+        setError('');
+        try {
+            const data = await api.googleLogin(credentialResponse.credential);
+            if (data.token && data.user) {
+                localStorage.setItem("dr_token", data.token);
+                localStorage.setItem("userId", data.user.id);
+                navigate('/main');
+            } else {
+                setError(data.message || "Помилка авторизації Google");
+            }
+        } catch (err) {
+            console.error('Google Auth Error:', err);
+            setError("Помилка при спробі входу через Google");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleSosClick = () => {
         setIsLeaving(true);
@@ -185,18 +206,31 @@ export default function AuthPage() {
 
                     <div className="flex items-center gap-4 my-6">
                         <div className="flex-1 h-px bg-slate-800" />
-                        <span className="text-slate-600 text-xs font-bold uppercase tracking-widest">або</span>
+                        <span className="text-slate-600 text-xs font-bold uppercase tracking-widest">або увійдіть через</span>
                         <div className="flex-1 h-px bg-slate-800" />
                     </div>
 
-                    <button
-                        onClick={handleGuestLogin}
-                        disabled={isLoading}
-                        className="w-full bg-transparent border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-50"
-                    >
-                        <Sparkles size={16} />
-                        Увійти як гість
-                    </button>
+                    <div className="flex flex-col gap-4">
+                        <div className="flex justify-center">
+                            <GoogleLogin
+                                onSuccess={handleGoogleSuccess}
+                                onError={() => setError('Помилка авторизації Google')}
+                                theme="filled_blue"
+                                shape="pill"
+                                text="continue_with"
+                                width="100%"
+                            />
+                        </div>
+
+                        <button
+                            onClick={handleGuestLogin}
+                            disabled={isLoading}
+                            className="w-full bg-transparent border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            <Sparkles size={16} />
+                            Увійти як гість
+                        </button>
+                    </div>
                 </div>
 
                 {/* SOS */}

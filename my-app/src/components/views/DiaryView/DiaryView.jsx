@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Smile, Meh, Frown, BookOpen, Calendar } from 'lucide-react';
+import { Smile, Meh, Frown, BookOpen, Calendar, Trash2 } from 'lucide-react';
 import { api } from '../../../infrastructure/api/api';
 
 const MOOD_CONFIG = [
@@ -71,6 +71,16 @@ const DiaryView = ({ userId }) => {
             });
     };
 
+    const handleDeleteEntry = (entryId) => {
+        if (!window.confirm('Ви впевнені, що хочете видалити цей запис?')) return;
+
+        api.deleteDiaryEntry(resolvedUserId, entryId)
+            .then(() => {
+                setEntries(entries.filter(e => e._id !== entryId));
+            })
+            .catch((err) => console.error('Error deleting entry:', err));
+    };
+
     const formatDate = (dateStr) => {
         const date = new Date(dateStr);
         return date.toLocaleDateString('uk-UA', {
@@ -93,7 +103,7 @@ const DiaryView = ({ userId }) => {
                     <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center">
                         <BookOpen size={20} className="text-emerald-500" />
                     </div>
-                    <h3 className="text-white font-black uppercase text-sm tracking-widest">Нова запис</h3>
+                    <h3 className="text-white font-black uppercase text-sm tracking-widest">Новий запис</h3>
                 </div>
 
                 <textarea
@@ -172,9 +182,9 @@ const DiaryView = ({ userId }) => {
                         return (
                             <div
                                 key={entry._id || idx}
-                                className="bg-slate-900/40 border border-slate-800 rounded-[32px] p-6 backdrop-blur-xl transition-all hover:border-slate-700 animate-in fade-in duration-300"
+                                className="group bg-slate-900/40 border border-slate-800 rounded-[32px] p-6 backdrop-blur-xl transition-all hover:border-slate-700 animate-in fade-in duration-300 relative overflow-hidden"
                             >
-                                <div className="flex items-start justify-between gap-4">
+                                <div className="flex items-start justify-between gap-4 relative z-10">
                                     <div className="flex items-center gap-3">
                                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${mood.bg}`}>
                                             <Icon size={20} className={mood.color} />
@@ -186,13 +196,21 @@ const DiaryView = ({ userId }) => {
                                             <div className="flex items-center gap-1 mt-0.5">
                                                 <Calendar size={10} className="text-slate-600" />
                                                 <span className="text-[10px] text-slate-600 font-bold">
-                                                    {formatDate(entry.date)}
+                                                    {formatDate(entry.createdAt || entry.date)}
                                                 </span>
                                             </div>
                                         </div>
                                     </div>
+
+                                    <button 
+                                        onClick={() => handleDeleteEntry(entry._id)}
+                                        className="opacity-0 group-hover:opacity-100 p-2 text-slate-600 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all duration-300"
+                                        title="Видалити запис"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
                                 </div>
-                                <p className="mt-4 text-slate-300 text-sm leading-relaxed pl-1 whitespace-pre-wrap">
+                                <p className="mt-4 text-slate-300 text-sm leading-relaxed pl-1 whitespace-pre-wrap relative z-10">
                                     {entry.content}
                                 </p>
                             </div>
