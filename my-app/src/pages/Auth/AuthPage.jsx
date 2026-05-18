@@ -118,7 +118,7 @@ export default function AuthPage() {
                     <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-[#0b0f1a] shadow-2xl shadow-white/10 mb-5">
                         <ShieldCheck size={36} />
                     </div>
-                    <span className="text-3xl font-black text-white italic uppercase tracking-tighter">Shelter</span>
+                    <span className="text-3xl font-black text-white italic uppercase tracking-tighter font-montserrat">Shelter</span>
                     <p className="text-slate-500 text-sm mt-1 font-medium">Твій простір психологічної підтримки</p>
                 </div>
 
@@ -128,7 +128,7 @@ export default function AuthPage() {
                     <div className="flex bg-slate-800/50 rounded-2xl p-1 mb-8">
                         <button
                             onClick={() => { setIsLogin(true); setError(''); }}
-                            className={`flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 ${
+                            className={`flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest font-montserrat transition-all duration-300 ${
                                 isLogin
                                     ? 'bg-emerald-500 text-[#0b0f1a] shadow-lg shadow-emerald-500/20'
                                     : 'text-slate-500 hover:text-slate-300'
@@ -138,7 +138,7 @@ export default function AuthPage() {
                         </button>
                         <button
                             onClick={() => { setIsLogin(false); setError(''); }}
-                            className={`flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 ${
+                            className={`flex-1 py-3 rounded-xl font-black text-xs uppercase tracking-widest font-montserrat transition-all duration-300 ${
                                 !isLogin
                                     ? 'bg-emerald-500 text-[#0b0f1a] shadow-lg shadow-emerald-500/20'
                                     : 'text-slate-500 hover:text-slate-300'
@@ -195,7 +195,7 @@ export default function AuthPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-700 disabled:text-slate-500 text-[#0b0f1a] py-4 rounded-2xl font-black text-sm uppercase tracking-widest shadow-xl shadow-emerald-500/20 transition-all transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed mt-2"
+                            className="w-full bg-emerald-500 hover:bg-emerald-400 disabled:bg-slate-700 disabled:text-slate-500 text-[#0b0f1a] py-4 rounded-2xl font-black text-sm uppercase tracking-widest font-montserrat shadow-xl shadow-emerald-500/20 transition-all transform hover:scale-[1.02] active:scale-95 disabled:cursor-not-allowed mt-2"
                         >
                             {isLoading
                                 ? (isLogin ? 'Входимо...' : 'Створюємо...')
@@ -206,7 +206,7 @@ export default function AuthPage() {
 
                     <div className="flex items-center gap-4 my-6">
                         <div className="flex-1 h-px bg-slate-800" />
-                        <span className="text-slate-600 text-xs font-bold uppercase tracking-widest">або увійдіть через</span>
+                        <span className="text-slate-600 text-xs font-bold uppercase tracking-widest font-montserrat">або увійдіть через</span>
                         <div className="flex-1 h-px bg-slate-800" />
                     </div>
 
@@ -225,7 +225,7 @@ export default function AuthPage() {
                         <button
                             onClick={handleGuestLogin}
                             disabled={isLoading}
-                            className="w-full bg-transparent border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                            className="w-full bg-transparent border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest font-montserrat transition-all flex items-center justify-center gap-2 disabled:opacity-50"
                         >
                             <Sparkles size={16} />
                             Увійти як гість
