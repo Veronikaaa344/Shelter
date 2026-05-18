@@ -6,27 +6,34 @@
 
 /* Custom animations */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInFromBottom {
-  from { 
+  from {
     opacity: 0;
     transform: translateY(1rem);
   }
-  to { 
+
+  to {
     opacity: 1;
     transform: translateY(0);
   }
 }
 
 @keyframes zoomIn {
-  from { 
+  from {
     opacity: 0;
     transform: scale(0.95);
   }
-  to { 
+
+  to {
     opacity: 1;
     transform: scale(1);
   }
@@ -57,7 +64,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-h1, h2, h3, h4, h5, h6, .font-montserrat {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-montserrat {
   font-family: 'Montserrat', sans-serif !important;
 }
 
@@ -66,7 +79,8 @@ h1, h2, h3, h4, h5, h6, .font-montserrat {
   --color-emerald: #10B981;
   --color-blue: #3B82F6;
   --color-amber: #F59E0B;
-  --color-sos: #D17A6A; /* Terracotta */
+  --color-sos: #D17A6A;
+  /* Terracotta */
 }
 
 /* --- ROBUST ROUNDING & PREMIUM ANIMATIONS --- */
