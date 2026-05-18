@@ -211,4 +211,25 @@ router.post('/resilience/:userId', auth, async (req, res) => {
   }
 });
 
+// Записати перегляд матеріалу
+router.post('/material-view/:userId', auth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { materialId, minutes } = req.body;
+    
+    let userStats = await UserStats.findOne({ userId });
+    if (!userStats) userStats = new UserStats({ userId });
+    
+    await userStats.recordMaterialView(materialId, minutes);
+    
+    // Оновлюємо також останню активність у профілі користувача
+    await User.findByIdAndUpdate(userId, { 'stats.lastActiveDate': new Date() });
+    
+    res.json({ success: true, message: 'Material view recorded' });
+  } catch (error) {
+    console.error('Error recording material view:', error);
+    res.status(500).json({ error: 'Failed to record material view' });
+  }
+});
+
 export default router;

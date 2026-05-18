@@ -89,14 +89,18 @@ export default function MainChat({ onBack, username, resilience }) {
     }, [messages, isTyping, chatView]);
 
     const selectScenario = (s) => {
+        if (!s || !s.nodes) {
+            console.error("Scenario has no nodes:", s);
+            return;
+        }
         setScenario(s);
         setIsChatMode('scenario');
-        const startId = s.nodes["start"] ? "start" : Object.keys(s.nodes)[0];
+        const startId = s.nodes["start"] ? "start" : (Object.keys(s.nodes)[0] || 'start');
         setCurrentNodeId(startId);
         setMessages([
             {
                 id: 1,
-                text: s.nodes[startId].text,
+                text: s.nodes[startId]?.text || "Помилка завантаження вмісту сценарію",
                 sender: 'bot',
                 timestamp: new Date(),
                 isScenario: true
@@ -145,7 +149,7 @@ export default function MainChat({ onBack, username, resilience }) {
 
             setTimeout(() => {
                 setIsTyping(false);
-                let nextNode = isChatMode === 'ai' ? baseNodes[nextId] : scenario.nodes[nextId];
+                let nextNode = isChatMode === 'ai' ? baseNodes[nextId] : scenario?.nodes?.[nextId];
 
                 if (!nextNode) {
                     const endText = isChatMode === 'scenario' 
@@ -301,7 +305,7 @@ export default function MainChat({ onBack, username, resilience }) {
 
             <div className="dr-chat-footer">
                 <div className="dr-scenario-options">
-                    {currentNodeId && (isChatMode === 'ai' ? baseNodes[currentNodeId]?.options : scenario?.nodes[currentNodeId]?.options)?.map((option, index) => (
+                    {currentNodeId && (isChatMode === 'ai' ? baseNodes[currentNodeId]?.options : scenario?.nodes?.[currentNodeId]?.options)?.map((option, index) => (
                         <button
                             key={index}
                             className="dr-option-btn"

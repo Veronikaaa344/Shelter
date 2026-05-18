@@ -154,7 +154,7 @@ export const api = {
 		}
 		return fetch(`${API_URL}/stats/breathing/${userId}`, {
 			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
+			headers: getHeaders(),
 			body: JSON.stringify({ minutes })
 		}).then((res) => res.json());
 	},
