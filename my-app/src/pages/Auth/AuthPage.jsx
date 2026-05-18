@@ -106,7 +106,7 @@ export default function AuthPage() {
             {/* Кнопка назад */}
             <button
                 onClick={() => navigate('/main')}
-                className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-white font-bold uppercase text-xs tracking-widest transition-all"
+                className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-white font-bold uppercase text-xs tracking-widest transition-all font-montserrat"
             >
                 <ChevronLeft size={18} /> На головну
             </button>
@@ -119,7 +119,7 @@ export default function AuthPage() {
                         <ShieldCheck size={36} />
                     </div>
                     <span className="text-3xl font-black text-white italic uppercase tracking-tighter font-montserrat">Shelter</span>
-                    <p className="text-slate-500 text-sm mt-1 font-medium">Твій простір психологічної підтримки</p>
+                    <p className="text-slate-500 text-sm mt-1 font-medium font-comfortaa">Твій простір психологічної підтримки</p>
                 </div>
 
                 {/* Форма */}
@@ -150,7 +150,7 @@ export default function AuthPage() {
 
                     {/* Помилка */}
                     {error && (
-                        <div className="mb-6 px-4 py-3 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-400 text-sm font-medium animate-in fade-in duration-300">
+                        <div className="mb-6 px-4 py-3 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-400 text-sm font-medium animate-in fade-in duration-300 font-quicksand">
                             ⚠️ {error}
                         </div>
                     )}
@@ -165,7 +165,7 @@ export default function AuthPage() {
                                     value={formData.username}
                                     onChange={e => setFormData({...formData, username: e.target.value})}
                                     required
-                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:bg-slate-800/80 transition-all"
+                                    className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:bg-slate-800/80 transition-all font-comfortaa"
                                 />
                             </div>
                         )}
@@ -177,7 +177,7 @@ export default function AuthPage() {
                                 value={formData.email}
                                 onChange={e => setFormData({...formData, email: e.target.value})}
                                 required
-                                className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:bg-slate-800/80 transition-all"
+                                className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:bg-slate-800/80 transition-all font-comfortaa"
                             />
                         </div>
                         <div className="relative">
@@ -188,7 +188,7 @@ export default function AuthPage() {
                                 value={formData.password}
                                 onChange={e => setFormData({...formData, password: e.target.value})}
                                 required
-                                className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:bg-slate-800/80 transition-all"
+                                className="w-full bg-slate-800/50 border border-slate-700 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-slate-500 outline-none focus:border-emerald-500 focus:bg-slate-800/80 transition-all font-comfortaa"
                             />
                         </div>
 

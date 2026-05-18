@@ -78,6 +78,14 @@ h6,
   font-family: 'Montserrat', sans-serif !important;
 }
 
+.font-comfortaa {
+  font-family: 'Comfortaa', sans-serif !important;
+}
+
+.font-quicksand {
+  font-family: 'Quicksand', sans-serif !important;
+}
+
 :root {
   --color-bg: #0B0F1A;
   --color-emerald: #10B981;
