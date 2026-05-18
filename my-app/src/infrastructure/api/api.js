@@ -213,8 +213,7 @@ export const api = {
 					amount: 2,
 					type: `complete_${type}`,
 					name: `Завершено: ${type === 'material' ? 'Матеріал' : 'Вправу'}`,
-					itemId,
-					type
+					itemId
 				}),
 			}).then((res) => res.ok ? res.json() : res.text().then(t => { throw new Error(t) }));
 		}

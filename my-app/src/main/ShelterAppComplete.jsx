@@ -207,13 +207,15 @@ const ShelterAppComplete = () => {
     };
 
     fetchData();
-  }, [userId, refreshStats]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
   useEffect(() => {
     if (userId) {
       refreshStats();
     }
-  }, [userId, refreshStats]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId]);
 
 
 
