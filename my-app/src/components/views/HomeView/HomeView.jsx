@@ -3,6 +3,7 @@ import {
     Wind, Brain, Lightbulb, PenLine, MessageCircle, Search, Layout, Activity,
     CheckCircle, Sparkles, TrendingUp, Clock, Trophy
 } from 'lucide-react';
+import { api } from '../../../infrastructure/api/api';
 
 const HomeView = ({ 
     searchTerm, 
@@ -34,8 +35,7 @@ const HomeView = ({
     useEffect(() => {
         const fetchAdvice = async () => {
             try {
-                const response = await fetch('http://localhost:5000/api/advice/random');
-                const data = await response.json();
+                const data = await api.getRandomAdvice();
                 if (data && data.text) {
                     setAdvice(data.text);
                 }

@@ -20,12 +20,11 @@ const AdviceView = () => {
     useEffect(() => {
         const loadAll = async () => {
             try {
-                const [advicesRes, materialsRes] = await Promise.all([
-                    fetch('http://localhost:5000/api/advice'),
+                const [advicesData, materialsRes] = await Promise.all([
+                    api.getAdvice(),
                     api.getMaterials()
                 ]);
                 
-                const advicesData = await advicesRes.json();
                 if (Array.isArray(advicesData)) setAdvices(advicesData);
                 if (Array.isArray(materialsRes)) setMaterials(materialsRes);
             } catch (err) {

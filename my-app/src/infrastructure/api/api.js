@@ -103,6 +103,9 @@ export const api = {
 
 	getScenarios: () => fetch(`${API_URL}/scenarios`).then((res) => res.json()),
 
+	getAdvice: () => fetch(`${API_URL}/advice`).then((res) => res.json()),
+	getRandomAdvice: () => fetch(`${API_URL}/advice/random`).then((res) => res.json()),
+
 	getDiagnosticQuestions: (category) => {
 		const url = category ? `${API_URL}/diagnostic/questions?category=${category}` : `${API_URL}/diagnostic/questions`;
 		return fetch(url).then((res) => res.json());
