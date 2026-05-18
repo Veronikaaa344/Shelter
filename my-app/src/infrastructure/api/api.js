@@ -196,12 +196,16 @@ export const api = {
 		}).then((res) => res.json());
 	},
 
-	updateStreak: (userId) =>
-		fetch(`${API_URL}/auth/activity`, {
+	updateStreak: (userId) => {
+		if (isGuest()) {
+			return Promise.resolve({ success: true, guest: true });
+		}
+		return fetch(`${API_URL}/auth/activity`, {
 			method: 'POST',
 			headers: getHeaders(),
 			credentials: 'include'
-		}).then((res) => res.json()),
+		}).then((res) => res.json());
+	},
 
 	updateUserProgress: (userId, itemId, type) => {
 		if (isGuest()) {

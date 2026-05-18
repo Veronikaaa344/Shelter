@@ -283,8 +283,14 @@ const ShelterAppComplete = () => {
 
   // Редірект на /auth якщо немає токену
   const token = localStorage.getItem("dr_token");
+  
+  useEffect(() => {
+    if (!token) {
+      navigate('/auth', { replace: true });
+    }
+  }, [token, navigate]);
+
   if (!token) {
-    navigate('/auth', { replace: true });
     return null;
   }
 

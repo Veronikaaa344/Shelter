@@ -685,6 +685,9 @@ router.post("/activity", async (req, res) => {
 		if (!token) {
 			return res.status(401).json({ message: "Not authenticated" });
 		}
+		if (token === "guest_mode") {
+			return res.json({ success: true, guest: true });
+		}
 
 		const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret_key");
 		const user = await User.findById(decoded.id);
