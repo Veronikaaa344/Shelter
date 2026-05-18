@@ -70,10 +70,14 @@ userStatsSchema.methods.recordDiagnostic = async function(score, answers) {
   else if (score <= 40) resilienceChange = -2;
 
   // 1. Створюємо детальний результат тесту
+  const formattedAnswers = Array.isArray(answers)
+    ? answers.map(ans => typeof ans === 'number' ? { value: ans } : ans)
+    : [];
+
   await DiagnosticResult.create({
     userId: this.userId,
     score,
-    answers
+    answers: formattedAnswers
   });
 
   // 2. Створюємо лог активності для графіка
