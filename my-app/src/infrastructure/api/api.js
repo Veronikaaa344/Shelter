@@ -197,9 +197,10 @@ export const api = {
 	},
 
 	updateStreak: (userId) =>
-		fetch(`${API_URL}/stats/streak/${userId}`, {
+		fetch(`${API_URL}/auth/activity`, {
 			method: 'POST',
-			headers: getHeaders()
+			headers: getHeaders(),
+			credentials: 'include'
 		}).then((res) => res.json()),
 
 	updateUserProgress: (userId, itemId, type) => {
