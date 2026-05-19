@@ -167,7 +167,7 @@ export default function MainChat({ onBack, username, resilience }) {
                     // Бонус +4 за завершення чату
                     const userId = localStorage.getItem("userId");
                     if (userId) {
-                        api.updateResilience(userId, 4, "chat_finish", isChatMode === 'ai' ? 'AI Помічник' : scenario?.name)
+                        api.updateResilience(userId, "chat_finish", {}, isChatMode === 'ai' ? 'AI Помічник' : scenario?.name)
                             .then(() => {
                                 console.log("✅ [DEBUG] Chat progress saved. Current cookies:", document.cookie);
                             })

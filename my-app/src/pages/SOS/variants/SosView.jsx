@@ -9,7 +9,7 @@ export default function SosView({ answers }) {
     const handleFinishSession = async (mins, cycles) => {
         const userId = localStorage.getItem("userId");
         if (userId) {
-            await api.updateResilience(userId, 20, "sos", "Техніка дихання (SOS)");
+            await api.updateResilience(userId, "sos", {}, "Техніка дихання (SOS)");
         }
         navigate("/main", { state: { fromSOS: true, helped: true } });
     };

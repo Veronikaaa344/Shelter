@@ -143,7 +143,7 @@ export default function UpdatedVideoScenarioPage() {
             .then(() => {
                 const userId = localStorage.getItem("userId");
                 if (userId) {
-                    api.updateResilience(userId, Math.min(20, finalScore / 5), "video_complete", scenario.name);
+                    api.updateResilience(userId, "video_complete", { score: finalScore }, scenario.name);
                 }
                 navigate('/exercises');
             })

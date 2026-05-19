@@ -1,14 +1,16 @@
-import { compare, genSalt, hash } from "bcryptjs";
-import { Router } from "express";
+import express from "express";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import Account from "../models/Account.js";
 import User from "../models/User.js";
+import Account from "../models/Account.js";
 import Scenario from "../models/Scenario.js";
-import mongoose from "mongoose";
 import { OAuth2Client } from "google-auth-library";
+import mongoose from "mongoose";
+import { calculateResilienceChange } from "../utils/resilienceLogic.js";
 
+const { genSalt, hash, compare } = bcrypt;
+const router = express.Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-const router = Router();
 
 const sendTokenResponse = (user, statusCode, res) => {
 	const token = jwt.sign(
@@ -321,16 +323,28 @@ router.post("/guest/update", (req, res) => {
 		// Якщо оновлюються статси (наприклад діагностика), додаємо в історію
 		if (req.body.stats && req.body.stats.resilience !== undefined) {
 			const score = req.body.stats.resilience;
+			const isFirstTime = !currentData.diagnostic;
 			let resilienceChange = 0;
+
 			if (score >= 60) resilienceChange = 2;
 			else if (score <= 40) resilienceChange = -2;
 
 			if (!updatedData.history) updatedData.history = [];
+			
+			let currentRes = Number(currentData.stats?.resilience);
+			if (isNaN(currentRes)) currentRes = 50;
+			
+			let newScore = score;
+			if (!isFirstTime) {
+				newScore = Math.max(0, Math.min(100, currentRes + resilienceChange));
+				updatedData.stats.resilience = newScore;
+			}
+
 			updatedData.history.unshift({
 				activityType: 'diagnostic',
 				activityName: 'Діагностика стану',
-				change: resilienceChange,
-				newScore: score,
+				change: isFirstTime ? (score - currentRes) : resilienceChange,
+				newScore: newScore,
 				date: new Date()
 			});
 		}
@@ -403,7 +417,7 @@ router.get("/guest/stats-volume", (req, res) => {
 
 router.post("/guest/update-resilience", (req, res) => {
 	try {
-		const { amount, type, name, itemId } = req.body;
+		const { type, name, itemId, metadata = {} } = req.body;
 		
 		const guestCookie = req.cookies?.dr_guest;
 		if (!guestCookie) {
@@ -427,7 +441,13 @@ router.post("/guest/update-resilience", (req, res) => {
 			}
 		}
 
-		let currentRes = (guestData.stats?.resilience || 50) + amount;
+		// Calculate resilience change strictly on the server
+		const calculatedChange = calculateResilienceChange(type, metadata);
+
+		let currentRes = Number(guestData.stats?.resilience);
+		if (isNaN(currentRes)) currentRes = 50;
+		currentRes += calculatedChange;
+		
 		if (currentRes > 100) currentRes = 100;
 		if (currentRes < 0) currentRes = 0;
 
@@ -438,7 +458,7 @@ router.post("/guest/update-resilience", (req, res) => {
 		const historyEntry = {
 			activityType: type,
 			activityName: name,
-			change: amount,
+			change: calculatedChange,
 			newScore: currentRes,
 			date: new Date(),
 		};

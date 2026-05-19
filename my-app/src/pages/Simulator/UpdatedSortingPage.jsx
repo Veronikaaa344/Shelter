@@ -111,7 +111,7 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
 
                 const userId = localStorage.getItem("userId");
                 if (userId) {
-                    api.updateResilience(userId, 4, "exercise_complete", scenario?.name || "Сортування");
+                    api.updateResilience(userId, "exercise_complete", {}, scenario?.name || "Сортування");
                 }
                 api.completeScenario(id, 100);
                 setShowCompletionMenu(true);

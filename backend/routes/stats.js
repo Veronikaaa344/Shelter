@@ -5,6 +5,7 @@ import DiaryEntry from '../models/DiaryEntry.js';
 import ActivityLog from '../models/ActivityLog.js';
 import DiagnosticResult from '../models/DiagnosticResult.js';
 import auth from '../middleware/auth.js';
+import { calculateResilienceChange } from '../utils/resilienceLogic.js';
 
 const router = express.Router();
 
@@ -13,6 +14,7 @@ router.get('/user/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
     
+    const user = await User.findById(userId);
     let userStats = await UserStats.findOne({ userId }).populate('materialsViewed.materials.materialId');
     
     if (!userStats) {
@@ -20,7 +22,13 @@ router.get('/user/:userId', auth, async (req, res) => {
       await userStats.save();
     }
     
-    res.json(userStats);
+    const statsObj = userStats.toObject();
+    if (user && user.stats) {
+      statsObj.resilience = user.stats.resilience;
+      statsObj.streak = user.stats.streak;
+    }
+    
+    res.json(statsObj);
   } catch (error) {
     console.error('Error fetching user stats:', error);
     res.status(500).json({ error: 'Failed to fetch user stats' });
@@ -57,13 +65,32 @@ router.post('/diagnostic/:userId', auth, async (req, res) => {
     let userStats = await UserStats.findOne({ userId });
     if (!userStats) userStats = new UserStats({ userId });
     
+    const isFirstTime = userStats.diagnosticsTaken.count === 0;
+    
     await userStats.recordDiagnostic(score, answers);
 
     // Оновлюємо поточну резильєнтність у профілі
-    await User.findByIdAndUpdate(userId, { 
-      'stats.resilience': score,
-      'stats.lastActiveDate': new Date()
-    });
+    const user = await User.findById(userId);
+    if (user) {
+      if (isFirstTime) {
+        user.stats.resilience = score;
+      } else {
+        let resilienceChange = 0;
+        if (score >= 60) resilienceChange = 2;
+        else if (score <= 40) resilienceChange = -2;
+        
+        let currentRes = Number(user.stats.resilience);
+        if (isNaN(currentRes)) currentRes = 50;
+        user.stats.resilience = Math.max(0, Math.min(100, currentRes + resilienceChange));
+      }
+      user.stats.lastActiveDate = new Date();
+      await user.save();
+      
+      const io = req.app.get('io');
+      if (io) {
+          io.to(userId).emit('resilienceUpdate', { resilience: user.stats.resilience });
+      }
+    }
     
     res.json({ success: true, message: 'Diagnostic results recorded' });
   } catch (error) {
@@ -182,13 +209,17 @@ router.get('/dashboard/:userId', auth, async (req, res) => {
 router.post('/resilience/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
-    const { amount, type, name } = req.body;
+    const { type, name, metadata = {} } = req.body;
     
+    // Розрахунок виконується строго на сервері
+    const calculatedChange = calculateResilienceChange(type, metadata);
+
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
-    // Оновлюємо поточне значення
-    user.stats.resilience = Math.max(0, Math.min(100, (user.stats.resilience || 50) + amount));
+    let currentRes = Number(user.stats.resilience);
+    if (isNaN(currentRes)) currentRes = 50;
+    user.stats.resilience = Math.max(0, Math.min(100, currentRes + calculatedChange));
     user.stats.lastActiveDate = new Date();
     await user.save();
     
@@ -197,9 +228,14 @@ router.post('/resilience/:userId', auth, async (req, res) => {
       userId,
       type,
       name,
-      change: amount
+      change: calculatedChange
     });
     
+    const io = req.app.get('io');
+    if (io) {
+        io.to(userId).emit('resilienceUpdate', { resilience: user.stats.resilience });
+    }
+
     res.json({ 
       success: true, 
       currentResilience: user.stats.resilience,

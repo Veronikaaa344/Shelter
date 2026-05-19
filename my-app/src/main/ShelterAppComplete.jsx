@@ -6,8 +6,8 @@ import {
 
 import '../infrastructure/assets/styles/index-tailwind.css';
 import '../pages/Simulator/simulatorPage.css';
-import { api } from '../infrastructure/api/api';
-import { calculateResilienceChange, clampResilience } from '../infrastructure/utils/resilienceLogic';
+import { api, API_URL } from '../infrastructure/api/api';
+import { io } from 'socket.io-client';
 
 // Core Components
 import MainSidebar from '../components/MainSidebar/MainSidebar';
@@ -61,7 +61,7 @@ const ShelterAppComplete = () => {
 
   // Дані з API
   const [mediaLibraryData, setMediaLibraryData] = useState([]);
-  const [resilience, setResilience] = useState(0);
+  const [resilience, setResilience] = useState(50);
   const [userStats, setUserStats] = useState(null);
   const [streak, setStreak] = useState(0);
   const [currentMood, setCurrentMood] = useState(null);
@@ -217,6 +217,32 @@ const ShelterAppComplete = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
 
+  useEffect(() => {
+    if (!userId || api.isGuest()) return;
+
+    // Підключаємо сокет
+    const socket = io(API_URL.replace('/api', ''), {
+      withCredentials: true
+    });
+
+    socket.on('connect', () => {
+      console.log('🟢 [Socket] Підключено до сервера. ID:', socket.id);
+      socket.emit('join', userId);
+    });
+
+    socket.on('resilienceUpdate', (data) => {
+      console.log('📡 [Socket] Отримано оновлення стійкості:', data);
+      if (data && data.resilience !== undefined) {
+        setResilience(data.resilience);
+      }
+    });
+
+    return () => {
+      console.log('🔴 [Socket] Відключення...');
+      socket.disconnect();
+    };
+  }, [userId]);
+
 
 
 
@@ -246,17 +272,19 @@ const ShelterAppComplete = () => {
   };
 
   const applyResilienceChange = (type, metadata = {}) => {
-    const change = calculateResilienceChange(type, metadata);
-    const newResilience = clampResilience(resilience + change);
-    
-    if (newResilience !== resilience) {
-      setResilience(newResilience);
-      if (userId) {
-        api.updateResilience(userId, change, type, metadata.name || type)
-          .then(() => refreshStats());
-      }
+    if (userId || api.isGuest()) {
+      api.updateResilience(userId, type, metadata, metadata.name || type)
+        .then((res) => {
+          if (res && res.currentResilience !== undefined) {
+            setResilience(res.currentResilience);
+          } else if (res && res.stats && res.stats.resilience !== undefined) {
+            setResilience(res.stats.resilience);
+          }
+          refreshStats();
+        })
+        .catch((err) => console.error("Error updating resilience:", err));
     }
-    return change;
+    return 0; // The change is now calculated on the server
   };
 
   const handleMoodSelect = (moodId) => {

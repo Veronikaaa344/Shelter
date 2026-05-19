@@ -92,7 +92,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
 
                 const userId = localStorage.getItem("userId");
                 if (userId) {
-                    api.updateResilience(userId, clickedDifference.points || 3, "difference_found", scenario.name);
+                    api.updateResilience(userId, "difference_found", { points: clickedDifference.points }, scenario.name);
                 }
 
                 // Анімація знаходження
@@ -105,7 +105,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                     setIsFinished(true);
                     const finalScore = score + (clickedDifference.points || 10);
                     if (userId) {
-                        api.updateResilience(userId, 10, "level_complete", scenario.name);
+                        api.updateResilience(userId, "level_complete", {}, scenario.name);
                         api.completeScenario(id, 10);
                     }
 
@@ -149,7 +149,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
 
     const handleSosClick = async () => {
         const userId = localStorage.getItem("userId");
-        if (userId) await api.updateResilience(userId, -15, "sos", "Натиснута кнопка SOS");
+        if (userId) await api.updateResilience(userId, "sos", { panic: true }, "Натиснута кнопка SOS");
         navigate("/sos");
     };
 

@@ -58,7 +58,7 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
             // Фолбек якщо проп не передано
             if (weight < 0) {
                 const userId = localStorage.getItem("userId");
-                if (userId) api.updateResilience(userId, weight, "wrong_answer", scenario.name);
+                if (userId) api.updateResilience(userId, "wrong_answer", { weight }, scenario.name);
             }
         }
 
@@ -132,7 +132,7 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
             const userId = localStorage.getItem("userId");
             if (userId) {
                 console.log('📡 FRONTEND (SimulatorPage): Calling api.updateResilience for registered user...');
-                api.updateResilience(userId, finalImpact, "exercise", scenario.name);
+                api.updateResilience(userId, "exercise", { delta: finalImpact }, scenario.name);
             }
         }
         

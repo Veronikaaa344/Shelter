@@ -21,7 +21,7 @@ export default function BlueView({ answers }) {
 
     const handleFinish = async () => {
         const userId = localStorage.getItem("userId");
-        if (userId) await api.updateResilience(userId, 20, "sos", "Стабілізація (Заземлення)");
+        if (userId) await api.updateResilience(userId, "sos", {}, "Стабілізація (Заземлення)");
         navigate("/main");
     };
 

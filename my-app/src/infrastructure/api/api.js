@@ -7,7 +7,7 @@ const getBaseUrl = () => {
 	return "https://shelter-jsv0.onrender.com/api";
 };
 
-const API_URL = getBaseUrl();
+export const API_URL = getBaseUrl();
 
 const getHeaders = () => ({
 	"Content-Type": "application/json",
@@ -149,7 +149,7 @@ export const api = {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				credentials: 'include',
-				body: JSON.stringify({ amount: 1, type: 'breathing', name: `Дихальна сесія (${minutes} хв)` })
+				body: JSON.stringify({ type: 'breathing', metadata: { minutes }, name: `Дихальна сесія (${minutes} хв)` })
 			}).then((res) => res.json());
 		}
 		return fetch(`${API_URL}/stats/breathing/${userId}`, {
@@ -186,7 +186,7 @@ export const api = {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				credentials: 'include',
-				body: JSON.stringify({ amount: 0, type: 'material_view', name: `Перегляд матеріалу` })
+				body: JSON.stringify({ type: 'material_view', metadata: { minutes }, name: `Перегляд матеріалу` })
 			}).then((res) => res.json());
 		}
 		return fetch(`${API_URL}/stats/material-view/${userId}`, {
@@ -214,8 +214,8 @@ export const api = {
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
 				body: JSON.stringify({
-					amount: 2,
 					type: `complete_${type}`,
+					metadata: {},
 					name: `Завершено: ${type === 'material' ? 'Матеріал' : 'Вправу'}`,
 					itemId
 				}),
@@ -269,15 +269,15 @@ export const api = {
 		}).then((res) => res.json());
 	},
 
-	updateResilience: (userId, amount, type, name) => {
-		console.log('🚀 API: updateResilience called', { userId, amount, type, name });
+	updateResilience: (userId, type, metadata = {}, name) => {
+		console.log('🚀 API: updateResilience called', { userId, type, metadata, name });
 		if (isGuest()) {
 			console.log('👥 API: Mode = GUEST. Calling guest route...');
 			return fetch(`${API_URL}/auth/guest/update-resilience`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
-				body: JSON.stringify({ amount, type, name }),
+				body: JSON.stringify({ type, metadata, name }),
 			}).then((res) => res.json()).then(data => {
 				console.log('✅ API: Guest Resilience Updated Response (Cookie Content):', data);
 				return data;
@@ -288,7 +288,7 @@ export const api = {
 		return fetch(`${API_URL}/stats/resilience/${userId}`, {
 			method: "POST",
 			headers: getHeaders(),
-			body: JSON.stringify({ amount, type, name }),
+			body: JSON.stringify({ type, metadata, name }),
 		}).then((res) => res.json()).then(data => {
 			console.log('✅ API: Registered Resilience Updated Response:', data);
 			return data;

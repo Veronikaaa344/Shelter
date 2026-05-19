@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/update-resilience", async (req, res) => {
 	try {
-		const { userId, amount, type, name } = req.body;
+		const { userId, type, name, metadata = {} } = req.body;
 
 		if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
 			return res.status(400).json({ message: "Invalid ID" });
@@ -15,7 +15,13 @@ router.post("/update-resilience", async (req, res) => {
 		const user = await User.findById(userId);
 		if (!user) return res.status(404).json({ message: "User not found" });
 
-		let currentRes = (user.stats.resilience || 50) + amount;
+		const { calculateResilienceChange } = await import('../utils/resilienceLogic.js');
+		const calculatedChange = calculateResilienceChange(type, metadata);
+
+		let currentRes = Number(user.stats.resilience);
+		if (isNaN(currentRes)) currentRes = 50;
+		currentRes += calculatedChange;
+		
 		if (currentRes > 100) currentRes = 100;
 		if (currentRes < 0) currentRes = 0;
 
@@ -23,12 +29,18 @@ router.post("/update-resilience", async (req, res) => {
 		user.history.unshift({
 			activityType: type,
 			activityName: name,
-			change: amount,
+			change: calculatedChange,
 			newScore: currentRes,
 			date: new Date(),
 		});
 
 		await user.save();
+		
+		const io = req.app.get('io');
+		if (io) {
+			io.to(userId).emit('resilienceUpdate', { resilience: user.stats.resilience });
+		}
+
 		res.json(user);
 	} catch (err) {
 		res.status(500).json({ message: err.message });

@@ -54,7 +54,7 @@ export default function MaterialPage() {
         if (userId) {
             try {
                 await api.updateUserProgress(userId, id, 'material');
-                await api.updateResilience(userId, delta, 'material_feedback', material?.title || 'Матеріал');
+                await api.updateResilience(userId, 'material_feedback', { delta }, material?.title || 'Матеріал');
             } catch (error) {
                 console.error('Error updating progress:', error);
             }
