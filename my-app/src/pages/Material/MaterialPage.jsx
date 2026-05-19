@@ -15,6 +15,7 @@ export default function MaterialPage() {
     const { id } = useParams();
     const navigate = useNavigate();
 
+    const [resilience, setResilience] = useState(50);
     const [material, setMaterial] = useState(null);
     const [showFeedback, setShowFeedback] = useState(false);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -79,8 +80,11 @@ export default function MaterialPage() {
                     }
                 }
                 const profile = await api.getProfile();
-                if (isMounted && profile && profile.username) {
-                    setUsername(profile.username);
+                if (isMounted && profile) {
+                    if (profile.username) setUsername(profile.username);
+                    if (profile.stats && profile.stats.resilience !== undefined) {
+                        setResilience(profile.stats.resilience);
+                    }
                 }
             } catch (err) {
                 console.error("Fetch error:", err);
@@ -130,7 +134,7 @@ export default function MaterialPage() {
                         </div>
                         <div className="hidden lg:block text-left">
                             <p className="text-xs font-black text-white font-bold">{username}</p>
-                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Стійкість: 50%</p>
+                            <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">Стійкість: {resilience}%</p>
                         </div>
                     </div>
                 </div>
