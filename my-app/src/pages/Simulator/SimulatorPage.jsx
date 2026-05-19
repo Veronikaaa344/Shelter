@@ -51,11 +51,11 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
         setSessionScore(currentTotalScore);
         setChoicesCount(currentTotalChoices);
 
-        // Строгий розрахунок за вибір
+        
         if (applyResilienceChange) {
             applyResilienceChange('simulator_choice', { weight, name: scenario.name });
         } else {
-            // Фолбек якщо проп не передано
+            
             if (weight < 0) {
                 const userId = localStorage.getItem("userId");
                 if (userId) api.updateResilience(userId, "wrong_answer", { weight }, scenario.name);
@@ -112,34 +112,23 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
         const calculatedScore = totalChoices > 0 ? Math.round((totalPoints / totalChoices) * 100) : 0;
         const score = forcedScore !== undefined ? forcedScore : calculatedScore;
         
-        setSessionScore(score); // Store the final actual score
+        setSessionScore(score); 
 
         const isSuccess = score >= 50;
         const finalImpact = isSuccess ? 4 : -4;
         
-        console.log('🏁 FRONTEND (SimulatorPage): Session Finished. Preparing to send data.', { 
-            scenarioId: id,
-            calculatedScore: score, 
-            isSuccess, 
-            resilienceImpact: finalImpact, 
-            scenarioName: scenario.name 
-        });
 
         if (applyResilienceChange) {
-            console.log('📡 FRONTEND (SimulatorPage): Calling applyResilienceChange...');
             applyResilienceChange('exercise_finish', { score, delta: finalImpact, name: scenario.name });
         } else {
             const userId = localStorage.getItem("userId");
             if (userId) {
-                console.log('📡 FRONTEND (SimulatorPage): Calling api.updateResilience for registered user...');
                 api.updateResilience(userId, "exercise", { delta: finalImpact }, scenario.name);
             }
         }
         
-        console.log(`📡 FRONTEND (SimulatorPage): Calling api.completeScenario with scenarioId: ${id} and score: ${score}`);
         api.completeScenario(id, score)
             .then(response => {
-                console.log('✅ FRONTEND (SimulatorPage): api.completeScenario successful!', response);
             })
             .catch(error => {
                 console.error('❌ FRONTEND (SimulatorPage): api.completeScenario failed!', error);
@@ -224,7 +213,7 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
             </footer>
 
             <button className="dr-sos-fab-trainer" onClick={() => isEmbedded && onBack ? onBack() : navigate("/sos")}>SOS</button>
-            {/* <CharacterCompanion context="exercise" position="bottom-left" delay={4000} /> */}
+            {}
 
             {showCompletionMenu && (
                 <div className="dr-completion-overlay">

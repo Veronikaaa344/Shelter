@@ -10,7 +10,7 @@ const userStatsSchema = new mongoose.Schema({
     ref: 'User'
   },
   
-  // Статистика використання (агреговані дані)
+  
   breathingSessions: {
     count: { type: Number, default: 0 },
     totalMinutes: { type: Number, default: 0 },
@@ -29,11 +29,11 @@ const userStatsSchema = new mongoose.Schema({
       materialId: { type: String, ref: 'Material' },
       viewCount: { type: Number, default: 0 },
       lastViewed: { type: Date, default: Date.now },
-      totalTime: { type: Number, default: 0 } // в хвилинах
+      totalTime: { type: Number, default: 0 } 
     }]
   },
   
-  // Загальна статистика
+  
   totalSessions: { type: Number, default: 0 },
   totalMinutes: { type: Number, default: 0 },
   lastActiveDate: { type: Date }
@@ -41,7 +41,7 @@ const userStatsSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Методи для оновлення статистики
+
 userStatsSchema.methods.recordBreathingSession = async function(minutes) {
   this.breathingSessions.count += 1;
   this.breathingSessions.totalMinutes += minutes;
@@ -69,7 +69,7 @@ userStatsSchema.methods.recordDiagnostic = async function(score, answers) {
   if (score >= 60) resilienceChange = 2;
   else if (score <= 40) resilienceChange = -2;
 
-  // 1. Створюємо детальний результат тесту
+  
   const formattedAnswers = Array.isArray(answers)
     ? answers.map(ans => typeof ans === 'number' ? { value: ans } : ans)
     : [];
@@ -80,7 +80,7 @@ userStatsSchema.methods.recordDiagnostic = async function(score, answers) {
     answers: formattedAnswers
   });
 
-  // 2. Створюємо лог активності для графіка
+  
   await ActivityLog.create({
     userId: this.userId,
     type: 'diagnostic',
@@ -94,7 +94,7 @@ userStatsSchema.methods.recordDiagnostic = async function(score, answers) {
 };
 
 userStatsSchema.methods.addDiaryEntry = async function(mood, content, tags = []) {
-  // 1. Створюємо запис у щоденнику
+  
   await DiaryEntry.create({
     userId: this.userId,
     mood,
@@ -103,12 +103,12 @@ userStatsSchema.methods.addDiaryEntry = async function(mood, content, tags = [])
     wordCount: content.split(' ').filter(word => word.length > 0).length
   });
 
-  // 2. Створюємо лог активності
+  
   await ActivityLog.create({
     userId: this.userId,
     type: 'diary',
     name: 'Запис у щоденнику',
-    change: 1 // Невеликий бонус за рефлексію
+    change: 1 
   });
 
   this.lastActiveDate = new Date();

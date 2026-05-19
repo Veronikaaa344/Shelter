@@ -34,18 +34,18 @@ const QuestsView = ({
         const questsList = [];
         let dayCounter = 1;
         
-        // Фільтруємо матеріали за типом сторінки
-        // Фільтруємо матеріали за типом сторінки
+        
+        
         const filteredMaterials = materials.filter(m => {
             if (m.type === 'dialogue' || m.materialId === 'anxiety-dialogue-1') return false; 
             if (pageType === "default") return m.category === "general";
             return m.category === pageType || m.category === "general";
         });
 
-        const maxLength = Math.max(scenarios.length, filteredMaterials.length, 5); // Minimum 5 days
+        const maxLength = Math.max(scenarios.length, filteredMaterials.length, 5); 
         
         for (let i = 0; i < maxLength; i++) {
-            // 1. Сценарій (Вправа/Тренажер) - Always add sorting quest for Day 1
+            
             if (i < scenarios.length || (i === 0 && dayCounter === 1)) {
                 if (dayCounter === 1) {
                     questsList.push({
@@ -81,7 +81,7 @@ const QuestsView = ({
                 }
             }
             
-            // 2. Спеціальне завдання (Щоденник/Дихання) кожні 2 дні
+            
             if (dayCounter % 3 === 0) {
                 const isDiary = i % 2 === 0;
                 questsList.push({
@@ -95,7 +95,7 @@ const QuestsView = ({
                 });
             }
 
-            // 3. Матеріал (Стаття/Медіа)
+            
             if (i < filteredMaterials.length) {
                 const material = filteredMaterials[i];
                 questsList.push({
@@ -122,14 +122,14 @@ const QuestsView = ({
             let isCompleted = false;
 
             if (quest.questType === "exercise") {
-                // Match by scenarioId or _id
+                
                 isCompleted = compScenarios.some(c => 
                     (c.scenarioId && c.scenarioId === quest.scenarioId) || 
                     (c.id && c.id === quest.scenarioId) ||
                     (c._id && c._id === quest.scenarioId)
                 );
             } else if (quest.questType === "material") {
-                // Match by materialId or _id (handles both string and object formats)
+                
                 isCompleted = compMaterials.some(m => {
                     if (typeof m === 'string') return m === quest.materialId;
                     return (m.materialId && m.materialId === quest.materialId) || 
@@ -186,7 +186,7 @@ const QuestsView = ({
     useEffect(() => {
         loadData();
         
-        // Listen for focus to refresh progress
+        
         window.addEventListener('focus', loadData);
         return () => window.removeEventListener('focus', loadData);
     }, [resilience, loadData]);
@@ -230,12 +230,12 @@ const QuestsView = ({
             <div className="relative max-w-4xl mx-auto space-y-12 before:absolute before:left-[27px] before:top-8 before:bottom-8 before:w-1 before:bg-slate-800 before:rounded-full">
                 {quests.map((quest) => (
                     <div key={quest.id} className={`relative pl-20 transition-all duration-500 ${quest.status === 'locked' ? 'opacity-50' : 'opacity-100'}`}>
-                        {/* Fox Marker */}
+                        {}
                         {quest.status === "current" && (
                             <div className="absolute -left-4 -top-8 text-4xl animate-bounce z-20">🦊</div>
                         )}
 
-                        {/* Marker Circle */}
+                        {}
                         <div className={`absolute left-0 top-2 w-14 h-14 rounded-2xl flex items-center justify-center border-4 transition-all duration-500 z-10 ${
                             quest.status === 'completed' ? 'bg-emerald-500 border-emerald-500/50 text-white' :
                             quest.status === 'current' ? 'bg-blue-600 border-blue-500/50 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] scale-110' :
@@ -246,7 +246,7 @@ const QuestsView = ({
                              <Lock size={20} />}
                         </div>
 
-                        {/* Content Card */}
+                        {}
                         <div className={`p-8 rounded-[40px] border transition-all duration-500 ${
                             quest.status === 'current' ? 'bg-slate-900/60 border-blue-500/50 shadow-2xl scale-[1.02]' :
                             'bg-slate-900/40 border-slate-800'

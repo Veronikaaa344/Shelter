@@ -3,7 +3,7 @@ import { ChevronRight, Wind, Play, Pause, Camera, Volume2, Music } from 'lucide-
 import { api } from '../../../infrastructure/api/api';
 import { useNavigate } from 'react-router-dom';
 
-// Import grounding images
+
 import grounding1 from '../../../infrastructure/assets/images/forVideo/grounding_1.png';
 import grounding2 from '../../../infrastructure/assets/images/forVideo/grounding_2.jpg';
 import grounding3 from '../../../infrastructure/assets/images/forVideo/grounding_3.png';
@@ -25,7 +25,7 @@ const LibraryView = ({
     const [isNoisePlaying, setIsNoisePlaying] = useState(false);
     const [volume, setVolume] = useState(0.1);
     
-    // Audio API refs
+    
     const audioCtx = useRef(null);
     const noiseNode = useRef(null);
     const gainNode = useRef(null);
@@ -36,7 +36,7 @@ const LibraryView = ({
       return matchesSearch && matchesFilter;
     });
 
-    // Noise generation logic
+    
     const createNoiseBuffer = (type) => {
         if (!audioCtx.current) return null;
         const bufferSize = 2 * audioCtx.current.sampleRate;
@@ -59,7 +59,7 @@ const LibraryView = ({
                 b4 = 0.55000 * b4 + white * 0.5329522;
                 b5 = -0.7616 * b5 - white * 0.0168980;
                 output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
-                output[i] *= 0.11; // compensation
+                output[i] *= 0.11; 
                 b6 = white * 0.115926;
             }
         } else if (type === 'Коричневий') {
@@ -68,7 +68,7 @@ const LibraryView = ({
                 const white = Math.random() * 2 - 1;
                 output[i] = (lastOut + (0.02 * white)) / 1.002;
                 lastOut = output[i];
-                output[i] *= 3.5; // compensation
+                output[i] *= 3.5; 
             }
         }
         return buffer;
@@ -80,10 +80,10 @@ const LibraryView = ({
         }
 
         if (isNoisePlaying && activeNoise === type) {
-            // Stop
+            
             stopNoise();
         } else {
-            // Start or Switch
+            
             stopNoise();
             startNoise(type);
         }
@@ -169,7 +169,7 @@ const LibraryView = ({
 
     return (
       <div className="p-8 space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-24">
-        {/* Header and Filters */}
+        {}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <h2 className="text-5xl font-black text-white italic uppercase tracking-tighter leading-none">Бібліотека спокою</h2>
           <div className="flex gap-2 bg-slate-900/50 p-1.5 rounded-2xl border border-slate-800 backdrop-blur-md">
@@ -179,7 +179,7 @@ const LibraryView = ({
           </div>
         </div>
 
-        {/* Soundscapes Section */}
+        {}
         {libraryFilter === 'Всі' && (
             <section className="space-y-8">
                 <div className="flex items-center gap-3">
@@ -218,7 +218,7 @@ const LibraryView = ({
                                     ))}
                                 </div>
 
-                                {/* Always Visible iOS-style Slider */}
+                                {}
                                 <div className="relative flex flex-col items-center gap-4 py-2">
                                     <div 
                                         className="relative w-24 h-48 bg-[#0f172a] rounded-[44px] overflow-hidden cursor-pointer group shadow-[0_20px_40px_-10px_rgba(0,0,0,0.8),inset_0_2px_4px_rgba(255,255,255,0.05)] border-2 border-[#1e293b]"
@@ -303,7 +303,7 @@ const LibraryView = ({
                                     if (activeNoise) {
                                         toggleNoise(activeNoise);
                                     } else {
-                                        toggleNoise('Білий'); // Default to White noise if none selected
+                                        toggleNoise('Білий'); 
                                     }
                                 }}
                                 className={`w-full py-3 ${isNoisePlaying ? 'bg-rose-600' : 'bg-blue-600'} hover:opacity-90 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all shadow-lg flex items-center justify-center gap-2`}
@@ -316,7 +316,7 @@ const LibraryView = ({
             </section>
         )}
 
-        {/* Photo Grounding Section */}
+        {}
         {libraryFilter === 'Всі' && (
             <section className="space-y-8">
                 <div className="flex items-center gap-3">
@@ -351,7 +351,7 @@ const LibraryView = ({
             </section>
         )}
 
-        {/* Main Content List */}
+        {}
         <section className="space-y-8">
             <div className="flex items-center gap-3">
                 <div className="w-2 h-8 bg-purple-500 rounded-full"></div>

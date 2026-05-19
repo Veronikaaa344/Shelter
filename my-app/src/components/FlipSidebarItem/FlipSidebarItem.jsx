@@ -1,19 +1,7 @@
 import React from 'react';
 import { ChevronLeft, LayoutGrid } from 'lucide-react';
 
-/**
- * FlipSidebarItem - A reusable 3D flipping sidebar button component.
- * 
- * @param {string} id - Unique identifier for the item.
- * @param {React.ReactNode} icon - Icon element for the front face.
- * @param {string} label - Text label for the front face.
- * @param {boolean} isDashboard - If true, the back face shows a "Back" button.
- * @param {number} index - Position index for staggered animation delays.
- * @param {boolean} isSpecialMode - If true, triggers the flip animation.
- * @param {string} currentView - The currently active view ID.
- * @param {function} onClickAction - Function called when front face is clicked.
- * @param {function} onBackAction - Function called when back face (if isDashboard) is clicked.
- */
+
 const FlipSidebarItem = ({ 
     id, 
     icon, 
@@ -29,7 +17,7 @@ const FlipSidebarItem = ({
 
   React.useEffect(() => {
     if (isSpecialMode) {
-      // Delay slightly to ensure mount happens before animation
+      
       const timer = setTimeout(() => setActuallyFlipped(true), 100);
       return () => clearTimeout(timer);
     } else {
@@ -40,7 +28,7 @@ const FlipSidebarItem = ({
   const isFlipped = actuallyFlipped;
   const isActive = currentView === id && !isSpecialMode;
 
-  // Stagger the flip animation based on index
+  
   const baseDelay = isFlipped ? index * 0.1 : (5 - index) * 0.1;
 
   const wrapperStyle = {
@@ -82,7 +70,7 @@ const FlipSidebarItem = ({
   return (
     <div style={wrapperStyle}>
       <div style={innerStyle}>
-        {/* Front */}
+        {}
         <div
           style={faceStyle}
           className={`flex items-center gap-4 p-4 robust-rounded-20 cursor-pointer transition-all duration-300 ${isActive
@@ -95,7 +83,7 @@ const FlipSidebarItem = ({
           <span className="font-bold text-sm hidden lg:block tracking-wide">{label}</span>
         </div>
 
-        {/* Back */}
+        {}
         <div
           style={backFaceStyle}
           className={`flex items-center gap-4 p-4 robust-rounded-20 transition-all duration-300 w-full ${isDashboard

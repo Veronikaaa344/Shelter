@@ -16,17 +16,11 @@ function App() {
 
 	useEffect(() => {
 		const initSession = async () => {
-			console.log("🍪 [DEBUG] Browser Cookies:", document.cookie);
-			console.log("📂 [DEBUG] Local Storage:", {
-				token: localStorage.getItem("dr_token"),
-				userId: localStorage.getItem("userId"),
-				username: localStorage.getItem("username")
-			});
 
 			const token = localStorage.getItem("dr_token");
 			const userId = localStorage.getItem("userId");
 
-			// Якщо є нормальний токен — нічого не робимо, просто показуємо додаток
+			
 			const hasValidSession =
 				token &&
 				token !== "guest_mode" &&
@@ -38,32 +32,28 @@ function App() {
 			const isMissingId = !userId || userId === "null" || userId === "undefined";
 
 			if (isGuestMode && isMissingId) {
-				console.log("🔍 [DEBUG] Guest mode active but userId missing. Fetching profile...");
 				try {
 					const data = await api.getProfile();
 					if (data && data.id) {
 						localStorage.setItem("userId", data.id);
 						localStorage.setItem("username", data.username || "Гість");
-						console.log("✅ [DEBUG] Restored guest userId from profile:", data.id);
 					}
 				} catch (e) {
 					console.error("❌ [DEBUG] Failed to restore guest session:", e);
-					localStorage.removeItem("dr_token"); // Reset if failed
+					localStorage.removeItem("dr_token"); 
 				}
 			} else if (!hasValidSession && !isGuestMode) {
-				// Немає сесії — автоматично входимо як гість
-				console.log("🆕 [DEBUG] No session found. Logging in as guest...");
+				
 				localStorage.removeItem("dr_token");
 				localStorage.removeItem("userId");
 				try {
 					const data = await api.loginAsGuest();
-					// Гостева сесія в куках, локально позначаємо
+					
 					const guestUser = data.user || data;
 					if (guestUser.id) {
 						localStorage.setItem("dr_token", "guest_mode");
 						localStorage.setItem("userId", guestUser.id);
 						localStorage.setItem("username", guestUser.username || "Гість");
-						console.log("✅ [DEBUG] Guest session established. Current cookies:", document.cookie);
 					}
 				} catch (e) {
 					console.error(e);

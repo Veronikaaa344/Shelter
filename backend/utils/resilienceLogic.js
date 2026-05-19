@@ -1,31 +1,31 @@
 const SCORING_RULES = {
-    // Вправи та Симулятори
+    
     EXERCISE_COMPLETE_EXCELLENT: 8,
     EXERCISE_COMPLETE_GOOD: 4,
     EXERCISE_COMPLETE_POOR: -5,
     
-    // Взаємодія в симуляторі (за кожен крок)
+    
     SIMULATOR_POSITIVE_CHOICE: 2,
     SIMULATOR_NEGATIVE_CHOICE: -6,
     SIMULATOR_NEUTRAL_CHOICE: 0,
 
-    // Контент
+    
     MATERIAL_READ: 2,
     VIDEO_WATCHED: 3,
 
-    // Щоденник та емоції
+    
     DIARY_ENTRY_POSITIVE: 2,
     DIARY_ENTRY_NEGATIVE: 1,
     MOOD_TRACK_ANXIETY: -2,
     MOOD_TRACK_CALM: 3,
 
-    // Дисципліна
+    
     STREAK_BONUS_DAILY: 2,
     INACTIVITY_PENALTY_1_DAY: -3,
     INACTIVITY_PENALTY_3_DAYS: -15,
     INACTIVITY_PENALTY_WEEK: -40,
 
-    // Інше (захардкоджені значення з фронта)
+    
     SOS_BUTTON: 15,
     SOS_BUTTON_PRESSED_PANIC: -15,
     LEVEL_COMPLETE: 10,
@@ -52,7 +52,7 @@ const calculateResilienceChange = (eventType, metadata = {}) => {
                 else if (metadata.score > 50) change = SCORING_RULES.EXERCISE_COMPLETE_GOOD;
                 else change = SCORING_RULES.EXERCISE_COMPLETE_POOR;
             } else {
-                change = SCORING_RULES.EXERCISE_COMPLETE_GOOD; // Default
+                change = SCORING_RULES.EXERCISE_COMPLETE_GOOD; 
             }
             break;
 
@@ -75,7 +75,7 @@ const calculateResilienceChange = (eventType, metadata = {}) => {
             else if (metadata.days >= 1) change = SCORING_RULES.INACTIVITY_PENALTY_1_DAY;
             break;
 
-        // Custom mappings for frontend hardcoded values
+        
         case 'sos':
             if (metadata.panic) change = SCORING_RULES.SOS_BUTTON_PRESSED_PANIC;
             else change = SCORING_RULES.SOS_BUTTON;
@@ -120,12 +120,12 @@ const calculateResilienceChange = (eventType, metadata = {}) => {
             break;
     }
 
-    // Ensure change is a valid number
+    
     if (isNaN(change)) {
         change = 0;
     }
 
-    // Global cap for positive additions as per requirements (max +15)
+    
     if (change > 15) {
         change = 15;
     }

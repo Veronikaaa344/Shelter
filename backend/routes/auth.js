@@ -39,7 +39,7 @@ router.post("/register", async (req, res) => {
 	try {
 		const { email, password, username } = req.body;
 		
-		// Валідація вхідних даних
+		
 		if (!email || !password || !username) {
 			return res.status(400).json({ 
 				message: "Всі поля обов'язкові",
@@ -48,7 +48,7 @@ router.post("/register", async (req, res) => {
 			});
 		}
 
-		// Валідація email
+		
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!emailRegex.test(email)) {
 			return res.status(400).json({ 
@@ -58,7 +58,7 @@ router.post("/register", async (req, res) => {
 			});
 		}
 
-		// Валідація пароля
+		
 		if (password.length < 6) {
 			return res.status(400).json({ 
 				message: "Пароль має містити мінімум 6 символів",
@@ -67,7 +67,7 @@ router.post("/register", async (req, res) => {
 			});
 		}
 
-		// Валідація імені
+		
 		if (username.length < 2) {
 			return res.status(400).json({ 
 				message: "Ім'я має містити мінімум 2 символи",
@@ -76,7 +76,7 @@ router.post("/register", async (req, res) => {
 			});
 		}
 
-		// Перевірка чи існує акаунт
+		
 		const accountExists = await Account.findOne({ email });
 		if (accountExists) {
 			return res.status(400).json({ 
@@ -86,15 +86,15 @@ router.post("/register", async (req, res) => {
 			});
 		}
 
-		// Створення профілю користувача
+		
 		const userProfile = new User({ username });
 		const savedUser = await userProfile.save();
 
-		// Хешування пароля
+		
 		const salt = await genSalt(10);
 		const hashedPassword = await hash(password, salt);
 
-		// Створення акаунту
+		
 		const newAccount = new Account({
 			email,
 			password: hashedPassword,
@@ -106,7 +106,7 @@ router.post("/register", async (req, res) => {
 	} catch (err) {
 		console.error('Registration error:', err);
 		
-		// Обробка специфічних помилок MongoDB
+		
 		if (err.code === 11000) {
 			const field = Object.keys(err.keyPattern)[0];
 			const fieldNames = {
@@ -120,7 +120,7 @@ router.post("/register", async (req, res) => {
 			});
 		}
 
-		// Валідація помилок Mongoose
+		
 		if (err.name === 'ValidationError') {
 			const errors = Object.values(err.errors).map(e => e.message);
 			return res.status(400).json({ 
@@ -142,7 +142,7 @@ router.post("/login", async (req, res) => {
 	try {
 		const { email, password } = req.body;
 		
-		// Валідація вхідних даних
+		
 		if (!email || !password) {
 			return res.status(400).json({ 
 				message: "Email та пароль обов'язкові",
@@ -151,7 +151,7 @@ router.post("/login", async (req, res) => {
 			});
 		}
 
-		// Валідація email
+		
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!emailRegex.test(email)) {
 			return res.status(400).json({ 
@@ -161,7 +161,7 @@ router.post("/login", async (req, res) => {
 			});
 		}
 
-		// Пошук акаунту
+		
 		const account = await Account.findOne({ email }).populate("userId");
 		if (!account) {
 			return res.status(400).json({ 
@@ -171,7 +171,7 @@ router.post("/login", async (req, res) => {
 			});
 		}
 
-		// Перевірка пароля
+		
 		const isMatch = await compare(password, account.password);
 		if (!isMatch) {
 			return res.status(400).json({ 
@@ -206,28 +206,28 @@ router.post("/google", async (req, res) => {
 		const payload = ticket.getPayload();
 		const { email, name, picture, sub: googleId } = payload;
 
-		// Шукаємо акаунт за email
+		
 		let account = await Account.findOne({ email }).populate("userId");
 
 		if (account) {
-			// Користувач вже існує
+			
 			return sendTokenResponse(account.userId, 200, res);
 		}
 
-		// Створюємо нового користувача
+		
 		const newUser = new User({
 			username: name || email.split("@")[0],
 			avatar: picture,
 		});
 		const savedUser = await newUser.save();
 
-		// Створюємо акаунт без пароля (або з рандомним, оскільки ми використовуємо bcrypt)
+		
 		const randomPassword = await hash(Math.random().toString(36), 10);
 		const newAccount = new Account({
 			email,
 			password: randomPassword,
 			userId: savedUser._id,
-			googleId, // Можна додати в модель Account, якщо захочете
+			googleId, 
 		});
 		await newAccount.save();
 
@@ -240,11 +240,11 @@ router.post("/google", async (req, res) => {
 
 router.post("/guest", async (req, res) => {
 	try {
-		// Check if guest cookie already exists
+		
 		const existingCookie = req.cookies?.dr_guest;
 		if (existingCookie) {
 			const existingData = JSON.parse(existingCookie);
-			// Refresh cookie expiration
+			
 			res
 				.status(200)
 				.cookie("dr_guest", existingCookie, {
@@ -259,7 +259,7 @@ router.post("/guest", async (req, res) => {
 			return;
 		}
 
-		// Create new guest if no existing cookie
+		
 		const guestId = `guest_${Math.random().toString(36).substr(2, 9)}`;
 		const guestData = {
 			id: guestId,
@@ -327,7 +327,7 @@ router.post("/guest/update", (req, res) => {
 			}
 		};
 		
-		// Якщо оновлюються статси (наприклад діагностика), додаємо в історію
+		
 		if (req.body.stats && req.body.stats.resilience !== undefined) {
 			const score = req.body.stats.resilience;
 			const multiplier = Number((0.1 + (score / 100) * 1.4).toFixed(2));
@@ -348,7 +348,7 @@ router.post("/guest/update", (req, res) => {
 			});
 		}
 
-		// Сохраняем в куки только записи, кроме wrong_answer (промежуточные ответы в тестах)
+		
 		const updatedDataToSave = {
 			...updatedData,
 			history: (updatedData.history || []).filter(h => h.activityType !== "wrong_answer").slice(0, 10),
@@ -383,7 +383,6 @@ router.get("/guest/stats", (req, res) => {
 router.get("/guest/stats-volume", (req, res) => {
 	try {
 		const guestCookie = req.cookies?.dr_guest;
-		console.log('📊 GUEST BACKEND: stats-volume request. Cookie length:', guestCookie ? guestCookie.length : 0);
 		if (!guestCookie) {
 			return res.status(404).json({ message: "Guest not found" });
 		}
@@ -425,7 +424,7 @@ router.post("/guest/update-resilience", (req, res) => {
 		
 		const guestData = JSON.parse(guestCookie);
 
-		// Track completion if itemId and type provided
+		
 		if (itemId && type) {
 			if (type === 'material') {
 				if (!guestData.completedMaterials) guestData.completedMaterials = [];
@@ -440,7 +439,7 @@ router.post("/guest/update-resilience", (req, res) => {
 			}
 		}
 
-		// Calculate resilience change strictly on the server
+		
 		const calculatedChange = calculateResilienceChange(type, metadata);
 
 		const multiplier = guestData.stats?.resilienceMultiplier || 1.0;
@@ -480,7 +479,7 @@ router.post("/guest/update-resilience", (req, res) => {
 		res
 			.cookie("dr_guest", cookieString, {
 				expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-				secure: false, // For localhost development
+				secure: false, 
 				sameSite: "lax",
 				path: "/",
 			})
@@ -551,7 +550,7 @@ router.post("/guest/diagnostic", (req, res) => {
 	}
 });
 
-// Додати запис у щоденник (гість)
+
 router.post("/guest/diary", (req, res) => {
 	try {
 		const guestCookie = req.cookies?.dr_guest;
@@ -573,7 +572,7 @@ router.post("/guest/diary", (req, res) => {
 
 		guestData.diaryEntries.unshift(newEntry);
 
-		// Ограничиваем до 20 записей чтобы не переполнить куки
+		
 		if (guestData.diaryEntries.length > 20) {
 			guestData.diaryEntries = guestData.diaryEntries.slice(0, 20);
 		}
@@ -591,7 +590,7 @@ router.post("/guest/diary", (req, res) => {
 	}
 });
 
-// Отримати записи щоденника (гість)
+
 router.get("/guest/diary", (req, res) => {
 	try {
 		const guestCookie = req.cookies?.dr_guest;
@@ -613,7 +612,7 @@ router.post("/migrate-guest", async (req, res) => {
 		const { email, password, username } = req.body;
 		const guestCookie = req.cookies?.dr_guest;
 		
-		// Валідація вхідних даних
+		
 		if (!email || !password || !username) {
 			return res.status(400).json({ 
 				message: "Всі поля обов'язкові",
@@ -622,7 +621,7 @@ router.post("/migrate-guest", async (req, res) => {
 			});
 		}
 
-		// Валідація email
+		
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!emailRegex.test(email)) {
 			return res.status(400).json({ 
@@ -632,7 +631,7 @@ router.post("/migrate-guest", async (req, res) => {
 			});
 		}
 
-		// Валідація пароля
+		
 		if (password.length < 6) {
 			return res.status(400).json({ 
 				message: "Пароль має містити мінімум 6 символів",
@@ -641,7 +640,7 @@ router.post("/migrate-guest", async (req, res) => {
 			});
 		}
 
-		// Валідація імені
+		
 		if (username.length < 2) {
 			return res.status(400).json({ 
 				message: "Ім'я має містити мінімум 2 символи",
@@ -650,7 +649,7 @@ router.post("/migrate-guest", async (req, res) => {
 			});
 		}
 
-		// Check if email is taken
+		
 		const accountExists = await Account.findOne({ email });
 		if (accountExists) {
 			return res.status(400).json({ 
@@ -660,13 +659,13 @@ router.post("/migrate-guest", async (req, res) => {
 			});
 		}
 
-		// Get guest data if exists
+		
 		let guestData = null;
 		if (guestCookie) {
 			guestData = JSON.parse(guestCookie);
 		}
 
-		// Create user with guest data if available, or fresh data
+		
 		const userProfile = new User({
 			username,
 			stats: guestData?.stats || { resilience: 50, stabilityDays: 0 },
@@ -687,14 +686,14 @@ router.post("/migrate-guest", async (req, res) => {
 		});
 		await newAccount.save();
 
-		// Clear guest cookie
+		
 		res.clearCookie("dr_guest");
 
-		// Send token response
+		
 		sendTokenResponse(savedUser, 201, res);
 	} catch (err) {
 		
-		// Обробка специфічних помилок MongoDB
+		
 		if (err.code === 11000) {
 			const field = Object.keys(err.keyPattern)[0];
 			const fieldNames = {
@@ -708,7 +707,7 @@ router.post("/migrate-guest", async (req, res) => {
 			});
 		}
 
-		// Валідація помилок Mongoose
+		
 		if (err.name === 'ValidationError') {
 			const errors = Object.values(err.errors).map(e => e.message);
 			return res.status(400).json({ 
@@ -726,7 +725,7 @@ router.post("/migrate-guest", async (req, res) => {
 	}
 });
 
-// Get user profile with gamification data
+
 router.get("/profile", async (req, res) => {
 	try {
 		const token = req.cookies?.dr_token || req.header("x-auth-token");
@@ -760,7 +759,7 @@ router.get("/profile", async (req, res) => {
 	}
 });
 
-// Update streak and check for badges
+
 router.post("/activity", async (req, res) => {
 	try {
 		const token = req.cookies?.dr_token || req.header("x-auth-token");
@@ -793,7 +792,7 @@ router.post("/activity", async (req, res) => {
 
 			if (diffDays === 1) {
 				newStreak += 1;
-				// Бонус +6 за 2+ дні поспіль
+				
 				if (newStreak >= 2) {
 					user.stats.resilience = Math.min(100, (user.stats.resilience || 50) + 6);
 					user.history.unshift({
@@ -818,7 +817,7 @@ router.post("/activity", async (req, res) => {
 			user.stats.longestStreak = newStreak;
 		}
 
-		// Check for streak badges
+		
 		const newBadges = [];
 		const streakBadges = [
 			{ days: 3, id: "streak_3", name: "3 дні стабільності", icon: "🔥", description: "3 дні активності поспіль" },
@@ -846,15 +845,14 @@ router.post("/activity", async (req, res) => {
 	}
 });
 
-// Complete scenario and unlock next
+
 router.post("/complete-scenario", async (req, res) => {
 	try {
         const token = req.cookies?.dr_token || req.header("x-auth-token");
-        console.log(`[AUTH] Complete Scenario request received. Token present: ${!!token}, Scenario: ${req.body.scenarioId}`);
         const guestCookie = req.cookies?.dr_guest;
         const { scenarioId, score } = req.body;
 
-		// Handle Guest User FIRST
+		
 		if (guestCookie && (!token || token === 'guest_mode')) {
 			const guestData = JSON.parse(guestCookie);
 
@@ -866,7 +864,7 @@ router.post("/complete-scenario", async (req, res) => {
 			if (!alreadyCompleted) {
 				guestData.completedScenarios.push({ scenarioId, score, date: new Date() });
 				
-				// Also update resilience history
+				
 				let scenario;
 				if (mongoose.Types.ObjectId.isValid(scenarioId)) {
 					scenario = await Scenario.findById(scenarioId);
@@ -900,7 +898,7 @@ router.post("/complete-scenario", async (req, res) => {
 			});
 		}
 		
-		// Handle Registered User
+		
 		if (token) {
 			const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret_key");
 			const user = await User.findById(decoded.id);
@@ -909,7 +907,7 @@ router.post("/complete-scenario", async (req, res) => {
 				return res.status(404).json({ message: "User not found" });
 			}
 	
-			// Add to completed
+			
 			const alreadyCompleted = user.completedScenarios.some(s => 
 				s.scenarioId === scenarioId || (s._id && s._id.toString() === scenarioId)
 			);
@@ -920,7 +918,6 @@ router.post("/complete-scenario", async (req, res) => {
 					score: score, 
 					completedAt: new Date() 
 				});
-				console.log(`[AUTH] Added scenario ${scenarioId} to completed list for user ${user.username}`);
 			}
 	
 			let scenario;
@@ -930,7 +927,7 @@ router.post("/complete-scenario", async (req, res) => {
 				scenario = await Scenario.findOne({ scenarioId: scenarioId });
 			}
 
-			// Sync with UserStats model for consistency in history/charts
+			
 			try {
 				const UserStats = (await import('../models/UserStats.js')).default;
 				let userStats = await UserStats.findOne({ userId: user._id });
@@ -948,13 +945,13 @@ router.post("/complete-scenario", async (req, res) => {
 				});
 				await userStats.save();
 				
-				// Also update resilience in User model stats for getProfile() consistency
+				
 				user.stats.resilience = userStats.resilience.current;
 			} catch (statsErr) {
 				console.error("Failed to sync UserStats during scenario completion:", statsErr);
 			}
 
-			// Check for completion badges
+			
 			const newBadges = [];
 			const completedCount = user.completedScenarios.length;
 	
@@ -978,7 +975,7 @@ router.post("/complete-scenario", async (req, res) => {
 				newBadges.push(user.badges[user.badges.length - 1]);
 			}
 	
-			// Progressive unlocking - unlock next scenario based on category
+			
 			if (scenario && scenario.nextUnlock) {
 				if (!user.unlockedScenarios.includes(scenario.nextUnlock)) {
 					user.unlockedScenarios.push(scenario.nextUnlock);

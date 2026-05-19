@@ -11,9 +11,9 @@ const characters = [
 	{ image: capybara3, type: 'supportive' }
 ];
 
-// Phrases for each character
+
 const characterPhrases = {
-	// Distant characters - funny and detached capybara phrases
+	
 	distant: [
 		"Опа! Дивись, як я вмію розслаблятися. Головне — знайти уявне гаряче джерело!",
 		"Тиць! Ой, вибач, я просто жував травинку і випадково тицьнув носом в екран",
@@ -31,7 +31,7 @@ const characterPhrases = {
 		"Знаєш, бути цифровою капібарою зручно — шерсть завжди суха і не треба шукати калюжу",
 		"Я щойно чув, як твій процесор гудить. Звучить майже як муркотіння моїх родичів біля річки"
 	],
-	// Supportive characters - inspiring and supportive phrases with capybara chill
+	
 	supportive: [
 		"Пам'ятай: навіть найменший крок сьогодні — це вже величезний рух уперед. А лежати — це теж рух, тільки внутрішній",
 		"Ти сьогодні молодець вже тому, що просто знайшов сили зайти сюди. Я тобою пишаюся!",
@@ -54,7 +54,7 @@ const characterPhrases = {
 		"Я щиро пишаюся тим, як ти тримаєшся. Ти справжній боєць, хоч і дуже добрий у душі",
 		"Завтра обов'язково буде новий день і нові можливості. А поки — просто дихай і уяви себе в теплому озерці"
 	],
-	// Achievement phrases - when user completes scenario successfully
+	
 	achievement: [
 		"Вау! Ти просто неймовірний! Я аж підстрибнув (хоча зазвичай я цього не роблю)! 🎉",
 		"Я знав, що ти впораєшся! Ти справжній майстер! 🔍",
@@ -79,7 +79,7 @@ const characterPhrases = {
 	]
 };
 
-// Encouraging phrases by context and user state (legacy, for compatibility)
+
 const phrases = {
 	calm: characterPhrases.supportive,
 	anxiety: characterPhrases.supportive,
@@ -112,15 +112,15 @@ const phrases = {
 
 
 
-// Determine user state based on resilience and answers
+
 const getUserState = (resilience, stressCount = 0, pageType = 'default') => {
-	// If user has high stress answers, prioritize stress state
+	
 	if (stressCount >= 2) return 'stress';
-	// Based on resilience level
+	
 	if (resilience < 30) return 'anxiety';
 	if (resilience < 45) return 'stress';
 	if (resilience > 70) return 'calm';
-	// Based on page type
+	
 	if (pageType === 'apathy') return 'apathy';
 	if (pageType === 'anxiety') return 'anxiety';
 	if (pageType === 'stress') return 'stress';
@@ -133,12 +133,12 @@ const CharacterCompanion = forwardRef(({
 	resilience = 50,
 	stressCount = 0,
 	pageType = 'default',
-	auraColor = 'emerald', // emerald, amber, rose, blue, purple
+	auraColor = 'emerald', 
 	isBreathing = false,
 	forceSpeakMode = null,
 	onAction
 }, ref) => {
-	// Expose method to trigger achievement praise
+	
 	useImperativeHandle(ref, () => ({
 		speakAchievement: () => {
 			setIsVisible(true);
@@ -167,17 +167,17 @@ const CharacterCompanion = forwardRef(({
 		if (isSpeaking) return;
 		
 		setIsSpeaking(true);
-		// Directly show the phrase without attention phase
+		
 		setCurrentPhrase(getRandomPhrase(phraseType));
 		
-		// Speak for 10 seconds to give time to read
+		
 		setTimeout(() => {
 			setIsSpeaking(false);
 			setIsVisible(false);
 		}, 10000);
 	}, [getRandomPhrase, isSpeaking]);
 
-	// Handle forced speech (e.g. after completing a task)
+	
 	useEffect(() => {
 		if (forceSpeakMode) {
 			setIsVisible(true);
@@ -186,29 +186,29 @@ const CharacterCompanion = forwardRef(({
 	}, [forceSpeakMode, speak]);
 
 	useEffect(() => {
-		// Initial delay 5 seconds
+		
 		const initialDelay = 5000;
 		const initialTimer = setTimeout(() => {
 			setIsVisible(true);
 			speak();
 		}, initialDelay);
 
-		// Exactly 2 minutes interval between appearances
+		
 		const scheduleNext = () => {
-			const delay = 120000; // 2 minutes
+			const delay = 120000; 
 			return setTimeout(() => {
 				if (!isSpeaking) {
 					setIsVisible(true);
 					speak();
 				}
-				scheduleNext(); // Reschedule for next appearance
+				scheduleNext(); 
 			}, delay);
 		};
 
 		let nextTimer;
 		const startScheduling = setTimeout(() => {
 			nextTimer = scheduleNext();
-		}, initialDelay + 10000); // Start after first appearance
+		}, initialDelay + 10000); 
 
 		return () => {
 			clearTimeout(initialTimer);
@@ -217,7 +217,7 @@ const CharacterCompanion = forwardRef(({
 		};
 	}, [speak, isSpeaking]);
 
-	// Change character image periodically (only when not speaking)
+	
 	useEffect(() => {
 		const charInterval = setInterval(() => {
 			if (!isSpeaking) {
@@ -234,7 +234,7 @@ const CharacterCompanion = forwardRef(({
 			<div className="character-bubble">
 				<p className="character-text">{currentPhrase}</p>
 				
-				{/* Personalized exercises block when resilience is low */}
+				{}
 				{(resilience < 35 || forceSpeakMode === 'main-hints') && (
 					<div className="character-quick-actions">
 						<button onClick={() => onAction && onAction('breathing')} className="qa-btn">🫁 Дихання</button>
@@ -256,7 +256,7 @@ const CharacterCompanion = forwardRef(({
 
 export default CharacterCompanion;
 
-// Hook to trigger character manually
+
 export function useCharacterTrigger() {
 	const [trigger, setTrigger] = useState(0);
 	

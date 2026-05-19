@@ -51,7 +51,7 @@ const HomeView = ({
         setCurrentMood(mood.id);
     };
 
-    // Адаптивні рекомендації
+    
     const getRecommendations = () => {
         if (!currentMood) return [];
         
@@ -98,7 +98,7 @@ const HomeView = ({
       };
     });
 
-    // Адаптивна видача контенту (Adaptive Content Delivery)
+    
     const getAdaptiveCards = () => {
         if (resilience < 40) {
             return [
@@ -121,8 +121,8 @@ const HomeView = ({
         return [
             { title: "Квести Стійкості", cat: "РОЗВИТОК", icon: <Trophy className="text-amber-400"/>, color: "from-amber-500 to-amber-600", onClick: () => navigateTo('quests') },
             { title: "Глибока діагностика", cat: "АНАЛІТИКА", icon: <Brain/>, color: "from-indigo-500 to-indigo-600", onClick: () => navigateTo('testing') },
-            ...baseCards.filter(c => c.title !== "Діагностика"), // Всі базові вправи
-            ...simulatorCards // Всі симулятори
+            ...baseCards.filter(c => c.title !== "Діагностика"), 
+            ...simulatorCards 
         ];
     };
 
@@ -130,7 +130,7 @@ const HomeView = ({
 
     return (
       <div className="p-8 space-y-12 animate-in fade-in duration-1000 pb-20">
-        {/* Adaptive Stabilization Trigger */}
+        {}
         {showStabilizationHint && !searchTerm && (
             <div className="relative overflow-hidden bg-rose-500/10 border border-rose-500/20 p-8 rounded-[48px] animate-in slide-in-from-top-10 duration-700 shadow-[0_0_50px_rgba(244,63,94,0.1)]">
                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
@@ -148,12 +148,12 @@ const HomeView = ({
                         Почати зараз
                     </button>
                 </div>
-                {/* Background Decor */}
+                {}
                 <div className="absolute top-0 right-0 w-64 h-64 bg-rose-500/10 rounded-full blur-3xl -mr-32 -mt-32"></div>
             </div>
         )}
 
-        {/* Header Section */}
+        {}
         <section className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div className="space-y-4">
             <h1 className="text-7xl font-black text-white italic uppercase tracking-tighter leading-none">
@@ -179,7 +179,7 @@ const HomeView = ({
           </div>
         </section>
 
-        {/* Mood Tracker Section */}
+        {}
         {!searchTerm && (
             <section className="space-y-6">
                 <div className="flex items-center gap-3">
@@ -213,7 +213,7 @@ const HomeView = ({
             </section>
         )}
 
-        {/* Adaptive Support Section */}
+        {}
         {!searchTerm && recommendations.length > 0 && (
             <section className="space-y-6 animate-in slide-in-from-left duration-700">
                 <div className="flex items-center justify-between">
@@ -249,7 +249,7 @@ const HomeView = ({
             </section>
         )}
 
-        {/* Main Grid Section */}
+        {}
         <section className="space-y-6">
             <div className="flex items-center gap-3">
                 <div className="w-2 h-8 bg-purple-500 rounded-full"></div>

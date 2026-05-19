@@ -59,7 +59,7 @@ const DiaryView = ({ userId }) => {
                 setSaveMessage('✅ Нотатку збережено!');
                 setDiaryEntry('');
                 setSelectedMood(null);
-                loadEntries(); // перезавантаження записів з БД
+                loadEntries(); 
             })
             .catch((err) => {
                 console.error('Error saving diary entry:', err);
@@ -97,7 +97,7 @@ const DiaryView = ({ userId }) => {
                 <h2 className="text-5xl font-black text-white italic uppercase tracking-tighter leading-none">Щоденник рефлексії</h2>
             </div>
 
-            {/* Форма нового запису */}
+            {}
             <div className="bg-slate-900/40 border border-slate-800 p-8 rounded-[40px] backdrop-blur-xl shadow-2xl space-y-6">
                 <div className="flex items-center gap-3 mb-2">
                     <div className="w-10 h-10 bg-emerald-500/10 rounded-xl flex items-center justify-center">
@@ -160,7 +160,7 @@ const DiaryView = ({ userId }) => {
                 </div>
             </div>
 
-            {/* Список записів з БД */}
+            {}
             <div className="space-y-4">
                 <h3 className="text-xs font-black text-slate-500 uppercase tracking-[0.2em]">
                     Попередні записи

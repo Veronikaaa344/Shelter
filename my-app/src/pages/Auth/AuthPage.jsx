@@ -97,13 +97,13 @@ export default function AuthPage() {
             className="min-h-screen bg-[#0b0f1a] flex items-center justify-center p-6 relative overflow-hidden transition-opacity duration-500"
             style={{ opacity: isLeaving ? 0 : 1 }}
         >
-            {/* Декоративний фон */}
+            {}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl" />
                 <div className="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl" />
             </div>
 
-            {/* Кнопка назад */}
+            {}
             <button
                 onClick={() => navigate('/main')}
                 className="absolute top-8 left-8 flex items-center gap-2 text-slate-500 hover:text-white font-bold uppercase text-xs tracking-widest transition-all font-montserrat"
@@ -111,9 +111,9 @@ export default function AuthPage() {
                 <ChevronLeft size={18} /> На головну
             </button>
 
-            {/* Картка */}
+            {}
             <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-8 duration-700">
-                {/* Лого */}
+                {}
                 <div className="flex flex-col items-center mb-10">
                     <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-[#0b0f1a] shadow-2xl shadow-white/10 mb-5">
                         <ShieldCheck size={36} />
@@ -122,9 +122,9 @@ export default function AuthPage() {
                     <p className="text-slate-500 text-sm mt-1 font-medium font-comfortaa">Твій простір психологічної підтримки</p>
                 </div>
 
-                {/* Форма */}
+                {}
                 <div className="bg-slate-900/60 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl">
-                    {/* Перемикач */}
+                    {}
                     <div className="flex bg-slate-800/50 rounded-2xl p-1 mb-8">
                         <button
                             onClick={() => { setIsLogin(true); setError(''); }}
@@ -148,7 +148,7 @@ export default function AuthPage() {
                         </button>
                     </div>
 
-                    {/* Помилка */}
+                    {}
                     {error && (
                         <div className="mb-6 px-4 py-3 bg-rose-500/10 border border-rose-500/30 rounded-2xl text-rose-400 text-sm font-medium animate-in fade-in duration-300 font-quicksand">
                             ⚠️ {error}
@@ -233,7 +233,7 @@ export default function AuthPage() {
                     </div>
                 </div>
 
-                {/* SOS */}
+                {}
                 <div className="mt-8 text-center">
                     <HoldSOSButton onActivate={handleSosClick}>
                         SOS — Потрібна допомога

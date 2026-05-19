@@ -9,13 +9,13 @@ import '../pages/Simulator/simulatorPage.css';
 import { api, API_URL } from '../infrastructure/api/api';
 import { io } from 'socket.io-client';
 
-// Core Components
+
 import MainSidebar from '../components/MainSidebar/MainSidebar';
 import MainHeader from '../components/MainHeader/MainHeader';
 import HomeView from '../components/views/HomeView/HomeView';
 import MainChat from '../components/MainChat/MainChat';
 
-// Heavy View Components (Lazy)
+
 const LibraryView = React.lazy(() => import('../components/views/LibraryView/LibraryView'));
 const QuestsView = React.lazy(() => import('../components/views/QuestsView/QuestsView'));
 const TestingView = React.lazy(() => import('../components/views/TestingView/TestingView'));
@@ -24,14 +24,14 @@ const PracticeView = React.lazy(() => import('../components/views/PracticeView/P
 const AdviceView = React.lazy(() => import('../components/views/AdviceView/AdviceView'));
 const DiaryView = React.lazy(() => import('../components/views/DiaryView/DiaryView'));
 
-// Simulator Components (Lazy)
+
 const SimulatorPage = React.lazy(() => import('../pages/Simulator/SimulatorPage'));
 const UpdatedFindDifferencesPage = React.lazy(() => import('../pages/Simulator/UpdatedFindDifferencesPage'));
 const UpdatedSortingPage = React.lazy(() => import('../pages/Simulator/UpdatedSortingPage'));
 
-// --- ІМІТАЦІЯ ДАНИХ (MOCK DATA) ---
 
-// --- ShelterApp ---
+
+
 
 
 
@@ -55,11 +55,11 @@ const ShelterAppComplete = () => {
   const [testAnswers, setTestAnswers] = useState([]);
   const [isTestFinished, setIsTestFinished] = useState(false);
 
-  // Simulator states
+  
   const [simulatorScenarioId, setSimulatorScenarioId] = useState(null);
   const [simulatorScenariosList, setSimulatorScenariosList] = useState([]);
 
-  // Дані з API
+  
   const [mediaLibraryData, setMediaLibraryData] = useState([]);
   const [resilience, setResilience] = useState(50);
   const [resilienceMultiplier, setResilienceMultiplier] = useState(1.0);
@@ -67,7 +67,7 @@ const ShelterAppComplete = () => {
   const [streak, setStreak] = useState(0);
   const [currentMood, setCurrentMood] = useState(null);
   
-  // Перевірка на "null" або "undefined" як рядки
+  
   const rawUserId = localStorage.getItem("userId");
   const initialUserId = (rawUserId === "null" || rawUserId === "undefined") ? null : rawUserId;
   const [userId, setUserId] = useState(initialUserId);
@@ -79,7 +79,7 @@ const ShelterAppComplete = () => {
   const [showStabilizationHint, setShowStabilizationHint] = useState(false);
 
   useEffect(() => {
-    // Показуємо підказку лише якщо рівень стійкості низький ТА обрано негативний настрій
+    
     const isNegativeMood = ['anxiety', 'stress', 'exhausted', 'anger'].includes(currentMood);
     if (resilience > 0 && resilience < 35 && isNegativeMood) {
       setShowStabilizationHint(true);
@@ -89,14 +89,12 @@ const ShelterAppComplete = () => {
   }, [resilience, currentMood]);
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Тестові клавіші: 1 - зменшити, 2 - збільшити
+      
       if (e.key === '1') {
         setResilience(prev => Math.max(0, prev - 10));
-        console.log("📉 Тест: Стійкість зменшена");
       }
       if (e.key === '2') {
         setResilience(prev => Math.min(100, prev + 10));
-        console.log("📈 Тест: Стійкість збільшена");
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -114,7 +112,7 @@ const ShelterAppComplete = () => {
 
   useEffect(() => {
     if (location.state?.showSOS) {
-      // Clear the state so SOS doesn't reopen on refresh
+      
       navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location, navigate]);
@@ -128,7 +126,6 @@ const ShelterAppComplete = () => {
     if (finalUserId || isGuest) {
       api.getUserStats(finalUserId)
         .then((stats) => {
-          console.log('📈 Статистика оновлена:', stats);
           setUserStats(stats);
           if (stats?.resilience?.current !== undefined) {
             setResilience(Math.round(stats.resilience.current));
@@ -166,11 +163,10 @@ const ShelterAppComplete = () => {
     if (isFetchingRef.current) return;
     isFetchingRef.current = true;
 
-    console.log('🔄 [DEBUG] Main data fetch triggered for userId:', userId);
 
     const fetchData = async () => {
       try {
-        // 1. Materials
+        
         const materials = await api.getMaterials();
         if (Array.isArray(materials)) {
           const adviceTitles = ["Гігієна сну в стресі", "Емоційний інтелект", "Медітація для новачків", "Як працює кортизол"];
@@ -188,7 +184,7 @@ const ShelterAppComplete = () => {
           setMediaLibraryData(mappedData);
         }
 
-        // 2. Profile
+        
         if (userId || api.isGuest()) {
           const profile = await api.getProfile();
           if (profile) {
@@ -198,13 +194,13 @@ const ShelterAppComplete = () => {
           }
         }
 
-        // 3. Scenarios
+        
         const scenarios = await api.getScenarios();
         if (Array.isArray(scenarios)) {
           setSimulatorScenariosList(scenarios);
         }
 
-        // 4. Stats
+        
         refreshStats();
 
       } catch (err) {
@@ -215,31 +211,29 @@ const ShelterAppComplete = () => {
     };
 
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [userId]);
 
   useEffect(() => {
     if (userId) {
       refreshStats();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    
   }, [userId]);
 
   useEffect(() => {
     if (!userId || api.isGuest()) return;
 
-    // Підключаємо сокет
+    
     const socket = io(API_URL.replace('/api', ''), {
       withCredentials: true
     });
 
     socket.on('connect', () => {
-      console.log('🟢 [Socket] Підключено до сервера. ID:', socket.id);
       socket.emit('join', userId);
     });
 
     socket.on('resilienceUpdate', (data) => {
-      console.log('📡 [Socket] Отримано оновлення стійкості:', data);
       if (data && data.resilience !== undefined) {
         setResilience(Math.round(data.resilience));
       }
@@ -249,7 +243,6 @@ const ShelterAppComplete = () => {
     });
 
     return () => {
-      console.log('🔴 [Socket] Відключення...');
       socket.disconnect();
     };
   }, [userId]);
@@ -295,19 +288,18 @@ const ShelterAppComplete = () => {
         })
         .catch((err) => console.error("Error updating resilience:", err));
     }
-    return 0; // The change is now calculated on the server
+    return 0; 
   };
 
   const handleMoodSelect = (moodId) => {
     setCurrentMood(moodId);
     applyResilienceChange('mood_select', { mood: moodId });
     
-    // Візуальний зворотний зв'язок
+    
     const message = moodId === 'anxiety' || moodId === 'stress' 
       ? "Ваш стан зафіксовано. Це вимагає додаткових зусиль для відновлення." 
       : "Чудово! Ваша стійкість зростає.";
     
-    console.log(message);
   };
 
   const handleChatBack = () => {
@@ -320,7 +312,7 @@ const ShelterAppComplete = () => {
 
   const isSpecialMode = isChatMode || isSimulatorMode || isFindDifferencesMode || isSortingMode;
 
-  // Редірект на /auth якщо немає токену
+  
   const token = localStorage.getItem("dr_token");
   
   useEffect(() => {
@@ -335,7 +327,7 @@ const ShelterAppComplete = () => {
 
   return (
     <div className={`flex h-screen bg-[#0b0f1a] text-slate-300 font-sans overflow-hidden`}>
-      {/* Digital Isolation Overlay (Simpler for FPS) */}
+      {}
       {showSOS && <div className="fixed inset-0 z-[100] bg-[#0b0f1a]/80 animate-in fade-in duration-300"></div>}
 
       <MainSidebar 
@@ -358,7 +350,7 @@ const ShelterAppComplete = () => {
 
         <div className="flex-1 relative">
           <React.Suspense fallback={<div className="flex items-center justify-center h-full"><div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div></div>}>
-            {/* Special Modes - Mount/Unmount as before to free memory, as they are heavy */}
+            {}
             {isChatMode && (
               <div className="absolute inset-0 z-10 bg-[#0b0f1a]">
                 <MainChat
@@ -401,7 +393,7 @@ const ShelterAppComplete = () => {
               </div>
             )}
 
-            {/* Standard Views - Kept in memory once loaded to prevent re-renders */}
+            {}
             <div className={`relative h-full w-full ${(isChatMode || isSimulatorMode || isFindDifferencesMode || isSortingMode) ? 'hidden' : 'block'}`}>
                 {visitedViews.includes('home') && (
                   <div className={`h-full w-full ${currentView === 'home' ? 'block' : 'hidden'}`}>
@@ -512,19 +504,7 @@ const ShelterAppComplete = () => {
         </footer>
       </main>
 
-      {/* Character Companion - Adaptive Support Module (Temporarily disabled)
-      <CharacterCompanion
-        resilience={resilience}
-        auraColor={resilience < 35 ? 'rose' : resilience < 60 ? 'amber' : 'emerald'}
-        context={currentView}
-        forceSpeakMode={showStabilizationHint ? 'main-hints' : null}
-        onAction={(action) => {
-          if (action === 'breathing') navigateTo('practice');
-          if (action === 'sorting') { setSimulatorScenarioId('chaos-unloading'); setIsSortingMode(true); }
-          if (action === 'sos') setShowSOS(true);
-        }}
-      />
-      */}
+      {}
 
       {showSOS && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 animate-in fade-in duration-300">

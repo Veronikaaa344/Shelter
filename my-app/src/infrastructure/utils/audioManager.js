@@ -1,26 +1,25 @@
-// Управление громкостью звука с сохранением в куки
+
 export const AudioManager = {
-  // Получаем сохраненную громкость или устанавливаем по умолчанию
+  
   getVolume: () => {
     const savedVolume = localStorage.getItem('audioVolume');
-    return savedVolume ? parseFloat(savedVolume) : 0.3; // Минимальная громкость по умолчанию
+    return savedVolume ? parseFloat(savedVolume) : 0.3; 
   },
 
-  // Сохраняем громкость
+  
   setVolume: (volume) => {
-    const clampedVolume = Math.max(0, Math.min(1, volume)); // Ограничиваем 0-1
+    const clampedVolume = Math.max(0, Math.min(1, volume)); 
     localStorage.setItem('audioVolume', clampedVolume.toString());
     
-    // Применяем ко всем аудио элементам
+    
     const audioElements = document.querySelectorAll('audio, video');
     audioElements.forEach(element => {
       element.volume = clampedVolume;
     });
     
-    console.log(`🔊 Громкость установлена: ${Math.round(clampedVolume * 100)}%`);
   },
 
-  // Показываем диалог подтверждения громкости
+  
   requestAudioPermission: () => {
     return new Promise((resolve) => {
       const dialog = document.createElement('div');
@@ -78,7 +77,7 @@ export const AudioManager = {
       const confirmBtn = document.getElementById('confirm-volume');
       const cancelBtn = document.getElementById('cancel-volume');
 
-      // Обновляем отображение громкости
+      
       const updateDisplay = () => {
         display.textContent = `${slider.value}%`;
       };
@@ -86,7 +85,7 @@ export const AudioManager = {
       slider.addEventListener('input', updateDisplay);
       updateDisplay();
 
-      // Обработчики кнопок
+      
       confirmBtn.addEventListener('click', () => {
         const volume = parseInt(slider.value) / 100;
         AudioManager.setVolume(volume);
@@ -99,7 +98,7 @@ export const AudioManager = {
         resolve(false);
       });
 
-      // Закрытие при клике вне диалога
+      
       dialog.addEventListener('click', (e) => {
         if (e.target === dialog) {
           document.body.removeChild(dialog);

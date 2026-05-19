@@ -51,7 +51,7 @@ const AdviceView = () => {
                 <p className="text-slate-500 font-medium text-lg">Науково обґрунтовані методи зміцнення вашої ментальної броні.</p>
             </header>
 
-            {/* Dynamic Advices from DB */}
+            {}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {advices.map((advice, i) => (
                     <div 
@@ -74,7 +74,7 @@ const AdviceView = () => {
                 ))}
             </div>
 
-            {/* Dynamic Articles from API */}
+            {}
             {materials.length > 0 && (
                 <div className="space-y-8 mt-20">
                     <h3 className="text-2xl font-black text-white italic uppercase tracking-widest border-l-4 border-emerald-500 pl-6">Глибоке вивчення</h3>

@@ -20,7 +20,7 @@ export default function BreathingExercise({
     onFinishSession,
     autoStart = false,
     showControls = true,
-    requireCycles = 0, // After how many cycles to trigger finish check (for SOS)
+    requireCycles = 0, 
     onCyclesComplete,
     title = "Техніка дихання"
 }) {
@@ -82,7 +82,7 @@ export default function BreathingExercise({
     return (
         <>
             <div className="fixed inset-0 z-[100] bg-[#070a12] flex flex-col items-center justify-center overflow-hidden animate-in fade-in duration-500">
-                {/* Top Bar */}
+                {}
                 <div className="absolute top-8 left-8 right-8 flex items-center justify-between z-10">
                     <button
                         onClick={onExit}
@@ -96,16 +96,16 @@ export default function BreathingExercise({
                     </div>
                 </div>
 
-                {/* Main Content */}
+                {}
                 <div className="flex flex-col items-center gap-12 z-10">
                     <div className="text-center">
                         <p className="text-slate-500 text-xs font-black uppercase tracking-[0.3em] mb-3">Тиша та спокій</p>
                         <h1 className="text-5xl font-black text-white italic uppercase tracking-tighter leading-none">{title}</h1>
                     </div>
 
-                    {/* Breathing Circle Container */}
+                    {}
                     <div className="relative flex items-center justify-center w-80 h-80 my-8">
-                        {/* Animated Breathing Circle (Background) */}
+                        {}
                         <div
                             className="absolute rounded-full transition-all ease-in-out"
                             style={{
@@ -119,7 +119,7 @@ export default function BreathingExercise({
                             }}
                         ></div>
 
-                        {/* Static Text Container */}
+                        {}
                         <div className="relative z-10 flex flex-col items-center justify-center w-64 h-64 rounded-full bg-[#0b0f1a]/40 border border-emerald-500/10 backdrop-blur-sm shadow-2xl">
                             <Wind size={36} className="text-emerald-400 mb-4 opacity-80" />
                             <span className="text-[100px] font-black text-white italic leading-none drop-shadow-2xl">{seconds}</span>
@@ -133,7 +133,7 @@ export default function BreathingExercise({
                         </div>
                     </div>
 
-                    {/* Instructional Hint */}
+                    {}
                     <div className="h-12 flex items-center justify-center">
                         <p
                             key={phaseIndex}
@@ -144,7 +144,7 @@ export default function BreathingExercise({
                         </p>
                     </div>
 
-                    {/* Control Actions */}
+                    {}
                     <div className="flex items-center gap-6">
                         {showControls && (
                             <>
@@ -184,7 +184,7 @@ export default function BreathingExercise({
                     </div>
                 </div>
 
-                {/* Finish Prompt Modal (for SOS/Required Cycles) */}
+                {}
                 {showFinishPrompt && (
                     <div className="absolute inset-0 bg-[#070a12]/80 backdrop-blur-md flex items-center justify-center z-[110] animate-in fade-in duration-500">
                         <div className="bg-slate-900/90 border border-slate-700 rounded-[40px] p-12 max-w-md w-full text-center shadow-2xl animate-in slide-in-from-bottom-8 duration-700">

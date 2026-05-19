@@ -9,7 +9,6 @@ import { calculateResilienceChange } from '../utils/resilienceLogic.js';
 
 const router = express.Router();
 
-// Отримати базову статистику користувача (лічильники)
 router.get('/user/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -36,7 +35,6 @@ router.get('/user/:userId', auth, async (req, res) => {
   }
 });
 
-// Записати сесію дихання
 router.post('/breathing/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -47,7 +45,7 @@ router.post('/breathing/:userId', auth, async (req, res) => {
     
     await userStats.recordBreathingSession(minutes);
     
-    // Оновлюємо також останню активність у профілі користувача
+    
     await User.findByIdAndUpdate(userId, { 'stats.lastActiveDate': new Date() });
     
     res.json({ success: true, message: 'Breathing session recorded' });
@@ -57,7 +55,6 @@ router.post('/breathing/:userId', auth, async (req, res) => {
   }
 });
 
-// Записати результати діагностики
 router.post('/diagnostic/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -74,7 +71,7 @@ router.post('/diagnostic/:userId', auth, async (req, res) => {
     
     await userStats.recordDiagnostic(score, answers);
 
-    // Оновлюємо коефіцієнт стійкості у профілі
+    
     const user = await User.findById(userId);
     let multiplier = 1.0;
     if (user) {
@@ -103,7 +100,6 @@ router.post('/diagnostic/:userId', auth, async (req, res) => {
   }
 });
 
-// Щоденник: Отримати записи (тепер з окремої колекції)
 router.get('/diary/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -123,7 +119,6 @@ router.get('/diary/:userId', auth, async (req, res) => {
   }
 });
 
-// Щоденник: Додати запис
 router.post('/diary/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -141,12 +136,11 @@ router.post('/diary/:userId', auth, async (req, res) => {
   }
 });
 
-// Щоденник: ВИДАЛИТИ запис
 router.delete('/diary/:userId/:entryId', auth, async (req, res) => {
   try {
     const { userId, entryId } = req.params;
     
-    // Перевіряємо, чи належить запис цьому користувачу
+    
     const entry = await DiaryEntry.findOne({ _id: entryId, userId });
     if (!entry) {
       return res.status(404).json({ error: 'Diary entry not found or unauthorized' });
@@ -161,7 +155,6 @@ router.delete('/diary/:userId/:entryId', auth, async (req, res) => {
   }
 });
 
-// Отримати загальну статистику для дашборду (агрегація з різних колекцій)
 router.get('/dashboard/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -174,7 +167,7 @@ router.get('/dashboard/:userId', auth, async (req, res) => {
       await userStats.save();
     }
     
-    // Отримуємо останні результати для графіка
+    
     const resilienceHistory = await ActivityLog.find({ userId, type: 'diagnostic' })
       .sort({ createdAt: -1 })
       .limit(7);
@@ -210,13 +203,12 @@ router.get('/dashboard/:userId', auth, async (req, res) => {
   }
 });
 
-// Оновити резильєнтність (тепер через ActivityLog та User модель)
 router.post('/resilience/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
     const { type, name, metadata = {} } = req.body;
     
-    // Розрахунок виконується строго на сервері
+    
     const calculatedChange = calculateResilienceChange(type, metadata);
 
     const user = await User.findById(userId);
@@ -231,7 +223,7 @@ router.post('/resilience/:userId', auth, async (req, res) => {
     user.stats.lastActiveDate = new Date();
     await user.save();
     
-    // Створюємо запис в логах
+    
     const newLog = await ActivityLog.create({
       userId,
       type,
@@ -255,7 +247,6 @@ router.post('/resilience/:userId', auth, async (req, res) => {
   }
 });
 
-// Записати перегляд матеріалу
 router.post('/material-view/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
@@ -266,7 +257,7 @@ router.post('/material-view/:userId', auth, async (req, res) => {
     
     await userStats.recordMaterialView(materialId, minutes);
     
-    // Оновлюємо також останню активність у профілі користувача
+    
     await User.findByIdAndUpdate(userId, { 'stats.lastActiveDate': new Date() });
     
     res.json({ success: true, message: 'Material view recorded' });

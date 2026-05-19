@@ -12,7 +12,7 @@ import {
 import { Leaf, TreeDeciduous, Zap, Sprout, Shrub, Trees } from 'lucide-react';
 
 const StatsView = ({ userStats, resilience = 50, resilienceMultiplier = 1.0, completedCount = 0, isVisible }) => {
-    // console.log('📊 StatsView: Received Props', { userStats, resilience, resilienceMultiplier, completedCount, isVisible });
+    
     
     const getTreeIcon = () => {
         if (resilience <= 30) {
@@ -26,7 +26,7 @@ const StatsView = ({ userStats, resilience = 50, resilienceMultiplier = 1.0, com
         }
     };
     
-    // Формуємо дані для графіка з історії резильєнтності
+    
     let rawHistory = [];
     if (userStats?.resilience?.history) {
         rawHistory = userStats.resilience.history.map(h => ({ date: h.date, val: h.value }));
@@ -50,7 +50,7 @@ const StatsView = ({ userStats, resilience = 50, resilienceMultiplier = 1.0, com
                .recharts-cartesian-grid-horizontal line { stroke: #1e293b; }
                .recharts-cartesian-grid-vertical line { display: none; }
            `}</style>
-           {/* Section 1: Garden Visualization */}
+           {}
            <section className="space-y-6">
                 <div className="flex items-center gap-3">
                     <div className="w-2 h-8 bg-emerald-500 rounded-full"></div>

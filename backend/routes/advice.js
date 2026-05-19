@@ -3,7 +3,6 @@ import Advice from "../models/Advice.js";
 
 const router = express.Router();
 
-// Get all advices
 router.get("/", async (req, res) => {
 	try {
 		const advices = await Advice.find();
@@ -13,7 +12,6 @@ router.get("/", async (req, res) => {
 	}
 });
 
-// Get random advice (for HomeView)
 router.get("/random", async (req, res) => {
 	try {
 		const count = await Advice.countDocuments();

@@ -27,12 +27,12 @@ export default function BlueView({ answers }) {
 
     return (
         <div className="fixed inset-0 bg-[#070a12] flex flex-col items-center justify-center overflow-hidden">
-            {/* Ambient glow based on current task */}
+            {}
             <div
                 className={`absolute inset-0 bg-gradient-to-br ${task.color} opacity-30 transition-all duration-1000`}
             />
 
-            {/* Top controls */}
+            {}
             <div className="absolute top-8 left-8 right-8 flex items-center justify-between z-10">
                 <button
                     onClick={() => navigate("/main")}
@@ -48,7 +48,7 @@ export default function BlueView({ answers }) {
                 </button>
             </div>
 
-            {/* Progress bar */}
+            {}
             <div className="absolute top-0 left-0 right-0 h-1 bg-slate-800/50">
                 <div
                     className="h-full bg-emerald-500 transition-all duration-700 ease-out"
@@ -56,9 +56,9 @@ export default function BlueView({ answers }) {
                 />
             </div>
 
-            {/* Main card */}
+            {}
             <div className="z-10 flex flex-col items-center gap-8 max-w-lg w-full px-8 animate-in fade-in duration-500">
-                {/* Step counter */}
+                {}
                 <div className="flex gap-2">
                     {TASKS.map((_, i) => (
                         <div
@@ -70,7 +70,7 @@ export default function BlueView({ answers }) {
                     ))}
                 </div>
 
-                {/* Task card */}
+                {}
                 <div
                     key={step}
                     className={`w-full bg-slate-900/60 border ${task.border} rounded-[40px] p-12 backdrop-blur-xl text-center shadow-2xl animate-in zoom-in-95 duration-500`}
@@ -84,7 +84,7 @@ export default function BlueView({ answers }) {
                     </p>
                 </div>
 
-                {/* Action button */}
+                {}
                 {!isLast ? (
                     <button
                         onClick={() => setStep(s => s + 1)}

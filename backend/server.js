@@ -45,19 +45,17 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// Logging middleware
+
 app.use((req, res, next) => {
 	const start = Date.now();
 	res.on('finish', () => {
 		const duration = Date.now() - start;
-		console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} - ${res.statusCode} (${duration}ms)`);
 	});
 	next();
 });
 
 const dbURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/shelter_db";
 
-console.log(`[${new Date().toISOString()}] 🚀 Server starting...`);
 
 mongoose
 	.connect(dbURI, {
@@ -68,9 +66,6 @@ mongoose
 		minPoolSize: 2,
 	})
 	.then(() => {
-		console.log(`[${new Date().toISOString()}] ✅ MongoDB Connected successfully!`);
-		console.log(`[${new Date().toISOString()}] 🔗 Connection state:`, mongoose.connection.readyState);
-		console.log(`[${new Date().toISOString()}] 📦 Database name:`, mongoose.connection.name);
 	})
 	.catch((err) => {
 		console.error(`[${new Date().toISOString()}] ❌ MongoDB Connection Error:`, err.message);
@@ -88,7 +83,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/diagnostic", diagnosticRoutes);
 app.use("/api/advice", adviceRoutes);
 
-// Health check endpoint for Vercel
+
 app.get("/api/health", async (req, res) => {
 	try {
 		const mongoStatus = mongoose.connection.readyState;
@@ -113,15 +108,13 @@ app.get("/api/health", async (req, res) => {
 	}
 });
 
-// Full database dump endpoint
+
 app.get("/api/db-dump", async (req, res) => {
 	try {
-		console.log(`[${new Date().toISOString()}] 🗄️ Full database dump requested`);
 		
 		const db = mongoose.connection.db;
 		const collections = await db.listCollections().toArray();
 		
-		console.log(`[${new Date().toISOString()}] 📋 Found collections:`, collections.map(c => c.name));
 		
 		const fullDump = {
 			database: db.databaseName,
@@ -142,7 +135,6 @@ app.get("/api/db-dump", async (req, res) => {
 				collData.documents = docs;
 				fullDump.totalDocuments += docs.length;
 				
-				console.log(`[${new Date().toISOString()}] 📄 Collection ${collection.name}: ${docs.length} documents`);
 			} catch (err) {
 				console.error(`[${new Date().toISOString()}] ❌ Error reading collection ${collection.name}:`, err.message);
 				collData.error = err.message;
@@ -151,7 +143,6 @@ app.get("/api/db-dump", async (req, res) => {
 			fullDump.collections.push(collData);
 		}
 		
-		console.log(`[${new Date().toISOString()}] ✅ Total documents in database: ${fullDump.totalDocuments}`);
 		
 		res.status(200).json(fullDump);
 	} catch (err) {
@@ -160,22 +151,17 @@ app.get("/api/db-dump", async (req, res) => {
 	}
 });
 
-// MongoDB connection test endpoint
+
 app.get("/api/mongodb-test", async (req, res) => {
 	try {
-		console.log(`[${new Date().toISOString()}] Testing MongoDB connection...`);
-		console.log(`[${new Date().toISOString()}] Connection state:`, mongoose.connection.readyState);
-		console.log(`[${new Date().toISOString()}] Connected:`, mongoose.connection.readyState === 1);
-		console.log(`[${new Date().toISOString()}] Database name:`, mongoose.connection.name);
 
-		// Тестуємо простий запит
+		
 		const startTime = Date.now();
 		const collections = await mongoose.connection.db.listCollections().toArray();
 		const duration = Date.now() - startTime;
 
-		console.log(`[${new Date().toISOString()}] ✅ Collections found:`, collections.length, `(${duration}ms)`);
 
-		// Перевіряємо дані в кожній колекції
+		
 		const collectionDetails = {};
 		for (const collection of collections) {
 			const collStartTime = Date.now();
@@ -187,7 +173,7 @@ app.get("/api/mongodb-test", async (req, res) => {
 				duration: `${collDuration}ms`
 			};
 			
-			// Якщо є документи, показуємо перший
+			
 			if (count > 0) {
 				const firstDoc = await mongoose.connection.db.collection(collection.name).findOne();
 				collectionDetails[collection.name].firstDocument = {
@@ -198,7 +184,6 @@ app.get("/api/mongodb-test", async (req, res) => {
 			}
 		}
 
-		console.log(`[${new Date().toISOString()}] ✅ Collection details:`, collectionDetails);
 
 		res.status(200).json({
 			status: "OK",
@@ -236,22 +221,15 @@ const io = new Server(server, {
 app.set('io', io);
 
 io.on("connection", (socket) => {
-	console.log(`[${new Date().toISOString()}] 🟢 [Socket] Client connected: ${socket.id}`);
 	
 	socket.on("join", (userId) => {
 		socket.join(userId);
-		console.log(`[${new Date().toISOString()}] 👥 [Socket] Client ${socket.id} joined room ${userId}`);
 	});
 
 	socket.on("disconnect", () => {
-		console.log(`[${new Date().toISOString()}] 🔴 [Socket] Client disconnected: ${socket.id}`);
 	});
 });
 
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
-	console.log(`[${new Date().toISOString()}] 🎉 Server successfully started on port ${PORT}`);
-	console.log(`[${new Date().toISOString()}] 🌐 Server URL: http://localhost:${PORT}`);
-	console.log(`[${new Date().toISOString()}] 📊 Health check: http://localhost:${PORT}/api/health`);
-	console.log(`[${new Date().toISOString()}] 🗄️ DB dump: http://localhost:${PORT}/api/db-dump`);
 });

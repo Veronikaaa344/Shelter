@@ -139,7 +139,7 @@ export const api = {
 	getMaterialById: (id) =>
 		fetch(`${API_URL}/materials/${id}`).then((res) => res.json()),
 
-	// Статистика
+	
 	getDashboardStats: (userId) =>
 		fetch(`${API_URL}/stats/dashboard/${userId}`).then((res) => res.json()),
 
@@ -177,8 +177,8 @@ export const api = {
 
 	recordMaterialView: (userId, materialId, minutes = 0) => {
 		if (isGuest()) {
-			// For guest we just update resilience, actual "view" tracking is less important
-			// but we can add a history entry
+			
+			
 			return fetch(`${API_URL}/auth/guest/update-resilience`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -267,27 +267,22 @@ export const api = {
 	},
 
 	updateResilience: (userId, type, metadata = {}, name) => {
-		console.log('🚀 API: updateResilience called', { userId, type, metadata, name });
 		if (isGuest()) {
-			console.log('👥 API: Mode = GUEST. Calling guest route...');
 			return fetch(`${API_URL}/auth/guest/update-resilience`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				credentials: "include",
 				body: JSON.stringify({ type, metadata, name }),
 			}).then((res) => res.json()).then(data => {
-				console.log('✅ API: Guest Resilience Updated Response (Cookie Content):', data);
 				return data;
 			});
 		}
-		console.log('👤 API: Mode = REGISTERED. Calling stats route...');
 		if (!isValidId(userId)) return Promise.reject("Invalid ID");
 		return fetch(`${API_URL}/stats/resilience/${userId}`, {
 			method: "POST",
 			headers: getHeaders(),
 			body: JSON.stringify({ type, metadata, name }),
 		}).then((res) => res.json()).then(data => {
-			console.log('✅ API: Registered Resilience Updated Response:', data);
 			return data;
 		});
 	},
@@ -304,7 +299,7 @@ export const api = {
 		}).then((res) => res.json());
 	},
 
-	// Gamification APIs
+	
 	recordActivity: () => {
 		return fetch(`${API_URL}/auth/activity`, {
 			method: "POST",
@@ -314,9 +309,7 @@ export const api = {
 	},
 
 	completeScenario: (scenarioId, score) => {
-		console.log(`🚀 FRONTEND (api.js): Sending completeScenario request.`, { scenarioId, score });
 		const userMode = isGuest() ? "guest" : "registered";
-		console.log(`👤 User mode: ${userMode}`);
 
 		return fetch(`${API_URL}/auth/complete-scenario`, {
 			method: "POST",
@@ -333,7 +326,6 @@ export const api = {
 				return res.json();
 			})
 			.then((data) => {
-				console.log('✅ FRONTEND (api.js): Received response from completeScenario:', data);
 				return data;
 			});
 	},

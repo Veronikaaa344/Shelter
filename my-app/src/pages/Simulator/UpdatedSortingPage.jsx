@@ -46,7 +46,7 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
                 if (data && !data.message) {
                     setScenario(data);
                     
-                    // Use categories and items from DB content or fallback
+                    
                     const dbBoxes = (data.content?.categories || data.categories || [
                         { id: 'positive', name: 'Корисні', color: '#10b981' },
                         { id: 'negative', name: 'Шкідливі', color: '#ef4444' }
@@ -91,7 +91,7 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
         if (!draggedItem) return;
 
         if (draggedItem.categoryId === boxId) {
-            // Correct
+            
             setBoxes(prev => prev.map(b => 
                 b.id === boxId ? { ...b, items: [...b.items, draggedItem], isHighlighted: true } : b
             ));
@@ -106,7 +106,7 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
             }, 500);
 
             if (sortedCount + 1 >= totalItems) {
-                // ПЕРЕВІРКА: щоб не відправляти декілька разів
+                
                 if (showCompletionMenu) return; 
 
                 const userId = localStorage.getItem("userId");
@@ -117,7 +117,7 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
                 setShowCompletionMenu(true);
             }
         } else {
-            // Wrong
+            
             setHighlightedBox(boxId);
             setScore(prev => Math.max(0, prev - 5));
             setTimeout(() => setHighlightedBox(null), 500);
@@ -225,7 +225,7 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack }) {
                 </div>
             )}
 
-            {/* <CharacterCompanion context="exercise" position="bottom-right" resilience={score / 10} forceSpeakMode={showCompletionMenu ? 'achievement' : null} /> */}
+            {}
         </div>
     );
 }

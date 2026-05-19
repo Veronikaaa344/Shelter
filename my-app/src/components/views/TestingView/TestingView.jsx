@@ -26,9 +26,8 @@ const TestingView = ({
             try {
                 let data = await api.getDiagnosticQuestions();
                 
-                // If database doesn't have enough questions (e.g. old database with only 4), auto-seed and refetch
+                
                 if (!Array.isArray(data) || data.length < 7) {
-                    console.log("Database missing questions. Auto-seeding diagnostic questions...");
                     await api.seedDiagnostics();
                     data = await api.getDiagnosticQuestions();
                 }

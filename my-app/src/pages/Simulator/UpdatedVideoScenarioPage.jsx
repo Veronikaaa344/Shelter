@@ -169,7 +169,7 @@ export default function UpdatedVideoScenarioPage() {
 
     return (
         <div className="dr-updated-video-layout">
-            {/* Header */}
+            {}
             <header className="dr-video-header">
                 <div className="dr-header-content">
                     <button className="dr-back-btn" onClick={() => navigate("/exercises")}>
@@ -201,10 +201,10 @@ export default function UpdatedVideoScenarioPage() {
                 </div>
             </header>
 
-            {/* Main Content */}
+            {}
             <main className="dr-video-main">
                 <div className="dr-video-container">
-                    {/* Video Player */}
+                    {}
                     <div className="dr-video-player-wrapper">
                         <video
                             ref={videoRef}
@@ -217,7 +217,7 @@ export default function UpdatedVideoScenarioPage() {
                             preload="metadata"
                         />
                         
-                        {/* Video Overlay Controls */}
+                        {}
                         <div className="dr-video-overlay">
                             {!isPlaying && (
                                 <button className="dr-video-play-btn" onClick={toggleVideo}>
@@ -233,7 +233,7 @@ export default function UpdatedVideoScenarioPage() {
                             )}
                         </div>
                         
-                        {/* Video Controls Bar */}
+                        {}
                         <div className="dr-video-controls">
                             <div className="dr-controls-left">
                                 <button className="dr-control-btn" onClick={toggleVideo}>
@@ -295,7 +295,7 @@ export default function UpdatedVideoScenarioPage() {
                         </div>
                     </div>
 
-                    {/* Video Content */}
+                    {}
                     <div className="dr-video-content">
                         <div className="dr-video-description">
                             <h3>
@@ -331,10 +331,10 @@ export default function UpdatedVideoScenarioPage() {
                 </div>
             </main>
 
-            {/* Character Companion */}
-            {/* <CharacterCompanion context="scenario" position="bottom-right" /> */}
+            {}
+            {}
 
-            {/* Completion Menu */}
+            {}
             {showCompletionMenu && (
                 <div className="dr-completion-overlay">
                     <div className="dr-completion-card">

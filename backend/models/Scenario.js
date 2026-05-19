@@ -15,8 +15,8 @@ const ScenarioSchema = new Schema({
 	},
 	duration: { type: String, default: "5 хв" },
 	difficulty: { type: Number, default: 50, min: 0, max: 100 },
-	image: { type: String }, // URL зображення для карточки
-	description: { type: String }, // Опис сценарію
+	image: { type: String }, 
+	description: { type: String }, 
 	nodes: { type: Schema.Types.Mixed },
 	levels: [{
 		image: { type: String },

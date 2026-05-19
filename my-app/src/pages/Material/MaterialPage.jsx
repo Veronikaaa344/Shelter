@@ -109,7 +109,7 @@ export default function MaterialPage() {
                 </div>
                 <nav className="flex-1 px-4 mt-6">
                     <div className="space-y-0">
-                        {/* Staggered flip & collapse animation for all items */}
+                        {}
                         <FlipSidebarItem 
                             id="home" 
                             icon={<LayoutGrid size={22} />} 
@@ -256,7 +256,7 @@ export default function MaterialPage() {
                     )}
                 </div>
             </main>
-            {/* <CharacterCompanion context="content" position="bottom-right" /> */}
+            {}
         </div>
     );
 }

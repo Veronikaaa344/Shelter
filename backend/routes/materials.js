@@ -12,7 +12,6 @@ router.get("/", async (req, res) => {
 			.exec();
 
 		const duration = Date.now() - startTime;
-		console.log(`[${new Date().toISOString()}] ✅ Materials fetched: ${materials.length} (${duration}ms)`);
 
 		res.json(materials);
 	} catch (err) {
@@ -26,7 +25,6 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
 	try {
-		console.log(`[${new Date().toISOString()}] Fetching material by ID: ${req.params.id}`);
 		let material;
 		if (mongoose.Types.ObjectId.isValid(req.params.id)) {
 			material = await Material.findById(req.params.id);
@@ -36,10 +34,8 @@ router.get("/:id", async (req, res) => {
 		}
 
 		if (!material) {
-			console.log(`[${new Date().toISOString()}] ❌ Material not found: ${req.params.id}`);
 			return res.status(404).json({ message: "Матеріал не знайдено" });
 		}
-		console.log(`[${new Date().toISOString()}] ✅ Material found: ${material.title}`);
 		res.json(material);
 	} catch (err) {
 		console.error(`[${new Date().toISOString()}] ❌ Error fetching material:`, err.message);
@@ -49,18 +45,10 @@ router.get("/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
 	try {
-		console.log(`[${new Date().toISOString()}] 🟢 POST /api/materials - Creating new material`);
-		console.log(`[${new Date().toISOString()}] 📋 Request body:`, JSON.stringify(req.body, null, 2));
-		console.log(`[${new Date().toISOString()}] 🔗 MongoDB connection state:`, mongoose.connection.readyState);
-		console.log(`[${new Date().toISOString()}] 📦 Database name:`, mongoose.connection.name);
 		
 		const newMaterial = new Material(req.body);
-		console.log(`[${new Date().toISOString()}] 🆕 New material object created:`, JSON.stringify(newMaterial, null, 2));
 		
 		const saved = await newMaterial.save();
-		console.log(`[${new Date().toISOString()}] ✅ Material successfully saved to MongoDB:`, JSON.stringify(saved, null, 2));
-		console.log(`[${new Date().toISOString()}] 📊 Material _id:`, saved._id);
-		console.log(`[${new Date().toISOString()}] 📊 Material title:`, saved.title);
 		
 		res.status(201).json(saved);
 	} catch (err) {
@@ -83,11 +71,9 @@ router.delete("/:id", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
 	try {
-		console.log("Updating material:", req.params.id, req.body);
 		const updated = await Material.findByIdAndUpdate(req.params.id, req.body, {
 			new: true,
 		});
-		console.log("Material updated:", updated);
 		res.json(updated);
 	} catch (err) {
 		console.error("Error updating material:", err);

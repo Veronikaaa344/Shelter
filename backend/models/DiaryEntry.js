@@ -10,7 +10,7 @@ const DiaryEntrySchema = new mongoose.Schema(
 		},
 		mood: {
 			type: Number,
-			required: true, // 0 - позитивний, 1 - нейтральний, 2 - негативний
+			required: true, 
 		},
 		content: {
 			type: String,
@@ -27,7 +27,6 @@ const DiaryEntrySchema = new mongoose.Schema(
 	}
 );
 
-// Индекс для быстрой фильтрации по времени и пользователю
 DiaryEntrySchema.index({ userId: 1, createdAt: -1 });
 
 export default mongoose.model("DiaryEntry", DiaryEntrySchema);

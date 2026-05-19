@@ -16,7 +16,7 @@ const DiagnosticResultSchema = new mongoose.Schema(
 			{
 				questionId: { type: mongoose.Schema.Types.ObjectId, ref: "Question" },
 				value: Number,
-				text: String, // Сохраняем текст ответа на случай изменения базы вопросов
+				text: String, 
 			},
 		],
 		category: {
@@ -29,7 +29,6 @@ const DiagnosticResultSchema = new mongoose.Schema(
 	}
 );
 
-// Индекс для графиков прогресса
 DiagnosticResultSchema.index({ userId: 1, createdAt: -1 });
 
 export default mongoose.model("DiagnosticResult", DiagnosticResultSchema);

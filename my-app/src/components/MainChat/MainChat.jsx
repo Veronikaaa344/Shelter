@@ -59,7 +59,7 @@ const baseNodes = {
 };
 
 export default function MainChat({ onBack, username, resilience }) {
-    const [chatView, setChatView] = useState("selection"); // "selection" or "chat"
+    const [chatView, setChatView] = useState("selection"); 
     const [messages, setMessages] = useState([]);
     const [isTyping, setIsTyping] = useState(false);
     const [scenario, setScenario] = useState(null);
@@ -74,7 +74,7 @@ export default function MainChat({ onBack, username, resilience }) {
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
-        // Завантаження списку сценаріїв
+        
         api.getScenarios().then(data => {
             if (Array.isArray(data)) {
                 setScenariosList(data.filter(s => s.type === 'dialogue' || !s.type));
@@ -124,7 +124,7 @@ export default function MainChat({ onBack, username, resilience }) {
 
         const targetPos = {
             top: targetRect.top - 100,
-            left: targetRect.right - (rect.width / 2) - 80 // Ціль - права сторона
+            left: targetRect.right - (rect.width / 2) - 80 
         };
 
         setFlyingMessage({
@@ -133,7 +133,7 @@ export default function MainChat({ onBack, username, resilience }) {
             targetPos
         });
 
-        // Пряма анімація "перельоту"
+        
         setTimeout(() => {
             const nextId = option.next;
             const userMessage = {
@@ -164,12 +164,11 @@ export default function MainChat({ onBack, username, resilience }) {
                     }]);
                     setIsFinished(true);
                     
-                    // Бонус +4 за завершення чату
+                    
                     const userId = localStorage.getItem("userId");
                     if (userId) {
                         api.updateResilience(userId, "chat_finish", {}, isChatMode === 'ai' ? 'AI Помічник' : scenario?.name)
                             .then(() => {
-                                console.log("✅ [DEBUG] Chat progress saved. Current cookies:", document.cookie);
                             })
                             .catch(err => console.error("❌ [DEBUG] Failed to save chat progress:", err));
                     }
@@ -187,7 +186,7 @@ export default function MainChat({ onBack, username, resilience }) {
                     isScenario: isChatMode === 'scenario'
                 }]);
             }, 1000);
-        }, 600); // Час "польоту"
+        }, 600); 
     };
 
     if (chatView === "selection") {
@@ -211,7 +210,7 @@ export default function MainChat({ onBack, username, resilience }) {
                 </header>
 
                 <div className="dr-chat-selection-grid p-8 overflow-y-auto max-h-[calc(100vh-150px)]">
-                    {/* Сценарій AI Помічника (дефолтний) */}
+                    {}
                     <div 
                         className="dr-scenario-card ai-card"
                         onClick={() => {
@@ -231,7 +230,7 @@ export default function MainChat({ onBack, username, resilience }) {
                         </div>
                     </div>
 
-                    {/* Сценарії з бази даних */}
+                    {}
                     {scenariosList.map((s) => (
                         <div 
                             key={s._id} 
@@ -249,7 +248,7 @@ export default function MainChat({ onBack, username, resilience }) {
                         </div>
                     ))}
                 </div>
-                {/* <CharacterCompanion context="chat" position="bottom-right" /> */}
+                {}
             </div>
         );
     }
@@ -317,7 +316,7 @@ export default function MainChat({ onBack, username, resilience }) {
                 </div>
             </div>
 
-            {/* <CharacterCompanion context="chat" position="bottom-right" resilience={resilience} /> */}
+            {}
             
             {flyingMessage && (
                 <div 
@@ -354,7 +353,7 @@ export default function MainChat({ onBack, username, resilience }) {
                                 Вийти
                             </button>
                             <button 
-                                onClick={() => onBack()} // Перехід до Home/Dashboard
+                                onClick={() => onBack()} 
                                 className="bg-emerald-500 hover:bg-emerald-400 text-[#0b0f1a] py-4 rounded-[20px] font-black uppercase text-[10px] tracking-widest transition-all shadow-lg shadow-emerald-500/20"
                             >
                                 До прогресу

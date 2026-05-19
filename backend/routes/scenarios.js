@@ -13,7 +13,6 @@ router.get("/", async (req, res) => {
 			.exec();
 
 		const duration = Date.now() - startTime;
-		console.log(`[${new Date().toISOString()}] ✅ Scenarios fetched: ${scenarios.length} (${duration}ms)`);
 
 		res.json(scenarios);
 	} catch (err) {
@@ -30,10 +29,10 @@ router.get("/:id", async (req, res) => {
 		const { id } = req.params;
 		let scenario;
 		
-		// Спробуємо знайти за scenarioId (як у квестах)
+		
 		scenario = await Scenario.findOne({ scenarioId: id });
 		
-		// Якщо не знайшли і ID схожий на MongoDB ObjectId, спробуємо знайти за ним
+		
 		if (!scenario && mongoose.Types.ObjectId.isValid(id)) {
 			scenario = await Scenario.findById(id);
 		}

@@ -6,7 +6,7 @@ import "./adminPage.css";
 
 export default function AdminPage() {
     const navigate = useNavigate();
-    const [activeTab, setActiveTab] = useState("content"); // "content" or "scenarios"
+    const [activeTab, setActiveTab] = useState("content"); 
 
     return (
         <div className="dr-admin-layout">

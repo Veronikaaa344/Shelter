@@ -44,7 +44,6 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
         if (!id || id === 'null') return;
         api.getScenarioById(id)
             .then((data) => {
-                console.log('UpdatedFindDifferencesPage - scenario data:', data);
                 if (data && !data.message) {
                     setScenario(data);
                     setFoundDifferences([]);
@@ -95,7 +94,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                     api.updateResilience(userId, "difference_found", { points: clickedDifference.points }, scenario.name);
                 }
 
-                // Анімація знаходження
+                
                 const marker = document.querySelector(`[data-diff-id="${diffId}"]`);
                 if (marker) {
                     marker.classList.add('found');
@@ -109,14 +108,14 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                         api.completeScenario(id, 10);
                     }
 
-                    // Trigger achievement praise from companion
+                    
                     if (companionRef.current && companionRef.current.speakAchievement) {
                         companionRef.current.speakAchievement();
                     }
                 }
             }
         } else {
-            // Неправильний клік — анімація помилки
+            
             const clickEffect = document.createElement('div');
             clickEffect.className = 'wrong-click';
             clickEffect.style.left = `${e.clientX - rect.left}px`;
@@ -159,7 +158,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
         const currentLevel = scenario.levels?.[currentLevelIndex];
         const differences = currentLevel?.differences || [];
 
-        // Знайти першу не знайдену різницю
+        
         const unfoundDifference = differences.find((diff, index) => {
             const diffId = `${currentLevelIndex}-${diff.x}-${diff.y}`;
             return !foundDifferences.includes(diffId);
@@ -170,7 +169,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
             setScore(prev => Math.max(0, prev - 5));
             setShowHint(true);
 
-            // Показати підказку на 3 секунди
+            
             setTimeout(() => {
                 setShowHint(false);
             }, 3000);
@@ -243,7 +242,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
 
     return (
         <div className="dr-updated-find-layout">
-            {/* Header */}
+            {}
             <header className="dr-find-header">
                 <div className="dr-header-content">
                     <button className="dr-back-btn" onClick={handleClose}>
@@ -273,7 +272,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                 </div>
             </header>
 
-            {/* Main Game Area */}
+            {}
             <main className="dr-find-main">
                 {isFinished ? (
                     <div className="dr-completion-overlay">
@@ -315,7 +314,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                     </div>
                 ) : (
                     <div className="dr-game-container">
-                        {/* Controls */}
+                        {}
                         <div className="dr-game-controls">
                             <div className="dr-zoom-controls">
                                 <button
@@ -350,7 +349,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                             </div>
                         </div>
 
-                        {/* Image Area */}
+                        {}
                         <div className="dr-image-container">
                             <div className="dr-find-counter">
                                 Знайдено: <span className="dr-found-count">{foundCount}</span> / {differences.length}
@@ -371,7 +370,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                                     onWheel={handleWheel}
                                 />
 
-                                {/* Difference Markers */}
+                                {}
                                 {differences.map((diff, idx) => {
                                     const diffId = `${currentLevelIndex}-${diff.x}-${diff.y}`;
                                     const isFound = foundDifferences.includes(diffId);
@@ -418,18 +417,13 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                 )}
             </main>
 
-            {/* SOS Button */}
+            {}
             <button className="dr-sos-fab" onClick={handleSosClick}>
                 SOS
             </button>
 
-            {/* Character Companion */}
-            {/* <CharacterCompanion 
-                ref={companionRef}
-                context="exercise" 
-                position="bottom-left" 
-                delay={4000} 
-            /> */}
+            {}
+            {}
         </div>
     );
 }

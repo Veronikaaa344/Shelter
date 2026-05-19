@@ -6,7 +6,7 @@ export default function SosPage() {
     const { answers } = useParams();
     const location = useLocation();
     
-    // Check if answers come from state or params
+    
     const activeAnswers = answers || location.state?.answers;
     const View = getDiagnosticResult(activeAnswers);
 

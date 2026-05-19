@@ -1,43 +1,33 @@
-/**
- * ResilienceLogic - Строга система розрахунку ментальної стійкості.
- * Система розроблена так, щоб бути реалістичною: прогрес здобувається важко, 
- * але втрачається швидко при ігноруванні практик або деструктивних діях.
- */
+
 
 export const SCORING_RULES = {
-    // Вправи та Симулятори
-    EXERCISE_COMPLETE_EXCELLENT: 8,  // Високий бал у симуляторі
-    EXERCISE_COMPLETE_GOOD: 4,       // Середній бал
-    EXERCISE_COMPLETE_POOR: -5,      // Низький бал (помилкові рішення)
     
-    // Взаємодія в симуляторі (за кожен крок)
+    EXERCISE_COMPLETE_EXCELLENT: 8,  
+    EXERCISE_COMPLETE_GOOD: 4,       
+    EXERCISE_COMPLETE_POOR: -5,      
+    
+    
     SIMULATOR_POSITIVE_CHOICE: 2,
     SIMULATOR_NEGATIVE_CHOICE: -6,
     SIMULATOR_NEUTRAL_CHOICE: 0,
 
-    // Контент
-    MATERIAL_READ: 2,               // Прочитана стаття
-    VIDEO_WATCHED: 3,               // Переглянуте відео (вимагає більше фокусу)
+    
+    MATERIAL_READ: 2,               
+    VIDEO_WATCHED: 3,               
 
-    // Щоденник та емоції
-    DIARY_ENTRY_POSITIVE: 2,        // Позитивний запис
-    DIARY_ENTRY_NEGATIVE: 1,        // Робота з негативом (плюс за те, що виписав)
-    MOOD_TRACK_ANXIETY: -2,         // Фіксація тривоги (потребує уваги)
-    MOOD_TRACK_CALM: 3,             // Фіксація спокою
+    
+    DIARY_ENTRY_POSITIVE: 2,        
+    DIARY_ENTRY_NEGATIVE: 1,        
+    MOOD_TRACK_ANXIETY: -2,         
+    MOOD_TRACK_CALM: 3,             
 
-    // Дисципліна
-    STREAK_BONUS_DAILY: 2,          // Бонус за кожен день стріку
-    INACTIVITY_PENALTY_1_DAY: -3,   // Штраф за пропуск 1 дня
-    INACTIVITY_PENALTY_3_DAYS: -15, // Штраф за пропуск 3 днів
-    INACTIVITY_PENALTY_WEEK: -40,   // Майже повне обнулення прогресу
+    
+    STREAK_BONUS_DAILY: 2,          
+    INACTIVITY_PENALTY_1_DAY: -3,   
+    INACTIVITY_PENALTY_3_DAYS: -15, 
+    INACTIVITY_PENALTY_WEEK: -40,   
 };
 
-/**
- * Розраховує зміну резильєнтності на основі типу події
- * @param {string} eventType - Тип події (напр. 'exercise_complete')
- * @param {object} metadata - Додаткові дані (бал, тривалість тощо)
- * @returns {number} - Значення зміни (позитивне або негативне)
- */
 export const calculateResilienceChange = (eventType, metadata = {}) => {
     let change = 0;
 
@@ -79,9 +69,6 @@ export const calculateResilienceChange = (eventType, metadata = {}) => {
     return change;
 };
 
-/**
- * Нормалізація значення (0 - 100)
- */
 export const clampResilience = (value) => {
     return Math.max(0, Math.min(100, Math.round(value)));
 };
