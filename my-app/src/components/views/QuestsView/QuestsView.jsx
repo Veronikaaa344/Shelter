@@ -64,7 +64,8 @@ const QuestsView = ({
                     const typeLabels = {
                         'video': 'відео-сценарій',
                         'audio': 'аудіо-практика',
-                        'sorting': 'тренажер'
+                        'sorting': 'тренажер',
+                        'dialogue': 'чат-тренажер'
                     };
                     questsList.push({
                         id: `exercise-${scenario._id || i}`,

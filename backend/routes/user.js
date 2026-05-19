@@ -18,9 +18,12 @@ router.post("/update-resilience", async (req, res) => {
 		const { calculateResilienceChange } = await import('../utils/resilienceLogic.js');
 		const calculatedChange = calculateResilienceChange(type, metadata);
 
+		const multiplier = user.stats.resilienceMultiplier || 1.0;
+		const finalChange = Number((calculatedChange * multiplier).toFixed(2));
+
 		let currentRes = Number(user.stats.resilience);
 		if (isNaN(currentRes)) currentRes = 50;
-		currentRes += calculatedChange;
+		currentRes += finalChange;
 		
 		if (currentRes > 100) currentRes = 100;
 		if (currentRes < 0) currentRes = 0;
@@ -29,7 +32,7 @@ router.post("/update-resilience", async (req, res) => {
 		user.history.unshift({
 			activityType: type,
 			activityName: name,
-			change: calculatedChange,
+			change: finalChange,
 			newScore: currentRes,
 			date: new Date(),
 		});
@@ -88,6 +91,15 @@ router.get("/:id/profile", async (req, res) => {
 		res.json({
 			id: user._id,
 			username: user.username,
+			email: user.email,
+			isGuest: user.isGuest,
+			stats: user.stats,
+			badges: user.badges || [],
+			completedScenarios: user.completedScenarios || [],
+			completedMaterials: user.completedMaterials || [],
+			unlockedScenarios: user.unlockedScenarios || [],
+			diagnostic: user.diagnostic,
+			history: user.history || [],
 		});
 	} catch (err) {
 		res.status(500).json({ message: err.message });

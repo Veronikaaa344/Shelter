@@ -83,7 +83,7 @@ export default function MaterialPage() {
                 if (isMounted && profile) {
                     if (profile.username) setUsername(profile.username);
                     if (profile.stats && profile.stats.resilience !== undefined) {
-                        setResilience(profile.stats.resilience);
+                        setResilience(Math.round(profile.stats.resilience));
                     }
                 }
             } catch (err) {
@@ -205,23 +205,24 @@ export default function MaterialPage() {
                                 </section>
                             )}
 
-                            {material.desc && (
-                                <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl animate-in fade-in slide-in-from-bottom duration-700">
-                                    <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-6 flex items-center gap-3">
-                                        <Lightbulb size={24} className="text-emerald-500" />
-                                        Ключові тезиси
-                                    </h2>
-                                    <div className="text-slate-300 leading-relaxed">{formatText(material.desc)}</div>
-                                </section>
-                            )}
-
-                            {material.content && (
+                            {(material.desc || material.content) && (
                                 <section className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl animate-in fade-in slide-in-from-bottom duration-700">
                                     <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-6 flex items-center gap-3">
                                         <BookOpen size={24} className="text-emerald-500" />
-                                        Повний текст
+                                        {material.type === 'video' || material.type === 'audio' ? 'Опис практики' : 'Матеріал'}
                                     </h2>
-                                    <div className="text-slate-300 leading-relaxed">{formatText(material.content)}</div>
+                                    <div className="space-y-6 text-slate-300 leading-relaxed">
+                                        {material.desc && (
+                                            <div className="text-lg font-medium text-emerald-400/90 italic bg-emerald-500/5 p-6 rounded-2xl border border-emerald-500/10 shadow-inner">
+                                                {formatText(material.desc)}
+                                            </div>
+                                        )}
+                                        {material.content && material.content !== material.desc && (
+                                            <div className="text-base text-slate-300">
+                                                {formatText(material.content)}
+                                            </div>
+                                        )}
+                                    </div>
                                 </section>
                             )}
 
@@ -238,8 +239,8 @@ export default function MaterialPage() {
                                     <div className="bg-slate-900/40 border border-slate-800 rounded-[40px] p-8 backdrop-blur-xl shadow-2xl text-center">
                                         <p className="text-white mb-6 uppercase font-black tracking-widest text-xs">Як змінився ваш стан?</p>
                                         <div className="flex gap-4 justify-center">
-                                            <button onClick={() => handleComplete(2)} className="bg-emerald-500 hover:bg-emerald-400 text-[#0b0f1a] px-8 py-3 rounded-2xl font-black uppercase text-xs shadow-xl transition-all">😊 Полегчало (+2)</button>
-                                            <button onClick={() => handleComplete(-2)} className="bg-rose-500/20 border border-rose-500/40 hover:bg-rose-500 text-white px-8 py-3 rounded-2xl font-black uppercase text-xs transition-all">😔 Не полегчало (-2)</button>
+                                            <button onClick={() => handleComplete(2)} className="bg-emerald-500 hover:bg-emerald-400 text-[#0b0f1a] px-8 py-3 rounded-2xl font-black uppercase text-xs shadow-xl transition-all">😊 Полегчало</button>
+                                            <button onClick={() => handleComplete(-2)} className="bg-rose-500/20 border border-rose-500/40 hover:bg-rose-500 text-white px-8 py-3 rounded-2xl font-black uppercase text-xs transition-all">😔 Не полегчало</button>
                                         </div>
                                     </div>
                                 )}

@@ -6,12 +6,25 @@ import {
     ResponsiveContainer,
     Tooltip,
     XAxis,
-    YAxis
+    YAxis,
+    LabelList
 } from 'recharts';
-import { Leaf, TreeDeciduous, Zap } from 'lucide-react';
+import { Leaf, TreeDeciduous, Zap, Sprout, Shrub, Trees } from 'lucide-react';
 
-const StatsView = ({ userStats, resilience = 50, completedCount = 0, isVisible }) => {
-    // console.log('📊 StatsView: Received Props', { userStats, resilience, completedCount, isVisible });
+const StatsView = ({ userStats, resilience = 50, resilienceMultiplier = 1.0, completedCount = 0, isVisible }) => {
+    // console.log('📊 StatsView: Received Props', { userStats, resilience, resilienceMultiplier, completedCount, isVisible });
+    
+    const getTreeIcon = () => {
+        if (resilience <= 30) {
+            return <Sprout size={160} className="text-emerald-500 drop-shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-pulse" />;
+        } else if (resilience <= 60) {
+            return <Shrub size={160} className="text-emerald-500 drop-shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-in zoom-in duration-500" />;
+        } else if (resilience <= 85) {
+            return <TreeDeciduous size={160} className="text-emerald-500 drop-shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-in zoom-in duration-500" />;
+        } else {
+            return <Trees size={160} className="text-emerald-500 drop-shadow-[0_0_20px_rgba(16,185,129,0.3)] animate-in zoom-in duration-500" />;
+        }
+    };
     
     // Формуємо дані для графіка з історії резильєнтності
     let rawHistory = [];
@@ -50,7 +63,7 @@ const StatsView = ({ userStats, resilience = 50, completedCount = 0, isVisible }
                             className="transition-all duration-1000 ease-out flex items-center justify-center"
                             style={{ transform: `scale(${treeScale})` }}
                         >
-                            <TreeDeciduous size={160} className="text-emerald-500 drop-shadow-[0_0_20px_rgba(16,185,129,0.3)]" />
+                            {getTreeIcon()}
                         </div>
                         
                         {[...Array(Math.min(leafCount, 20))].map((_, i) => (
@@ -129,7 +142,7 @@ const StatsView = ({ userStats, resilience = 50, completedCount = 0, isVisible }
                 <div className="bg-slate-900/30 border border-slate-800 p-10 rounded-[48px] shadow-2xl backdrop-blur-xl h-96 min-h-[400px]">
                     {isVisible ? (
                         <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
-                            <AreaChart data={historyData}>
+                            <AreaChart data={historyData} margin={{ top: 20, right: 30, left: 10, bottom: 10 }}>
                                 <defs><linearGradient id="colorVal" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/><stop offset="95%" stopColor="#10b981" stopOpacity={0}/></linearGradient></defs>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" />
                                 <XAxis 
@@ -164,8 +177,28 @@ const StatsView = ({ userStats, resilience = 50, completedCount = 0, isVisible }
                                         color: '#fff'
                                     }}
                                     itemStyle={{ color: '#10b981' }}
+                                    labelFormatter={(label) => {
+                                        try {
+                                            const d = new Date(label);
+                                            if (isNaN(d.getTime())) return label;
+                                            const time = d.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' });
+                                            const date = d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
+                                            return `${time} ${date}`;
+                                        } catch (e) {
+                                            return label;
+                                        }
+                                    }}
+                                    formatter={(value) => [`${value}%`, 'Стійкість']}
                                 />
-                                <Area type="monotone" dataKey="val" stroke="#10b981" strokeWidth={4} fillOpacity={1} fill="url(#colorVal)" />
+                                <Area type="monotone" dataKey="val" stroke="#10b981" strokeWidth={4} fillOpacity={1} fill="url(#colorVal)">
+                                    <LabelList 
+                                        dataKey="val" 
+                                        position="top" 
+                                        offset={12} 
+                                        style={{ fill: '#10b981', fontSize: 11, fontWeight: 'bold' }} 
+                                        formatter={(val) => `${val}%`}
+                                    />
+                                </Area>
                             </AreaChart>
                         </ResponsiveContainer>
                     ) : (

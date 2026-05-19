@@ -26,6 +26,7 @@ router.get('/user/:userId', auth, async (req, res) => {
     if (user && user.stats) {
       statsObj.resilience = user.stats.resilience;
       statsObj.streak = user.stats.streak;
+      statsObj.resilienceMultiplier = user.stats.resilienceMultiplier || 1.0;
     }
     
     res.json(statsObj);
@@ -60,39 +61,42 @@ router.post('/breathing/:userId', auth, async (req, res) => {
 router.post('/diagnostic/:userId', auth, async (req, res) => {
   try {
     const { userId } = req.params;
-    const { score, answers } = req.body;
+    const { answers } = req.body;
+    
+    if (!answers || !Array.isArray(answers) || answers.length === 0) {
+      return res.status(400).json({ error: 'Answers are required and must be an array' });
+    }
+
+    const score = Math.round(answers.reduce((a, b) => a + b, 0) / answers.length);
     
     let userStats = await UserStats.findOne({ userId });
     if (!userStats) userStats = new UserStats({ userId });
     
-    const isFirstTime = userStats.diagnosticsTaken.count === 0;
-    
     await userStats.recordDiagnostic(score, answers);
 
-    // Оновлюємо поточну резильєнтність у профілі
+    // Оновлюємо коефіцієнт стійкості у профілі
     const user = await User.findById(userId);
+    let multiplier = 1.0;
     if (user) {
-      if (isFirstTime) {
-        user.stats.resilience = score;
+      if (score < 50) {
+        multiplier = Number((0.1 + (score / 50) * 0.4).toFixed(2));
       } else {
-        let resilienceChange = 0;
-        if (score >= 60) resilienceChange = 2;
-        else if (score <= 40) resilienceChange = -2;
-        
-        let currentRes = Number(user.stats.resilience);
-        if (isNaN(currentRes)) currentRes = 50;
-        user.stats.resilience = Math.max(0, Math.min(100, currentRes + resilienceChange));
+        multiplier = Number((1.1 + ((score - 50) / 50) * 0.4).toFixed(2));
       }
+      user.stats.resilienceMultiplier = multiplier;
       user.stats.lastActiveDate = new Date();
       await user.save();
       
       const io = req.app.get('io');
       if (io) {
-          io.to(userId).emit('resilienceUpdate', { resilience: user.stats.resilience });
+          io.to(userId).emit('resilienceUpdate', { 
+            resilience: user.stats.resilience, 
+            resilienceMultiplier: multiplier 
+          });
       }
     }
     
-    res.json({ success: true, message: 'Diagnostic results recorded' });
+    res.json({ success: true, score, multiplier, message: 'Diagnostic results recorded' });
   } catch (error) {
     console.error('Error recording diagnostic:', error);
     res.status(500).json({ error: 'Failed to record diagnostic' });
@@ -182,6 +186,7 @@ router.get('/dashboard/:userId', auth, async (req, res) => {
       totalMinutes: userStats.totalMinutes,
       streak: user?.stats?.streak || 0,
       currentResilience: user?.stats?.resilience || 50,
+      resilienceMultiplier: user?.stats?.resilienceMultiplier || 1.0,
       breathingSessions: userStats.breathingSessions.count,
       diagnosticsTaken: userStats.diagnosticsTaken.count,
       materialsViewed: userStats.materialsViewed.count,
@@ -217,9 +222,12 @@ router.post('/resilience/:userId', auth, async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
 
+    const multiplier = user.stats.resilienceMultiplier || 1.0;
+    const finalChange = Number((calculatedChange * multiplier).toFixed(2));
+
     let currentRes = Number(user.stats.resilience);
     if (isNaN(currentRes)) currentRes = 50;
-    user.stats.resilience = Math.max(0, Math.min(100, currentRes + calculatedChange));
+    user.stats.resilience = Math.max(0, Math.min(100, currentRes + finalChange));
     user.stats.lastActiveDate = new Date();
     await user.save();
     
@@ -228,7 +236,7 @@ router.post('/resilience/:userId', auth, async (req, res) => {
       userId,
       type,
       name,
-      change: calculatedChange
+      change: finalChange
     });
     
     const io = req.app.get('io');

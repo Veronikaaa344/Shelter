@@ -18,6 +18,8 @@ const TestingView = ({
 }) => {
     const [questions, setQuestions] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [result, setResult] = useState(null);
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         const fetchQuestions = async () => {
@@ -54,26 +56,26 @@ const TestingView = ({
       if (testStep < questions.length - 1) setTestStep(testStep + 1);
       else {
         setIsTestFinished(true);
-        const score = Math.round(newAnswers.reduce((a, b) => a + b, 0) / questions.length);
-        if (userId) {
-          api.recordDiagnostic(userId, score, newAnswers)
-            .then(() => {
-              setResilience(score);
-              if (onFinish) onFinish();
-              if (userStats) {
-                setUserStats({
-                  ...userStats,
-                  diagnosticsTaken: {
-                    ...userStats.diagnosticsTaken,
-                    count: (userStats.diagnosticsTaken?.count || 0) + 1,
-                    lastScore: score,
-                    lastDate: new Date()
-                  }
-                });
-              }
-            })
-            .catch((err) => console.error('Error saving diagnostic:', err));
-        }
+        setSaving(true);
+        api.recordDiagnostic(userId, newAnswers)
+          .then((res) => {
+            setResult(res);
+            if (onFinish) onFinish();
+            if (userStats) {
+              setUserStats({
+                ...userStats,
+                resilienceMultiplier: res.multiplier,
+                diagnosticsTaken: {
+                  ...userStats.diagnosticsTaken,
+                  count: (userStats.diagnosticsTaken?.count || 0) + 1,
+                  lastScore: res.score,
+                  lastDate: new Date()
+                }
+              });
+            }
+          })
+          .catch((err) => console.error('Error saving diagnostic:', err))
+          .finally(() => setSaving(false));
       }
     };
 
@@ -115,12 +117,26 @@ const TestingView = ({
     }
 
     if (isTestFinished) {
-      const score = Math.round(testAnswers.reduce((a, b) => a + b, 0) / questions.length);
+      if (saving || !result) {
+        return (
+          <div className="p-8 flex flex-col items-center justify-center min-h-[60vh]">
+            <div className="w-12 h-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-slate-400 mt-4 font-bold">Збереження результатів...</p>
+          </div>
+        );
+      }
+
+      const { score } = result;
       return (
         <div className="p-8 flex flex-col items-center justify-center min-h-[60vh] animate-in zoom-in duration-500 text-center">
           <div className="w-24 h-24 bg-emerald-500 rounded-[32px] flex items-center justify-center mb-8 shadow-2xl shadow-emerald-500/20"><CheckCircle2 size={48} className="text-[#0b0f1a]" /></div>
           <h2 className="text-4xl font-black text-white italic uppercase tracking-tighter mb-4 leading-none">Діагностика завершена</h2>
-          <p className="text-slate-500 mb-8 max-w-sm">Індекс стійкості: <span className="text-emerald-400 font-black">{score}%</span>. Продовжуйте працювати над собою!</p>
+          <p className="text-slate-400 mb-2 max-w-sm">Результат діагностики: <span className="text-emerald-400 font-black">{score}%</span></p>
+          <p className="text-slate-500 mb-8 max-w-md text-sm leading-relaxed">
+            Коефіцієнт нарахування балів оновлено.
+            <br />
+            До наступної діагностики ваші бали за вправи та практики будуть нараховуватися з новим коефіцієнтом.
+          </p>
           <button onClick={() => navigateTo('stats')} className="bg-white text-black px-10 py-4 rounded-2xl font-black uppercase text-xs shadow-lg">Дивитися динаміку</button>
         </div>
       );

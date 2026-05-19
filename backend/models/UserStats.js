@@ -80,15 +80,12 @@ userStatsSchema.methods.recordDiagnostic = async function(score, answers) {
     answers: formattedAnswers
   });
 
-  // Calculate actual change for log (assuming 50 is default if first time)
-  const actualChange = this.diagnosticsTaken.count === 1 ? (score - 50) : resilienceChange;
-
   // 2. Створюємо лог активності для графіка
   await ActivityLog.create({
     userId: this.userId,
     type: 'diagnostic',
     name: 'Діагностика стану',
-    change: actualChange,
+    change: 0,
     metadata: { score }
   });
   

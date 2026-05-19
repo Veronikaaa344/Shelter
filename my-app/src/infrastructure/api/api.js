@@ -159,22 +159,19 @@ export const api = {
 		}).then((res) => res.json());
 	},
 
-	recordDiagnostic: (userId, score, answers) => {
+	recordDiagnostic: (userId, answers) => {
 		if (isGuest()) {
-			return fetch(`${API_URL}/auth/guest/update`, {
+			return fetch(`${API_URL}/auth/guest/diagnostic`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				credentials: 'include',
-				body: JSON.stringify({
-					stats: { resilience: score },
-					diagnostic: { answers, completedAt: new Date() }
-				})
+				body: JSON.stringify({ answers })
 			}).then((res) => res.json());
 		}
 		return fetch(`${API_URL}/stats/diagnostic/${userId}`, {
 			method: 'POST',
 			headers: getHeaders(),
-			body: JSON.stringify({ score, answers })
+			body: JSON.stringify({ answers })
 		}).then((res) => res.json());
 	},
 

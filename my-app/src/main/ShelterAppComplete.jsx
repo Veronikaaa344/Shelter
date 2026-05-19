@@ -62,6 +62,7 @@ const ShelterAppComplete = () => {
   // Дані з API
   const [mediaLibraryData, setMediaLibraryData] = useState([]);
   const [resilience, setResilience] = useState(50);
+  const [resilienceMultiplier, setResilienceMultiplier] = useState(1.0);
   const [userStats, setUserStats] = useState(null);
   const [streak, setStreak] = useState(0);
   const [currentMood, setCurrentMood] = useState(null);
@@ -130,11 +131,18 @@ const ShelterAppComplete = () => {
           console.log('📈 Статистика оновлена:', stats);
           setUserStats(stats);
           if (stats?.resilience?.current !== undefined) {
-            setResilience(stats.resilience.current);
+            setResilience(Math.round(stats.resilience.current));
           } else if (stats?.allTime?.resilience !== undefined) {
-            setResilience(stats.allTime.resilience);
+            setResilience(Math.round(stats.allTime.resilience));
           } else if (typeof stats?.resilience === 'number') {
-            setResilience(stats.resilience);
+            setResilience(Math.round(stats.resilience));
+          }
+          if (stats?.resilienceMultiplier !== undefined) {
+            setResilienceMultiplier(stats.resilienceMultiplier);
+          } else if (stats?.stats?.resilienceMultiplier !== undefined) {
+            setResilienceMultiplier(stats.stats.resilienceMultiplier);
+          } else {
+            setResilienceMultiplier(1.0);
           }
           if (stats?.streak !== undefined) {
             setStreak(stats.streak);
@@ -233,7 +241,10 @@ const ShelterAppComplete = () => {
     socket.on('resilienceUpdate', (data) => {
       console.log('📡 [Socket] Отримано оновлення стійкості:', data);
       if (data && data.resilience !== undefined) {
-        setResilience(data.resilience);
+        setResilience(Math.round(data.resilience));
+      }
+      if (data && data.resilienceMultiplier !== undefined) {
+        setResilienceMultiplier(data.resilienceMultiplier);
       }
     });
 
@@ -276,9 +287,9 @@ const ShelterAppComplete = () => {
       api.updateResilience(userId, type, metadata, metadata.name || type)
         .then((res) => {
           if (res && res.currentResilience !== undefined) {
-            setResilience(res.currentResilience);
+            setResilience(Math.round(res.currentResilience));
           } else if (res && res.stats && res.stats.resilience !== undefined) {
-            setResilience(res.stats.resilience);
+            setResilience(Math.round(res.stats.resilience));
           }
           refreshStats();
         })
@@ -463,6 +474,7 @@ const ShelterAppComplete = () => {
                     <StatsView
                       userStats={userStats}
                       resilience={resilience}
+                      resilienceMultiplier={resilienceMultiplier}
                       completedCount={completedScenariosCount + completedMaterialsCount}
                       isVisible={currentView === 'stats'}
                     />

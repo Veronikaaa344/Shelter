@@ -318,33 +318,32 @@ router.post("/guest/update", (req, res) => {
 			return res.status(404).json({ message: "Guest not found" });
 		}
 		const currentData = JSON.parse(guestCookie);
-		const updatedData = { ...currentData, ...req.body };
+		const updatedData = { 
+			...currentData, 
+			...req.body,
+			stats: {
+				...(currentData.stats || {}),
+				...(req.body.stats || {})
+			}
+		};
 		
 		// Якщо оновлюються статси (наприклад діагностика), додаємо в історію
 		if (req.body.stats && req.body.stats.resilience !== undefined) {
 			const score = req.body.stats.resilience;
-			const isFirstTime = !currentData.diagnostic;
-			let resilienceChange = 0;
-
-			if (score >= 60) resilienceChange = 2;
-			else if (score <= 40) resilienceChange = -2;
-
-			if (!updatedData.history) updatedData.history = [];
+			const multiplier = Number((0.1 + (score / 100) * 1.4).toFixed(2));
 			
 			let currentRes = Number(currentData.stats?.resilience);
 			if (isNaN(currentRes)) currentRes = 50;
-			
-			let newScore = score;
-			if (!isFirstTime) {
-				newScore = Math.max(0, Math.min(100, currentRes + resilienceChange));
-				updatedData.stats.resilience = newScore;
-			}
 
+			updatedData.stats.resilienceMultiplier = multiplier;
+			updatedData.stats.resilience = currentRes;
+
+			if (!updatedData.history) updatedData.history = [];
 			updatedData.history.unshift({
 				activityType: 'diagnostic',
 				activityName: 'Діагностика стану',
-				change: isFirstTime ? (score - currentRes) : resilienceChange,
-				newScore: newScore,
+				change: 0,
+				newScore: currentRes,
 				date: new Date()
 			});
 		}
@@ -444,9 +443,12 @@ router.post("/guest/update-resilience", (req, res) => {
 		// Calculate resilience change strictly on the server
 		const calculatedChange = calculateResilienceChange(type, metadata);
 
+		const multiplier = guestData.stats?.resilienceMultiplier || 1.0;
+		const finalChange = Number((calculatedChange * multiplier).toFixed(2));
+
 		let currentRes = Number(guestData.stats?.resilience);
 		if (isNaN(currentRes)) currentRes = 50;
-		currentRes += calculatedChange;
+		currentRes += finalChange;
 		
 		if (currentRes > 100) currentRes = 100;
 		if (currentRes < 0) currentRes = 0;
@@ -458,7 +460,7 @@ router.post("/guest/update-resilience", (req, res) => {
 		const historyEntry = {
 			activityType: type,
 			activityName: name,
-			change: calculatedChange,
+			change: finalChange,
 			newScore: currentRes,
 			date: new Date(),
 		};
@@ -485,6 +487,66 @@ router.post("/guest/update-resilience", (req, res) => {
 			.json(guestData);
 	} catch (err) {
 		console.error('❌ GUEST BACKEND ERROR:', err);
+		res.status(500).json({ message: err.message });
+	}
+});
+
+router.post("/guest/diagnostic", (req, res) => {
+	try {
+		const { answers } = req.body;
+		if (!answers || !Array.isArray(answers) || answers.length === 0) {
+			return res.status(400).json({ message: "Answers are required" });
+		}
+
+		const guestCookie = req.cookies?.dr_guest;
+		if (!guestCookie) {
+			return res.status(404).json({ message: "Guest not found" });
+		}
+		const currentData = JSON.parse(guestCookie);
+
+		const score = Math.round(answers.reduce((a, b) => a + b, 0) / answers.length);
+		let multiplier = 1.0;
+		if (score < 50) {
+			multiplier = Number((0.1 + (score / 50) * 0.4).toFixed(2));
+		} else {
+			multiplier = Number((1.1 + ((score - 50) / 50) * 0.4).toFixed(2));
+		}
+
+		const updatedData = {
+			...currentData,
+			stats: {
+				...(currentData.stats || {}),
+				resilienceMultiplier: multiplier
+			},
+			diagnostic: {
+				answers,
+				completedAt: new Date()
+			}
+		};
+
+		if (!updatedData.history) updatedData.history = [];
+		updatedData.history.unshift({
+			activityType: 'diagnostic',
+			activityName: 'Діагностика стану',
+			change: 0,
+			newScore: updatedData.stats.resilience || 50,
+			date: new Date()
+		});
+
+		const updatedDataToSave = {
+			...updatedData,
+			history: (updatedData.history || []).slice(0, 10),
+		};
+
+		res
+			.cookie("dr_guest", JSON.stringify(updatedDataToSave), {
+				expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+				secure: false,
+				sameSite: "lax",
+				path: "/",
+			})
+			.json({ success: true, score, multiplier, stats: updatedData.stats });
+	} catch (err) {
 		res.status(500).json({ message: err.message });
 	}
 });

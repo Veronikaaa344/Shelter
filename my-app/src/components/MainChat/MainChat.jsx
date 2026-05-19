@@ -211,45 +211,43 @@ export default function MainChat({ onBack, username, resilience }) {
                 </header>
 
                 <div className="dr-chat-selection-grid p-8 overflow-y-auto max-h-[calc(100vh-150px)]">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Сценарій AI Помічника (дефолтний) */}
+                    {/* Сценарій AI Помічника (дефолтний) */}
+                    <div 
+                        className="dr-scenario-card ai-card"
+                        onClick={() => {
+                            setScenario(null);
+                            setIsChatMode('ai');
+                            setCurrentNodeId('start');
+                            setMessages([{ id: 1, text: baseNodes.start.text, sender: 'bot', timestamp: new Date() }]);
+                            setChatView("chat");
+                        }}
+                    >
+                        <div className="dr-card-icon"><Sparkles size={24} /></div>
+                        <h3>Вільне спілкування</h3>
+                        <p>Обговоріть будь-які почуття з нашим AI-асистентом</p>
+                        <div className="dr-card-footer">
+                            <span className="tag">AI</span>
+                            <button className="start-btn">Почати <Play size={14} fill="currentColor" /></button>
+                        </div>
+                    </div>
+
+                    {/* Сценарії з бази даних */}
+                    {scenariosList.map((s) => (
                         <div 
-                            className="dr-scenario-card ai-card"
-                            onClick={() => {
-                                setScenario(null);
-                                setIsChatMode('ai');
-                                setCurrentNodeId('start');
-                                setMessages([{ id: 1, text: baseNodes.start.text, sender: 'bot', timestamp: new Date() }]);
-                                setChatView("chat");
-                            }}
+                            key={s._id} 
+                            className="dr-scenario-card"
+                            onClick={() => selectScenario(s)}
                         >
-                            <div className="dr-card-icon"><Sparkles size={24} /></div>
-                            <h3>Вільне спілкування</h3>
-                            <p>Обговоріть будь-які почуття з нашим AI-асистентом</p>
+                            <div className="dr-card-icon"><Target size={24} /></div>
+                            <h3>{s.name}</h3>
+                            <p>Відпрацюйте конкретну ситуацію: {s.category || 'загальне'}</p>
                             <div className="dr-card-footer">
-                                <span className="tag">AI</span>
-                                <button className="start-btn">Почати <Play size={14} fill="currentColor" /></button>
+                                <span className="tag"><Clock size={12} className="inline mr-1" /> {s.duration || '5 хв'}</span>
+                                <span className="tag"><Zap size={12} className="inline mr-1 text-amber-500" /> {s.difficulty || 50}%</span>
+                                <button className="start-btn">Тренуватись <Play size={14} fill="currentColor" /></button>
                             </div>
                         </div>
-
-                        {/* Сценарії з бази даних */}
-                        {scenariosList.map((s) => (
-                            <div 
-                                key={s._id} 
-                                className="dr-scenario-card"
-                                onClick={() => selectScenario(s)}
-                            >
-                                <div className="dr-card-icon"><Target size={24} /></div>
-                                <h3>{s.name}</h3>
-                                <p>Відпрацюйте конкретну ситуацію: {s.category || 'загальне'}</p>
-                                <div className="dr-card-footer">
-                                    <span className="tag"><Clock size={12} className="inline mr-1" /> {s.duration || '5 хв'}</span>
-                                    <span className="tag"><Zap size={12} className="inline mr-1 text-amber-500" /> {s.difficulty || 50}%</span>
-                                    <button className="start-btn">Тренуватись <Play size={14} fill="currentColor" /></button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                    ))}
                 </div>
                 {/* <CharacterCompanion context="chat" position="bottom-right" /> */}
             </div>

@@ -11,6 +11,7 @@ const UserSchema = new mongoose.Schema({
 	},
 	stats: {
 		resilience: { type: Number, default: 50 },
+		resilienceMultiplier: { type: Number, default: 1.0 },
 		stabilityDays: { type: Number, default: 0 },
 		streak: { type: Number, default: 0 },
 		longestStreak: { type: Number, default: 0 },
