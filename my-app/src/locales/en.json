@@ -114,9 +114,28 @@
         "9": "You are not alone in this journey."
     },
     "library": {
-        "article": "Article",
+        "title": "Library of Materials",
+        "all": "All",
+        "audio": "Audio",
         "video": "Video",
-        "audio": "Audio"
+        "article": "Article",
+        "soundscapes": "Soundscapes",
+        "noise_colors": "Colors of Noise",
+        "noise_desc": "Different noise frequencies help you relax, focus, or sleep.",
+        "white": "White",
+        "white_desc": "Full spectrum",
+        "pink": "Pink",
+        "pink_desc": "Balanced",
+        "brown": "Brown",
+        "brown_desc": "Deep",
+        "photo_grounding_label": "Visual Grounding",
+        "morning_wind": "Morning Wind",
+        "water_shimmer": "Water Shimmer",
+        "forest_fog": "Forest Fog",
+        "mountain_stream": "Mountain Stream",
+        "evening_campfire": "Evening Campfire",
+        "rain_behind_glass": "Rain behind glass",
+        "all_materials": "All materials"
     },
     "advice": {
         "title": "Advice",
