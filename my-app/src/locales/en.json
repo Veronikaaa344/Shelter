@@ -5,7 +5,10 @@
         "hour": "HR",
         "yes": "Yes, I feel better",
         "reset": "Reset",
-        "finish": "Finish"
+        "finish": "Finish",
+        "day": "day",
+        "days": "days",
+        "days_genitive": "days"
     },
     "sidebar": {
         "dashboard": "Dashboard",
