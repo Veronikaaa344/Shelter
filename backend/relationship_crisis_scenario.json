@@ -1,258 +1,258 @@
 {
   "scenarioId": "relationship-crisis",
-  "name": "Криза у відносинах: Пошук спільної мови",
+  "name": "Crisis in relationships: Finding a common language",
   "type": "dialogue",
   "category": "stress",
-  "duration": "5 хв",
+  "duration": "5 min",
   "difficulty": 70,
-  "description": "Інтерактивний сценарій для відпрацювання навичок емпатії, подолання конфліктів та пошуку спільної мови у парі під час стресу.",
+  "description": "An interactive scenario for practicing empathy skills, overcoming conflicts and finding a common language in a couple during stress.",
   "nodes": {
     "start": {
-      "text": "Мені здається, що ми взагалі перестали розуміти один одного.  Ти постійно десь пропадаєш, а коли повертаєшся — просто мовчиш.",
+      "text": "It seems to me that we have stopped understanding each other altogether.  You always disappear somewhere, and when you come back, you are just silent.",
       "options": [
         {
-          "text": "Слухай, я працюю як проклятий, щоб...",
+          "text": "Look, I'm working like hell to...",
           "next": "hard_confrontation",
           "weight": -20
         },
         {
-          "text": "Я бачу, що тобі зараз дуже...",
+          "text": "I see that you are very...",
           "next": "empathy_start",
           "weight": 20
         },
         {
-          "text": "Якщо тебе щось не влаштовує —...",
+          "text": "If something doesn't suit you -...",
           "next": "abrupt_exit_1",
           "weight": -40
         },
         {
-          "text": "Знову починається...",
+          "text": "It starts again...",
           "next": "avoidance_branch",
           "weight": -15
         }
       ]
     },
     "hard_confrontation": {
-      "text": "О, знову ти згадуєш про гроші!  Тобі простіше відкупитися, ніж побути зі мною дві хвилини і запитати, як я почуваюся.",
+      "text": "Oh, you mention money again!  It's easier for you to pay off than to spend two minutes with me and ask how I feel.",
       "options": [
         {
-          "text": "Тобі просто нічим зайнятися, от і...",
+          "text": "You just have nothing to do, so...",
           "next": "abrupt_exit_2",
           "weight": -30
         },
         {
-          "text": "Стій.",
+          "text": "Stop.",
           "next": "transition_to_good",
           "weight": 30
         },
         {
-          "text": "А ти про мої почуття колись думаєш?",
+          "text": "Do you ever think about my feelings?",
           "next": "defensive_loop",
           "weight": -10
         }
       ]
     },
     "defensive_loop": {
-      "text": "Я знаю, як тобі важко на роботі, і я ціную твої зусилля.  Але мені потрібна людина, а не просто банківська картка!",
+      "text": "I know how hard it is for you at work and I appreciate your efforts.  But I need a person, not just a bank card!",
       "options": [
         {
-          "text": "Розумію.",
+          "text": "I understand.",
           "next": "transition_to_good",
           "weight": 30
         },
         {
-          "text": "Тоді знайди собі того, хто не...",
+          "text": "Then find someone who doesn't...",
           "next": "abrupt_exit_2",
           "weight": -40
         },
         {
-          "text": "Давай не будемо мірятися тим, кому важче.",
+          "text": "Let's not compare ourselves to those who have a harder time.",
           "next": "rational_negotiation",
           "weight": 10
         }
       ]
     },
     "rational_negotiation": {
-      "text": "Я не хочу мірятися.  Мені просто хочеться хоча б півгодини на день щирої розмови, без твоїх думок про роботу або телефон у руках.",
+      "text": "I don't want to measure myself.  I just want at least half an hour a day of sincere conversation, without your thoughts about work or the phone in my hands.",
       "options": [
         {
-          "text": "Згоден.",
+          "text": "I agree.",
           "next": "happy_end",
           "weight": 40
         },
         {
-          "text": "Я постараюся, але нічого не обіцяю,...",
+          "text": "I'll try, but I don't promise anything,...",
           "next": "neutral_cooling",
           "weight": -10
         }
       ]
     },
     "avoidance_branch": {
-      "text": "«Не сьогодні»?  А коли?",
+      "text": "\"Not today\"?  And when?",
       "options": [
         {
-          "text": "Бо ти кожен раз починаєш з обвинувачень!",
+          "text": "Because you always start with accusations!",
           "next": "hard_confrontation",
           "weight": -10
         },
         {
-          "text": "Вибач, ти маєш рацію, я просто...",
+          "text": "Sorry, you're right, I just...",
           "next": "empathy_start",
           "weight": 25
         },
         {
-          "text": "Мені простіше піти прогулятися, ніж слухати...",
+          "text": "It's easier for me to go for a walk than to listen...",
           "next": "walkout_exit",
           "weight": -30
         }
       ]
     },
     "walkout_exit": {
-      "text": "Ти просто розвертаєшся і йдеш...  Що ж, це найкраща відповідь на те, чи потрібні тобі ці стосунки.",
+      "text": "You just turn around and go... Well, that's the best answer to whether or not you want this relationship.",
       "options": [],
       "isFinal": true,
       "score": 15
     },
     "abrupt_exit_1": {
-      "text": "Знаєш що?  Я сподівався на якусь краплю розуміння, але твій егоїзм переходить усі межі.",
+      "text": "You know what?  I was hoping for some understanding, but your selfishness goes beyond all limits.",
       "options": [],
       "isFinal": true,
       "score": 10
     },
     "abrupt_exit_2": {
-      "text": "«Вигадуєш проблеми»?  Чудово.",
+      "text": "\"Inventing problems\"?  Perfectly.",
       "options": [],
       "isFinal": true,
       "score": 20
     },
     "transition_to_good": {
-      "text": "(Пауза) Я не очікував, що ти вибачишся...  Мені теж прикро, що я відразу починаю з крику.",
+      "text": "(Pause) I didn't expect you to apologize... I'm also sorry to start yelling right away.",
       "options": [
         {
-          "text": "Я розумію.",
+          "text": "I understand.",
           "next": "happy_end",
           "weight": 40
         },
         {
-          "text": "Гаразд, ми вибачилися, конфлікт вичерпано.",
+          "text": "Okay, we're sorry, the conflict is over.",
           "next": "neutral_cooling",
           "weight": -10
         },
         {
-          "text": "Я бачу, що накопичилося дуже багато...",
+          "text": "I see that a lot has accumulated...",
           "next": "constructive_path",
           "weight": 35
         }
       ]
     },
     "constructive_path": {
-      "text": "Ти серйозно?  Я не думав, що ти погодишся на таке...",
+      "text": "are you serious  I didn't think you would agree to such a...",
       "options": [
         {
-          "text": "Звісно, наші стосунки варті будь-яких зусиль.",
+          "text": "Of course, our relationship is worth any effort.",
           "next": "happy_end",
           "weight": 45
         },
         {
-          "text": "Ну, це як варіант, хоча я...",
+          "text": "Well, that's an option, although I...",
           "next": "neutral_cooling",
           "weight": 10
         }
       ]
     },
     "empathy_start": {
-      "text": "Ти справді готовий слухати?  Бо зазвичай все закінчується тим, що ти береш телефон або переводиш тему...",
+      "text": "Are you really ready to listen?  Because usually everything ends with you picking up the phone or changing the subject...",
       "options": [
         {
-          "text": "Я поруч.",
+          "text": "I'm near",
           "next": "deep_connection",
           "weight": 50
         },
         {
-          "text": "Слухай, ну не вигадуй, нічого ми...",
+          "text": "Listen, don't invent anything, we...",
           "next": "hard_confrontation",
           "weight": -20
         },
         {
-          "text": "Слухай, я роблю все можливе.",
+          "text": "Listen, I'm doing my best.",
           "next": "gaslighting_branch",
           "weight": -25
         }
       ]
     },
     "gaslighting_branch": {
-      "text": "Моя суб'єктивна думка?!  Тобто моє почуття самотності — це лише моя вигадка?",
+      "text": "My subjective opinion?!  So my feeling of loneliness is just my fiction?",
       "options": [
         {
-          "text": "Пробач, я висловився безглуздо і некоректно.",
+          "text": "I'm sorry, I expressed myself stupidly and incorrectly.",
           "next": "transition_to_good",
           "weight": 30
         },
         {
-          "text": "Так, бо ти постійно драматизуєш.",
+          "text": "Yes, because you constantly dramatize.",
           "next": "abrupt_exit_2",
           "weight": -30
         }
       ]
     },
     "deep_connection": {
-      "text": "Твої слова...  вони наче повернули мене до тями.",
+      "text": "Your words... they seemed to bring me back to my senses.",
       "options": [
         {
-          "text": "Ти завжди на першому місці.",
+          "text": "You are always in the first place.",
           "next": "happy_end",
           "weight": 50
         },
         {
-          "text": "А що саме я можу зробити...",
+          "text": "And what exactly can I do...",
           "next": "partner_ideas",
           "weight": 50
         },
         {
-          "text": "Я радий, що ми порозумілися.",
+          "text": "I'm glad we got along.",
           "next": "rational_connection",
           "weight": 15
         }
       ]
     },
     "partner_ideas": {
-      "text": "Просто обійми мене зараз і посидь зі мною кілька хвилин у тиші...  А на вихідних давай виберемося кудись за місто, тільки ти і я, без дзвінків по роботі.",
+      "text": "Just hug me now and sit with me for a few minutes in silence... And on the weekend, let's go somewhere outside the city, just you and me, without work calls.",
       "options": [
         {
-          "text": "З величезним задоволенням.",
+          "text": "With great pleasure.",
           "next": "happy_end",
           "weight": 50
         },
         {
-          "text": "Обійняти можу, але за місто на...",
+          "text": "I can hug, but for the city on...",
           "next": "neutral_cooling",
           "weight": -10
         }
       ]
     },
     "rational_connection": {
-      "text": "Календар?  Це звучить трохи сухо, але...",
+      "text": "Calendar?  This sounds a bit dry, but…",
       "options": [
         {
-          "text": "Я обіцяю, що ці слоти в...",
+          "text": "I promise that these slots in…",
           "next": "happy_end",
           "weight": 40
         },
         {
-          "text": "Я постараюся не скасовувати, але форс-мажори...",
+          "text": "I will try not to cancel, but force majeure...",
           "next": "neutral_cooling",
           "weight": -10
         }
       ]
     },
     "neutral_cooling": {
-      "text": "Ну...  добре.",
+      "text": "Well... good.",
       "options": [],
       "isFinal": true,
       "score": 50
     },
     "happy_end": {
-      "text": "Мені стало набагато легше.  Наче з душі впав величезний камінь.",
+      "text": "It became much easier for me.  It was as if a huge stone fell from the soul.",
       "options": [],
       "isFinal": true,
       "score": 100

@@ -144,27 +144,19 @@
     "scenarios": {
         "6a0c946cdb5bdded60f083d2": {
             "name": "Resistance to burnout",
-            "description": "A simulator for identifying signs of professional exhaustion and building healthy boundaries in the work process.",
-            "messages": [],
-            "nodes": []
+            "description": "A simulator for identifying signs of professional exhaustion and building healthy boundaries in the work process."
         },
         "6a0c946cdb5bdded60f083d3": {
             "name": "Impostor syndrome",
-            "description": "A trainer for fighting self-doubt before an important presentation.",
-            "messages": [],
-            "nodes": []
+            "description": "A trainer for fighting self-doubt before an important presentation."
         },
         "6a10771a00169fc597155c7a": {
             "name": "Conflict resolution",
-            "description": "A simulator for practicing the reaction to complex emotions of the interlocutor. Learn to choose an empathetic path instead of a conflictual one.",
-            "messages": [],
-            "nodes": []
+            "description": "A simulator for practicing the reaction to complex emotions of the interlocutor. Learn to choose an empathetic path instead of a conflictual one."
         },
         "6a1f36970c46c3d837e9f7a0": {
             "name": "Symptoms of burnout",
             "description": "Section burnout symptoms and recovery actions",
-            "messages": [],
-            "nodes": [],
             "categories": [
                 {
                     "id": 0,
@@ -225,8 +217,6 @@
         "6a1f36970c46c3d837e9f7a1": {
             "name": "Thoughts of an impostor",
             "description": "Let's separate harmful thoughts from rational ones",
-            "messages": [],
-            "nodes": [],
             "categories": [
                 {
                     "id": 0,
@@ -282,8 +272,6 @@
         "6a1f36970c46c3d837e9f7a2": {
             "name": "Focus and concentration",
             "description": "Sort out what distracts you and what helps you focus",
-            "messages": [],
-            "nodes": [],
             "categories": [
                 {
                     "id": 0,

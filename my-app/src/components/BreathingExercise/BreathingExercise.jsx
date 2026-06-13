@@ -3,17 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { ChevronLeft, Wind, Pause, Play, RotateCcw, Heart, CheckCircle2 } from 'lucide-react';
 
 const PHASES = [
-    { label: "Вдих", duration: 4, color: "rgba(16,185,129,0.4)", scale: 1.55 },
-    { label: "Затримка", duration: 4, color: "rgba(16,185,129,0.2)", scale: 1.55 },
-    { label: "Видих", duration: 6, color: "rgba(16,185,129,0.08)", scale: 1.0 },
-    { label: "Пауза", duration: 2, color: "rgba(16,185,129,0.04)", scale: 1.0 },
+    { label: "Inhale", duration: 4, color: "rgba(16,185,129,0.4)", scale: 1.55 },
+    { label: "Hold", duration: 4, color: "rgba(16,185,129,0.2)", scale: 1.55 },
+    { label: "Exhale", duration: 6, color: "rgba(16,185,129,0.08)", scale: 1.0 },
+    { label: "Pause", duration: 2, color: "rgba(16,185,129,0.04)", scale: 1.0 },
 ];
 
 const HINTS = [
-    "Повільно вдихайте через ніс, наповнюйте живіт...",
-    "Затримайте дихання, відчуйте тишу всередині...",
-    "Повільно видихайте через рот, відпускайте напругу...",
-    "Відпочиньте перед наступним вдихом...",
+    "Slowly inhale through your nose, fill your belly...",
+    "Hold your breath, feel the stillness within...",
+    "Slowly exhale through your mouth, release tension...",
+    "Rest before the next inhale...",
 ];
 
 export default function BreathingExercise({
@@ -23,7 +23,7 @@ export default function BreathingExercise({
     showControls = true,
     requireCycles = 0, 
     onCyclesComplete,
-    title = "Техніка дихання"
+    title = "Breathing Technique"
 }) {
     const { t } = useTranslation();
     const [isActive, setIsActive] = useState(autoStart);
@@ -94,17 +94,17 @@ export default function BreathingExercise({
                     </button>
                     <div className="flex items-center gap-2 text-slate-600 text-xs font-bold uppercase tracking-widest">
                         <Heart size={14} className="text-rose-500" />
-                        Цикл {cycles + 1}
-                        {t('breathing.cycle', 'Цикл')} {cycles + 1}
+                        Cycle {cycles + 1}
+                        {t('breathing.cycle', 'Cycle')} {cycles + 1}
                     </div>
                 </div>
 
                 <div className="flex flex-col items-center gap-6 md:gap-12 z-10 w-full max-w-sm px-4">
                     <div className="text-center">
-                        <p className="text-slate-500 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-2 md:mb-3">{t('breathing.silence', 'Тиша та спокій')}</p>
+                        <p className="text-slate-500 text-[10px] md:text-xs font-black uppercase tracking-[0.3em] mb-2 md:mb-3">{t('breathing.silence', 'Silence and Calm')}</p>
                         <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter leading-none">
-                            {t('breathing.technique', 'Техніка')} <br />
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-500">{t('breathing.breathing', 'Дихання')}</span>
+                            {t('breathing.technique', 'Technique')} <br />
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-500">{t('breathing.breathing', 'Breathing')}</span>
                         </h1>
                     </div>
 
@@ -143,7 +143,7 @@ export default function BreathingExercise({
                             className="text-slate-500 text-xs md:text-sm text-center max-w-xs leading-relaxed"
                             style={{ animation: 'fadeUp 0.5s ease-out' }}
                         >
-                            {isActive ? t(HINTS[phaseIndex]) : t('breathing.start_hint', "Натисніть кнопку, щоб розпочати сесію")}
+                            {isActive ? t(HINTS[phaseIndex]) : t('breathing.start_hint', "Press the button to start the session")}
                         </p>
                     </div>
 
@@ -167,7 +167,7 @@ export default function BreathingExercise({
                                 )}
                                 <button
                                     onClick={handleReset}
-                                    title={t('common.reset', 'Скинути')}
+                                    title={t('common.reset', 'Reset')}
                                     className="w-20 h-20 bg-slate-900 border border-slate-800 rounded-[28px] flex items-center justify-center text-slate-500 hover:text-white hover:border-slate-600 transition-all"
                                 >
                                     <RotateCcw size={28} />
@@ -180,7 +180,7 @@ export default function BreathingExercise({
                                 onClick={handleComplete}
                                 className="px-8 h-20 bg-emerald-500/10 border border-emerald-500/30 rounded-[28px] text-emerald-400 font-black text-xs uppercase tracking-widest hover:bg-emerald-500/20 transition-all"
                             >
-                                {t('common.finish', 'Завершити')}
+                                {t('common.finish', 'Finish')}
                             </button>
                         )}
                     </div>
@@ -192,20 +192,20 @@ export default function BreathingExercise({
                             <div className="w-20 h-20 bg-emerald-500/10 rounded-3xl flex items-center justify-center mx-auto mb-8">
                                 <Heart size={40} className="text-emerald-500" />
                             </div>
-                            <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-4">{t('breathing.feeling_title', 'Як ви почуваєтесь?')}</h2>
-                            <p className="text-slate-400 mb-10 leading-relaxed font-medium">{t('breathing.feeling_desc', 'Ви пройшли необхідну кількість циклів. Чи стало вам легше?')}</p>
+                            <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-4">{t('breathing.feeling_title', 'How do you feel?')}</h2>
+                            <p className="text-slate-400 mb-10 leading-relaxed font-medium">{t('breathing.feeling_desc', 'You have completed the required number of cycles. Do you feel better?')}</p>
                             <div className="flex flex-col gap-4">
                                 <button
                                     onClick={handleComplete}
                                     className="w-full bg-emerald-500 hover:bg-emerald-400 text-[#0b0f1a] py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all transform hover:scale-[1.02] shadow-xl shadow-emerald-500/20"
                                 >
-                                    {t('common.yes', 'Так, стало краще')} 🌱
+                                    {t('common.yes', 'Yes, I feel better')} 🌱
                                 </button>
                                 <button
                                     onClick={() => setShowFinishPrompt(false)}
                                     className="w-full border border-slate-700 hover:border-slate-500 text-slate-400 hover:text-white py-5 rounded-2xl font-bold text-sm uppercase tracking-widest transition-all"
                                 >
-                                    Продовжити вправу
+                                    Continue exercise
                                 </button>
                             </div>
                         </div>

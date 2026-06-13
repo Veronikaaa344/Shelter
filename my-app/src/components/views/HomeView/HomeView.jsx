@@ -45,14 +45,14 @@ const HomeView = ({
     const { t } = useTranslation();
     
     const catTranslations = {
-        'anxiety': 'Тривога',
-        'stress': 'Стрес',
-        'apathy': 'Апатія',
-        'depression': 'Депресія',
-        'resilience': 'Стійкість',
-        'general': 'Загальне',
-        'support': 'Підтримка',
-        'sleep': 'Сон'
+        'anxiety': 'Anxiety',
+        'stress': 'Stress',
+        'apathy': 'Apathy',
+        'depression': 'Depression',
+        'resilience': 'Resilience',
+        'general': 'General',
+        'support': 'Support',
+        'sleep': 'Sleep'
     };
 
     const moods = [
@@ -124,8 +124,8 @@ const HomeView = ({
       const colors = ["from-indigo-500 to-indigo-600", "from-violet-500 to-violet-600", "from-fuchsia-500 to-fuchsia-600", "from-cyan-500 to-cyan-600"];
       return {
         id: scenario._id,
-        title: scenario.title || scenario.name || `Тренажер ${i + 1}`,
-        cat: "Симулятор",
+        title: scenario.title || scenario.name || `Simulator ${i + 1}`,
+        cat: "Simulator",
         icon: <Activity/>,
         color: colors[i % colors.length],
         minResilience: scenario.minResilience !== undefined ? scenario.minResilience : 0,
@@ -152,8 +152,8 @@ const HomeView = ({
         return [
             {
                 id: 'hardcoded-sorting-1',
-                title: "Сортування думок",
-                cat: "СОРТУВАННЯ",
+                title: "Thought Sorting",
+                cat: "SORTING",
                 icon: <Grid3X3 />,
                 color: colors[0],
                 onClick: () => {
@@ -163,8 +163,8 @@ const HomeView = ({
             },
             {
                 id: 'hardcoded-sorting-2',
-                title: "Коло контролю",
-                cat: "СОРТУВАННЯ",
+                title: "Circle of Control",
+                cat: "SORTING",
                 icon: <Grid3X3 />,
                 color: colors[1],
                 onClick: () => {
@@ -174,8 +174,8 @@ const HomeView = ({
             },
             {
                 id: 'hardcoded-sorting-3',
-                title: "Звички",
-                cat: "СОРТУВАННЯ",
+                title: "Habits",
+                cat: "SORTING",
                 icon: <Grid3X3 />,
                 color: colors[2],
                 onClick: () => {
@@ -196,7 +196,7 @@ const HomeView = ({
         const burnoutCard = burnoutScenario ? {
             id: burnoutScenario._id || burnoutScenario.id,
             title: burnoutScenario.title || burnoutScenario.name,
-            cat: "ВІДНОВЛЕННЯ",
+            cat: "RECOVERY",
             icon: <MessageCircle />,
             color: "from-indigo-500 to-indigo-600",
             onClick: () => {
@@ -212,7 +212,7 @@ const HomeView = ({
         const impostorCard = impostorScenario ? {
             id: impostorScenario._id || impostorScenario.id,
             title: impostorScenario.title || impostorScenario.name,
-            cat: "ПІДТРИМКА",
+            cat: "SUPPORT",
             icon: <MessageCircle />,
             color: "from-violet-500 to-violet-600",
             onClick: () => {
@@ -223,10 +223,10 @@ const HomeView = ({
 
         if (resilience < 40) {
             const cards = [
-                { title: t('practices.breathing'), cat: "СТАБІЛІЗАЦІЯ", icon: <Wind/>, color: "from-rose-500 to-rose-600", onClick: () => navigateTo('practice') },
-                { title: t('practices.chat'), cat: "СТАБІЛІЗАЦІЯ", icon: <MessageCircle/>, color: "from-blue-500 to-blue-600", onClick: () => navigateTo('chat') },
+                { title: t('practices.breathing'), cat: "STABILIZATION", icon: <Wind/>, color: "from-rose-500 to-rose-600", onClick: () => navigateTo('practice') },
+                { title: t('practices.chat'), cat: "STABILIZATION", icon: <MessageCircle/>, color: "from-blue-500 to-blue-600", onClick: () => navigateTo('chat') },
 
-                { title: "Звуки спокою", cat: "СТАБІЛІЗАЦІЯ", icon: <Activity/>, color: "from-emerald-500 to-emerald-600", onClick: () => navigateTo('library') }
+                { title: "Sounds of Calm", cat: "STABILIZATION", icon: <Activity/>, color: "from-emerald-500 to-emerald-600", onClick: () => navigateTo('library') }
             ];
             if (burnoutCard) cards.push(burnoutCard);
             return [...cards, ...simulatorCards.filter(s => resilience >= (s.minResilience || 0) && resilience <= (s.maxResilience || 100))];

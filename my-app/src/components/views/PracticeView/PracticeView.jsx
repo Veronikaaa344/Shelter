@@ -17,7 +17,7 @@ const PracticeView = ({ userId, navigateTo, onFinish }) => {
         <BreathingExercise 
             onExit={() => navigateTo('home')}
             onFinishSession={handleFinishSession}
-            title="Техніка дихання"
+            title="Breathing Technique"
             showControls={true}
         />
     );

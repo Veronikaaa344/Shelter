@@ -4,9 +4,9 @@ import { Smile, Meh, Frown, BookOpen, Calendar, Trash2 } from 'lucide-react';
 import { api } from '../../../infrastructure/api/api';
 
 const MOOD_CONFIG = [
-    { icon: Smile, color: 'text-emerald-500', bg: 'bg-emerald-500/20', border: 'border-emerald-500', label: 'Добре' },
-    { icon: Meh,   color: 'text-amber-500',   bg: 'bg-amber-500/20',   border: 'border-amber-500',   label: 'Нейтрально' },
-    { icon: Frown, color: 'text-rose-500',     bg: 'bg-rose-500/20',    border: 'border-rose-500',    label: 'Погано' },
+    { icon: Smile, color: 'text-emerald-500', bg: 'bg-emerald-500/20', border: 'border-emerald-500', label: 'Good' },
+    { icon: Meh,   color: 'text-amber-500',   bg: 'bg-amber-500/20',   border: 'border-amber-500',   label: 'Neutral' },
+    { icon: Frown, color: 'text-rose-500',     bg: 'bg-rose-500/20',    border: 'border-rose-500',    label: 'Bad' },
 ];
 
 const DiaryView = ({ userId, onAddEntry }) => {
@@ -62,7 +62,7 @@ const DiaryView = ({ userId, onAddEntry }) => {
                 setSaveMessage(t('diary.note_saved'));
                 setDiaryEntry('');
                 setSelectedMood(null);
-                loadEntries(); 
+                loadEntries();
                 if (onAddEntry) {
                     onAddEntry();
                 }
@@ -212,7 +212,7 @@ const DiaryView = ({ userId, onAddEntry }) => {
                                         </div>
                                     </div>
 
-                                    <button 
+                                    <button
                                         onClick={() => handleDeleteEntry(entry._id)}
                                         className="opacity-0 group-hover:opacity-100 p-2 text-slate-600 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl transition-all duration-300"
                                         title={t('diary.delete')}

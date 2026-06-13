@@ -10,7 +10,7 @@ export default function SosPage() {
     useEffect(() => {
         const userId = localStorage.getItem("userId");
         if (userId) {
-            api.updateResilience(userId, "sos_open", {}, "Сигнал гострої потреби (SOS)").catch(e => console.error(e));
+            api.updateResilience(userId, "sos_open", {}, "Acute Need Signal (SOS)").catch(e => console.error(e));
         }
     }, []);
     

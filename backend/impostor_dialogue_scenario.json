@@ -1,191 +1,463 @@
 {
   "scenarioId": "impostor-dialogue",
-  "name": "Синдром самозванця",
+  "name": "Impostor syndrome",
   "type": "dialogue",
   "category": "apathy",
-  "duration": "5 хв",
+  "duration": "5 min",
   "difficulty": 70,
-  "description": "Тренажер для боротьби з сумнівами у власних силах перед важливою презентацією.",
+  "description": "A trainer for fighting self-doubt before an important presentation.",
   "nodes": {
     "start": {
-      "text": "Завтра презентація перед клієнтом. Впевнений, що все виглядає як дитячий садочок. Мене звільнять.",
+      "text": "Presentation to the client tomorrow. I am sure that everything looks like a kindergarten. I will be fired.",
       "options": [
-        { "text": "Це страшно. Що саме найбільше лякає?", "next": "emp_1", "weight": 15 },
-        { "text": "Садочок? Ти сам робив звіт, він професійний. В чому проблема?", "next": "neu_1", "weight": 5 },
-        { "text": "Знову за своє? Твоя невпевненість дратує.", "next": "bad_1", "weight": -15 },
-        { "text": "Ну, якщо ти так думаєш, то напевно так і є...", "next": "sad_1", "weight": -5 }
+        {
+          "text": "It's scary. What exactly scares the most?",
+          "next": "emp_1",
+          "weight": 15
+        },
+        {
+          "text": "Kindergarten? You made the report yourself, it is professional. What is the problem?",
+          "next": "neu_1",
+          "weight": 5
+        },
+        {
+          "text": "Again for your own? Your insecurity is annoying.",
+          "next": "bad_1",
+          "weight": -15
+        },
+        {
+          "text": "Well, if you think so, it probably is...",
+          "next": "sad_1",
+          "weight": -5
+        }
       ]
     },
     "emp_1": {
-      "text": "Все лякає. Кожна цифра. Здається, не зможу відповісти навіть на просте питання.",
+      "text": "Everything is scary. Each digit. I can't seem to answer even a simple question.",
       "options": [
-        { "text": "Давай пройдемось по найскладнішому разом?", "next": "emp_2", "weight": 20 },
-        { "text": "Підготуй шпаргалку на питання, які боїшся.", "next": "neu_2", "weight": 10 },
-        { "text": "Не можу зараз допомогти. Відпочинь, ти зробив що міг.", "next": "kind_exit", "weight": 0 },
-        { "text": "Не знаєш свій проєкт — звільнення заслужене.", "next": "rude_exit", "weight": -30 }
+        {
+          "text": "Let's go through the most difficult together?",
+          "next": "emp_2",
+          "weight": 20
+        },
+        {
+          "text": "Prepare a cheat sheet for the questions you are afraid of.",
+          "next": "neu_2",
+          "weight": 10
+        },
+        {
+          "text": "I can't help now. Rest, you did what you could.",
+          "next": "kind_exit",
+          "weight": 0
+        },
+        {
+          "text": "You don't know your project - you deserve to be fired.",
+          "next": "rude_exit",
+          "weight": -30
+        }
       ]
     },
     "neu_1": {
-      "text": "Запитають про масштабування, а там костилі. Розкусять за 5 хвилин.",
+      "text": "They ask about scaling, and there are crutches. They will eat in 5 minutes.",
       "options": [
-        { "text": "Архітектура — завжди компроміс. Підготуй аргумент, чому саме так.", "next": "emp_2", "weight": 25 },
-        { "text": "Скажи чесно, що це тимчасове рішення з планом рефакторингу.", "next": "neu_2", "weight": 5 },
-        { "text": "Не в змозі зараз коментувати. Бувай.", "next": "kind_exit", "weight": 0 },
-        { "text": "Сам написав костилі й боїшся? Смішно.", "next": "rude_exit", "weight": -35 }
+        {
+          "text": "Architecture is always a compromise. Prepare an argument why this is so.",
+          "next": "emp_2",
+          "weight": 25
+        },
+        {
+          "text": "Be honest that this is a temporary solution with a refactoring plan.",
+          "next": "neu_2",
+          "weight": 5
+        },
+        {
+          "text": "Unable to comment right now. bye",
+          "next": "kind_exit",
+          "weight": 0
+        },
+        {
+          "text": "Did you write the crutches yourself and are you afraid? Ridiculously.",
+          "next": "rude_exit",
+          "weight": -35
+        }
       ]
     },
     "bad_1": {
-      "text": "Я тобі довірився, а ти знущаєшся! Мене розкусять, і все — кінець.",
+      "text": "I trusted you, and you mock me! I'll be bitten and that's it.",
       "options": [
-        { "text": "Вибач, не те мав на увазі. Що конкретно лякає?", "next": "neu_2", "weight": 10 },
-        { "text": "Кінець через одну презентацію? Перебільшуєш.", "next": "bad_2", "weight": -20 },
-        { "text": "Я перегнув. Поговоримо завтра.", "next": "kind_exit", "weight": -5 },
-        { "text": "Не довіряйся нікому. Справляйся сам.", "next": "rude_exit", "weight": -40 }
+        {
+          "text": "Sorry, that's not what I meant. What specifically scares?",
+          "next": "neu_2",
+          "weight": 10
+        },
+        {
+          "text": "The end after one presentation? You exaggerate.",
+          "next": "bad_2",
+          "weight": -20
+        },
+        {
+          "text": "I overdid it. Let's talk tomorrow.",
+          "next": "kind_exit",
+          "weight": -5
+        },
+        {
+          "text": "Don't trust anyone. Do it yourself.",
+          "next": "rude_exit",
+          "weight": -40
+        }
       ]
     },
     "sad_1": {
-      "text": "Бачиш? Навіть ти вважаєш, що я не справжній спеціаліст. Відмовлюся від виступу.",
+      "text": "do you see Even you think that I am not a real specialist. I will refuse to speak.",
       "options": [
-        { "text": "Стоп, я сказав дурницю. Ти знаєш проєкт найкраще.", "next": "neu_2", "weight": 10 },
-        { "text": "Відмовишся — тебе точно замінять.", "next": "bad_2", "weight": -15 },
-        { "text": "Не те мав на увазі. Обидва втомились. Бувай.", "next": "kind_exit", "weight": 0 },
-        { "text": "Відмовляйся. Хтось інший отримає бонус.", "next": "rude_exit", "weight": -25 }
+        {
+          "text": "Stop, I said something stupid. You know the project best.",
+          "next": "neu_2",
+          "weight": 10
+        },
+        {
+          "text": "If you refuse, you will definitely be replaced.",
+          "next": "bad_2",
+          "weight": -15
+        },
+        {
+          "text": "That's not what I meant. Both were tired. bye",
+          "next": "kind_exit",
+          "weight": 0
+        },
+        {
+          "text": "Refuse. Someone else will get the bonus.",
+          "next": "rude_exit",
+          "weight": -25
+        }
       ]
     },
     "emp_2": {
-      "text": "А якщо почнуть тиснути і висміювати? Я просто заклякну.",
+      "text": "And if they start pressuring and ridiculing? I'll just shout.",
       "options": [
-        { "text": "Маєш право сказати: 'Дякую, ми розглянемо це'.", "next": "emp_3", "weight": 20 },
-        { "text": "Клієнти не вороги. Вони хочуть, щоб проєкт злетів.", "next": "neu_3", "weight": 5 },
-        { "text": "Може й справді краще не виходити на сцену.", "next": "bad_3", "weight": -20 },
-        { "text": "Можливо, вони дійсно будуть злими...", "next": "bad_3", "weight": -10 }
+        {
+          "text": "You have the right to say: 'Thank you, we will look into it.'",
+          "next": "emp_3",
+          "weight": 20
+        },
+        {
+          "text": "Customers are not enemies. They want the project to take off.",
+          "next": "neu_3",
+          "weight": 5
+        },
+        {
+          "text": "Maybe it's really better not to go on stage.",
+          "next": "bad_3",
+          "weight": -20
+        },
+        {
+          "text": "Maybe they really will be evil...",
+          "next": "bad_3",
+          "weight": -10
+        }
       ]
     },
     "neu_2": {
-      "text": "В мене все одно паніка. Відчуваю, що мене бачать наскрізь.",
+      "text": "I still panic. I feel that I am being seen through.",
       "options": [
-        { "text": "Класичний самозванець. Ти знаєш більше, ніж думаєш.", "next": "emp_3", "weight": 15 },
-        { "text": "Ніхто не бачить наскрізь. Всі зайняті своїм.", "next": "neu_3", "weight": 5 },
-        { "text": "Вважаєш себе нікчемним — що мені з цим робити?", "next": "bad_3", "weight": -25 },
-        { "text": "Може й справді помітять щось не те...", "next": "bad_3", "weight": -10 }
+        {
+          "text": "A classic impostor. You know more than you think.",
+          "next": "emp_3",
+          "weight": 15
+        },
+        {
+          "text": "No one sees through. Everyone is busy with their own.",
+          "next": "neu_3",
+          "weight": 5
+        },
+        {
+          "text": "You consider yourself worthless - what should I do about it?",
+          "next": "bad_3",
+          "weight": -25
+        },
+        {
+          "text": "Maybe they will really notice something wrong...",
+          "next": "bad_3",
+          "weight": -10
+        }
       ]
     },
     "bad_2": {
-      "text": "Просто хочу почути: 'Ти впораєшся'. Це так складно?",
+      "text": "I just want to hear: 'You'll make it.' Is it that difficult?",
       "options": [
-        { "text": "Ти впораєшся. Я бачу це по твоїй роботі.", "next": "emp_3", "weight": 15 },
-        { "text": "Залежить від підготовки. Давай по слайдах.", "next": "neu_3", "weight": 10 },
-        { "text": "Нормальні спеціалісти не випрошують компліменти вночі.", "next": "bad_3", "weight": -20 },
-        { "text": "Намагався допомогти, але ти не чуєш.", "next": "bad_3", "weight": -5 }
+        {
+          "text": "You will manage. I can see it in your work.",
+          "next": "emp_3",
+          "weight": 15
+        },
+        {
+          "text": "Depends on the preparation. Let's go through the slides.",
+          "next": "neu_3",
+          "weight": 10
+        },
+        {
+          "text": "Normal specialists do not ask for compliments at night.",
+          "next": "bad_3",
+          "weight": -20
+        },
+        {
+          "text": "Tried to help, but you don't listen.",
+          "next": "bad_3",
+          "weight": -5
+        }
       ]
     },
     "emp_3": {
-      "text": "Може перебільшую. Але голос всередині каже: 'Ти обманщик'.",
+      "text": "Maybe I'm exaggerating. But the voice inside says: 'You are a liar.'",
       "options": [
-        { "text": "Це тривога, не правда. Ти працював місяцями.", "next": "emp_4", "weight": 20 },
-        { "text": "Запиши три речі, які зробив добре. Факти проти паніки.", "next": "neu_4", "weight": 10 },
-        { "text": "Ти сильніший за цей голос. Мені пора, вірю в тебе.", "next": "kind_exit", "weight": 5 },
-        { "text": "Може цей голос знає щось?", "next": "rude_exit", "weight": -25 }
+        {
+          "text": "This is anxiety, not truth. You worked for months.",
+          "next": "emp_4",
+          "weight": 20
+        },
+        {
+          "text": "Write down three things you did well. Facts versus panic.",
+          "next": "neu_4",
+          "weight": 10
+        },
+        {
+          "text": "You are stronger than this voice. It's time for me, I believe in you.",
+          "next": "kind_exit",
+          "weight": 5
+        },
+        {
+          "text": "Maybe this voice knows something?",
+          "next": "rude_exit",
+          "weight": -25
+        }
       ]
     },
     "neu_3": {
-      "text": "Добре, спробую. Але що якщо забуду цифри і зависну?",
+      "text": "OK, I'll try. But what if I forget the numbers and hang up?",
       "options": [
-        { "text": "Тримай нотатки. Жоден спікер не виступає без них.", "next": "emp_4", "weight": 15 },
-        { "text": "Забудеш — скажи 'уточню після зустрічі'. Це нормально.", "next": "neu_4", "weight": 10 },
-        { "text": "Не забудеш. Мені пора, завтра все буде ок.", "next": "kind_exit", "weight": 0 },
-        { "text": "Забудеш цифри свого проєкту — тоді вже нічим не допоможу.", "next": "rude_exit", "weight": -30 }
+        {
+          "text": "Keep notes. No speaker speaks without them.",
+          "next": "emp_4",
+          "weight": 15
+        },
+        {
+          "text": "If you forget, say \"I'll clarify after the meeting.\" This is normal.",
+          "next": "neu_4",
+          "weight": 10
+        },
+        {
+          "text": "You won't forget. It's time for me, tomorrow everything will be ok.",
+          "next": "kind_exit",
+          "weight": 0
+        },
+        {
+          "text": "If you forget the numbers of your project, then I won't be able to help you.",
+          "next": "rude_exit",
+          "weight": -30
+        }
       ]
     },
     "bad_3": {
-      "text": "Все. Напишу, що захворів. Не піду на презентацію.",
+      "text": "All. I will write that I got sick. I will not go to the presentation.",
       "options": [
-        { "text": "Зачекай. Відступиш — страх тільки виросте.", "next": "neu_4", "weight": 10 },
-        { "text": "Тікати — це кінець. Лід зрозуміє, що ти злив.", "next": "bad_4", "weight": -20 },
-        { "text": "Твоє рішення. Подумай на свіжу голову.", "next": "kind_exit", "weight": -5 },
-        { "text": "Відмовляйся. Всім стане ясно, хто ти.", "next": "rude_exit", "weight": -40 }
+        {
+          "text": "Wait. If you retreat, the fear will only grow.",
+          "next": "neu_4",
+          "weight": 10
+        },
+        {
+          "text": "Running away is the end. The ice will understand that you are angry.",
+          "next": "bad_4",
+          "weight": -20
+        },
+        {
+          "text": "Your decision. Think with a fresh head.",
+          "next": "kind_exit",
+          "weight": -5
+        },
+        {
+          "text": "Refuse. Everyone will know who you are.",
+          "next": "rude_exit",
+          "weight": -40
+        }
       ]
     },
     "emp_4": {
-      "text": "Ти правий. Завтра вийду і розкажу те, що знаю.",
+      "text": "You are right. I will come out tomorrow and tell you what I know.",
       "options": [
-        { "text": "Саме так. Просто будь собою.", "next": "emp_5", "weight": 15 },
-        { "text": "Правильно. Виспися.", "next": "neu_5", "weight": 5 },
-        { "text": "Нарешті зрозумів.", "next": "neu_5", "weight": -5 },
-        { "text": "Давно б так, замість панік.", "next": "bad_5", "weight": -15 }
+        {
+          "text": "That's right. Just be yourself.",
+          "next": "emp_5",
+          "weight": 15
+        },
+        {
+          "text": "Right. get some sleep",
+          "next": "neu_5",
+          "weight": 5
+        },
+        {
+          "text": "I finally understood.",
+          "next": "neu_5",
+          "weight": -5
+        },
+        {
+          "text": "It would have been like this, instead of panic.",
+          "next": "bad_5",
+          "weight": -15
+        }
       ]
     },
     "neu_4": {
-      "text": "Добре, перегляну слайди і ляжу раніше.",
+      "text": "OK, I'll go through the slides and go to bed earlier.",
       "options": [
-        { "text": "Ти готовий краще, ніж думаєш. Спокійної ночі!", "next": "emp_5", "weight": 10 },
-        { "text": "Сон — найкращий план. До завтра.", "next": "neu_5", "weight": 5 },
-        { "text": "Без впевненості нічого не вийде.", "next": "bad_5", "weight": -10 },
-        { "text": "Головне — не сиди до ранку.", "next": "neu_5", "weight": -5 }
+        {
+          "text": "You are better prepared than you think. Good night!",
+          "next": "emp_5",
+          "weight": 10
+        },
+        {
+          "text": "Sleep is the best plan. See you tomorrow.",
+          "next": "neu_5",
+          "weight": 5
+        },
+        {
+          "text": "Nothing will work without confidence.",
+          "next": "bad_5",
+          "weight": -10
+        },
+        {
+          "text": "The main thing is not to sit until morning.",
+          "next": "neu_5",
+          "weight": -5
+        }
       ]
     },
     "bad_4": {
-      "text": "Ти не розумієш. Ти ніколи не відчував себе шахраєм на роботі.",
+      "text": "You don't understand. You never felt like a fraud at work.",
       "options": [
-        { "text": "Бачу, як тобі важко. Давай переглянемо слайди?", "next": "emp_5", "weight": 15 },
-        { "text": "Вже пізно. Відклади рішення до ранку.", "next": "neu_5", "weight": 5 },
-        { "text": "Кожен сумнівається. Ти не унікальний.", "next": "bad_5", "weight": -10 },
-        { "text": "Раз не розумію — нема про що говорити.", "next": "bad_5", "weight": -20 }
+        {
+          "text": "I see how difficult it is for you. Let's go through the slides shall we?",
+          "next": "emp_5",
+          "weight": 15
+        },
+        {
+          "text": "It's already late. Postpone the decision until the morning.",
+          "next": "neu_5",
+          "weight": 5
+        },
+        {
+          "text": "Everyone doubts. You are not unique.",
+          "next": "bad_5",
+          "weight": -10
+        },
+        {
+          "text": "Once I don't understand, there's nothing to talk about.",
+          "next": "bad_5",
+          "weight": -20
+        }
       ]
     },
     "emp_5": {
-      "text": "Дякую. Стало спокійніше. Гляну слайди і спати.",
+      "text": "Thank you. It became calmer. I will look at the slides and go to sleep.",
       "options": [
-        { "text": "Впораєшся! Тримаю кулаки. Добраніч!", "next": "good_end", "weight": 20 },
-        { "text": "Побачимося завтра. Спокійної ночі.", "next": "neutral_end", "weight": 5 },
-        { "text": "Давай, іди. Завтра важливий день.", "next": "kind_exit", "weight": 5 },
-        { "text": "Тільки не панікуй знову вночі.", "next": "rude_exit", "weight": -20 }
+        {
+          "text": "You will manage! I keep my fists. Good night!",
+          "next": "good_end",
+          "weight": 20
+        },
+        {
+          "text": "See you tomorrow. Good night.",
+          "next": "neutral_end",
+          "weight": 5
+        },
+        {
+          "text": "Come on, go. Tomorrow is an important day.",
+          "next": "kind_exit",
+          "weight": 5
+        },
+        {
+          "text": "Just don't panic again at night.",
+          "next": "rude_exit",
+          "weight": -20
+        }
       ]
     },
     "neu_5": {
-      "text": "Завтра буде як буде. Йду спати.",
+      "text": "Tomorrow will be as it will be. I'm going to sleep.",
       "options": [
-        { "text": "Все буде добре. Вірю в тебе!", "next": "good_end", "weight": 15 },
-        { "text": "До завтра. Спокійної ночі.", "next": "neutral_end", "weight": 5 },
-        { "text": "Відпочивай. Щасти завтра.", "next": "kind_exit", "weight": 0 },
-        { "text": "Ну й добре. Менше драми.", "next": "rude_exit", "weight": -25 }
+        {
+          "text": "Everything will be fine. I believe in you!",
+          "next": "good_end",
+          "weight": 15
+        },
+        {
+          "text": "See you tomorrow. Good night.",
+          "next": "neutral_end",
+          "weight": 5
+        },
+        {
+          "text": "rest Good luck tomorrow.",
+          "next": "kind_exit",
+          "weight": 0
+        },
+        {
+          "text": "Well, that's good. Less drama.",
+          "next": "rude_exit",
+          "weight": -25
+        }
       ]
     },
     "bad_5": {
-      "text": "Все кину. Зранку подам заяву. Не підхожу для цієї роботи.",
+      "text": "I will throw everything. I will submit an application in the morning. Not suitable for this job.",
       "options": [
-        { "text": "Не приймай рішень уночі. Виспися.", "next": "neutral_end", "weight": 5 },
-        { "text": "Не всім дано витримувати тиск.", "next": "bad_end", "weight": -20 },
-        { "text": "Давай про це завтра. Зараз емоції.", "next": "kind_exit", "weight": -5 },
-        { "text": "Подавай. Одним нитиком менше.", "next": "rude_exit", "weight": -40 }
+        {
+          "text": "Don't make decisions at night. get some sleep",
+          "next": "neutral_end",
+          "weight": 5
+        },
+        {
+          "text": "Not everyone can withstand pressure.",
+          "next": "bad_end",
+          "weight": -20
+        },
+        {
+          "text": "Let's talk about it tomorrow. Emotions now.",
+          "next": "kind_exit",
+          "weight": -5
+        },
+        {
+          "text": "give it One thread less.",
+          "next": "rude_exit",
+          "weight": -40
+        }
       ]
     },
     "good_end": {
-      "text": "Ви допомогли колезі повірити в себе.",
+      "text": "You helped a colleague to believe in himself.",
       "options": [],
       "isFinal": true,
       "score": 100
     },
     "neutral_end": {
-      "text": "Колега заспокоївся, але сумніви залишились.",
+      "text": "The colleague calmed down, but doubts remained.",
       "options": [],
       "isFinal": true,
       "score": 60
     },
     "bad_end": {
-      "text": "Страх переміг. Колега думає про звільнення.",
+      "text": "Fear won. A colleague is thinking about dismissal.",
       "options": [],
       "isFinal": true,
       "score": 10
     },
     "kind_exit": {
-      "text": "Ви делікатно відсторонились без образ.",
+      "text": "You gently withdrew without offense.",
       "options": [],
       "isFinal": true,
       "score": 45
     },
     "rude_exit": {
-      "text": "Ви підтвердили найгірші страхи колеги.",
+      "text": "You confirmed a colleague's worst fears.",
       "options": [],
       "isFinal": true,
       "score": 0

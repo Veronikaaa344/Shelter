@@ -1,191 +1,463 @@
 {
   "scenarioId": "burnout-dialogue",
-  "name": "Протистояння вигоранню",
+  "name": "Resistance to burnout",
   "type": "dialogue",
   "category": "stress",
-  "duration": "5 хв",
+  "duration": "5 min",
   "difficulty": 65,
-  "description": "Тренажер для виявлення ознак професійного виснаження та вибудовування здорових меж у робочому процесі.",
+  "description": "A simulator for identifying signs of professional exhaustion and building healthy boundaries in the work process.",
   "nodes": {
     "start": {
-      "text": "Не можу більше. Три тижні до другої ночі, а тасок менше не стає. Нудить від коду.",
+      "text": "I can't anymore. Three weeks until two o'clock in the morning, and the tusks are not getting any less. Bored with code.",
       "options": [
-        { "text": "Повне виснаження. Що зараз забирає найбільше сил?", "next": "emp_1", "weight": 15 },
-        { "text": "Такий графік — пряма дорога до вигорання. Поговори з менеджером.", "next": "neu_1", "weight": 5 },
-        { "text": "Всі овертаймимо. Твоє ниття демотивує команду.", "next": "bad_1", "weight": -15 },
-        { "text": "Жахливо. Але що поробиш, дотерпи до релізу...", "next": "sad_1", "weight": -5 }
+        {
+          "text": "Complete exhaustion. What is taking the most strength now?",
+          "next": "emp_1",
+          "weight": 15
+        },
+        {
+          "text": "Such a schedule is a direct road to burnout. Talk to the manager.",
+          "next": "neu_1",
+          "weight": 5
+        },
+        {
+          "text": "We will all overtime. Your whining demotivates the team.",
+          "next": "bad_1",
+          "weight": -15
+        },
+        {
+          "text": "Terribly. But whatever you do, wait until the release...",
+          "next": "sad_1",
+          "weight": -5
+        }
       ]
     },
     "emp_1": {
-      "text": "Звітність. ПМ вимагає звіти за кожен крок, це забирає купу часу.",
+      "text": "Reporting. PM requires reports for each step, it takes a lot of time.",
       "options": [
-        { "text": "Допоможу автоматизувати частину. Згоден?", "next": "emp_2", "weight": 20 },
-        { "text": "Заповнюй тільки критичні поля. Заощадиш годину.", "next": "neu_2", "weight": 10 },
-        { "text": "Розумію, але сам завалений. Поспи. Бувай.", "next": "kind_exit", "weight": 0 },
-        { "text": "Звіти — твої обов'язки. Не вмієш планувати — твої проблеми.", "next": "rude_exit", "weight": -30 }
+        {
+          "text": "I will help to automate the part. Do you agree?",
+          "next": "emp_2",
+          "weight": 20
+        },
+        {
+          "text": "Fill only critical fields. You will save an hour.",
+          "next": "neu_2",
+          "weight": 10
+        },
+        {
+          "text": "I understand, but I'm overwhelmed. get some sleep bye",
+          "next": "kind_exit",
+          "weight": 0
+        },
+        {
+          "text": "Reporting is your responsibility. If you don't know how to plan, that's your problem.",
+          "next": "rude_exit",
+          "weight": -30
+        }
       ]
     },
     "neu_1": {
-      "text": "Менеджер каже, все пріоритетне. Не чує мене.",
+      "text": "The manager says everything is a priority. Can't hear me.",
       "options": [
-        { "text": "Давай разом покажемо йому реальні трудовитрати.", "next": "emp_2", "weight": 25 },
-        { "text": "Роби скільки встигаєш за 8 годин і вимикай ноут.", "next": "neu_2", "weight": 5 },
-        { "text": "З менеджерами складно. Сподіваюсь, вирішите. Мені час.", "next": "kind_exit", "weight": 0 },
-        { "text": "Не можеш сказати 'ні' ліду — не скаржся іншим.", "next": "rude_exit", "weight": -35 }
+        {
+          "text": "Let's show him the real labor costs together.",
+          "next": "emp_2",
+          "weight": 25
+        },
+        {
+          "text": "Do as much as you can in 8 hours and turn off the laptop.",
+          "next": "neu_2",
+          "weight": 5
+        },
+        {
+          "text": "Managers are difficult. I hope you will decide. It's time for me.",
+          "next": "kind_exit",
+          "weight": 0
+        },
+        {
+          "text": "You can't say no to ice - don't complain to others.",
+          "next": "rude_exit",
+          "weight": -35
+        }
       ]
     },
     "bad_1": {
-      "text": "Ниття?! Я на межі зриву! Ти б не витримав такий темп!",
+      "text": "Nagging?! I'm on the verge of a breakdown! You wouldn't be able to withstand such a pace!",
       "options": [
-        { "text": "Вибач, різко сказав. Давай разом зменшимо навантаження.", "next": "neu_2", "weight": 10 },
-        { "text": "Працюю не менше, але істерик не влаштовую.", "next": "bad_2", "weight": -20 },
-        { "text": "Обидва роздратовані. Поговоримо пізніше.", "next": "kind_exit", "weight": -5 },
-        { "text": "Не збираюся слухати. Справляйся сам.", "next": "rude_exit", "weight": -40 }
+        {
+          "text": "Sorry, he said sharply. Let's reduce the load together.",
+          "next": "neu_2",
+          "weight": 10
+        },
+        {
+          "text": "I work no less, but I don't like tantrums.",
+          "next": "bad_2",
+          "weight": -20
+        },
+        {
+          "text": "Both are annoyed. Let's talk later.",
+          "next": "kind_exit",
+          "weight": -5
+        },
+        {
+          "text": "I'm not going to listen. Do it yourself.",
+          "next": "rude_exit",
+          "weight": -40
+        }
       ]
     },
     "sad_1": {
-      "text": "Дотерпіти... Відчуваю, що впаду завтра і не піднімуся.",
+      "text": "To endure... I feel that I will fall tomorrow and not get up.",
       "options": [
-        { "text": "Бережи здоров'я. Візьми хоча б день лікарняного.", "next": "neu_2", "weight": 10 },
-        { "text": "Ну, якщо впадеш — принаймні відпочинеш.", "next": "bad_2", "weight": -15 },
-        { "text": "Сумна ситуація. Сподіваюсь, знайдеш вихід. Мені пора.", "next": "kind_exit", "weight": 0 },
-        { "text": "Твоє життя. Роби що хочеш, мені байдуже.", "next": "rude_exit", "weight": -25 }
+        {
+          "text": "Take care of your health. Take at least a day of sick leave.",
+          "next": "neu_2",
+          "weight": 10
+        },
+        {
+          "text": "Well, if you fall, at least you will rest.",
+          "next": "bad_2",
+          "weight": -15
+        },
+        {
+          "text": "Sad situation. I hope you will find a way out. It's time for me.",
+          "next": "kind_exit",
+          "weight": 0
+        },
+        {
+          "text": "your life Do whatever you want, I don't care.",
+          "next": "rude_exit",
+          "weight": -25
+        }
       ]
     },
     "emp_2": {
-      "text": "Логічно. Але боюсь, лід подумає, що я нічого не роблю.",
+      "text": "Logically. But I'm afraid the ice will think I'm not doing anything.",
       "options": [
-        { "text": "Підтверджу ліду, що ти працюєш якісно.", "next": "emp_3", "weight": 15 },
-        { "text": "Завдання закриті в Jira — звіти ніхто не читає.", "next": "neu_3", "weight": 5 },
-        { "text": "Чому тебе хвилює, хто що подумає? Працюй.", "next": "bad_3", "weight": -20 },
-        { "text": "Можливо й так... пиши звіти далі.", "next": "bad_3", "weight": -10 }
+        {
+          "text": "I will confirm that you work well.",
+          "next": "emp_3",
+          "weight": 15
+        },
+        {
+          "text": "Tasks are closed in Jira - no one reads the reports.",
+          "next": "neu_3",
+          "weight": 5
+        },
+        {
+          "text": "Why do you care who will think what? work",
+          "next": "bad_3",
+          "weight": -20
+        },
+        {
+          "text": "Maybe so... keep writing reports.",
+          "next": "bad_3",
+          "weight": -10
+        }
       ]
     },
     "neu_2": {
-      "text": "Спробую. Але якщо реліз затримається — крайнім зроблять мене.",
+      "text": "I will try But if the release is delayed, they will make me the worst.",
       "options": [
-        { "text": "Ми команда. Якщо що — захищу тебе перед лідом.", "next": "emp_3", "weight": 15 },
-        { "text": "Зафіксуй ризики в чаті заздалегідь.", "next": "neu_3", "weight": 5 },
-        { "text": "Боїшся відповідальності — міняй професію.", "next": "bad_3", "weight": -25 },
-        { "text": "Когось завжди роблять крайнім... готуйся.", "next": "bad_3", "weight": -10 }
+        {
+          "text": "We are a team. If anything, I will protect you from the ice.",
+          "next": "emp_3",
+          "weight": 15
+        },
+        {
+          "text": "Fix the risks in the chat in advance.",
+          "next": "neu_3",
+          "weight": 5
+        },
+        {
+          "text": "If you are afraid of responsibility, change your profession.",
+          "next": "bad_3",
+          "weight": -25
+        },
+        {
+          "text": "Someone is always made the extreme... get ready.",
+          "next": "bad_3",
+          "weight": -10
+        }
       ]
     },
     "bad_2": {
-      "text": "Я прошу допомоги, а у відповідь — байдужість і глузування!",
+      "text": "I ask for help, and in response - indifference and mockery!",
       "options": [
-        { "text": "Шкода. Давай забудемо суперечку і зменшимо тиск.", "next": "emp_3", "weight": 15 },
-        { "text": "Без звинувачень. Які завдання горять?", "next": "neu_3", "weight": 10 },
-        { "text": "Емпатія не закриє дедлайни. Досить.", "next": "bad_3", "weight": -20 },
-        { "text": "Намагався допомогти, але лише заважаю.", "next": "bad_3", "weight": -5 }
+        {
+          "text": "Damage. Let's forget the argument and reduce the pressure.",
+          "next": "emp_3",
+          "weight": 15
+        },
+        {
+          "text": "No accusations. What tasks are burning?",
+          "next": "neu_3",
+          "weight": 10
+        },
+        {
+          "text": "Empathy won't close deadlines. Enough.",
+          "next": "bad_3",
+          "weight": -20
+        },
+        {
+          "text": "I tried to help, but I only hindered.",
+          "next": "bad_3",
+          "weight": -5
+        }
       ]
     },
     "emp_3": {
-      "text": "Дякую, стало легше. Але все одно почуваюсь вичавленим.",
+      "text": "Thank you, it became easier. But I still feel squeezed.",
       "options": [
-        { "text": "Нормально після такого марафону. Виспися.", "next": "emp_4", "weight": 20 },
-        { "text": "Відпочинь на вихідних, вимкни сповіщення.", "next": "neu_4", "weight": 10 },
-        { "text": "Розумію. Мені теж пора. Тобі раджу відпочити.", "next": "kind_exit", "weight": 5 },
-        { "text": "Співчуттям сил не повернути. Іди працюй.", "next": "rude_exit", "weight": -25 }
+        {
+          "text": "Normal after such a marathon. get some sleep",
+          "next": "emp_4",
+          "weight": 20
+        },
+        {
+          "text": "Relax on the weekend, turn off notifications.",
+          "next": "neu_4",
+          "weight": 10
+        },
+        {
+          "text": "I understand. It's time for me too. I advise you to rest.",
+          "next": "kind_exit",
+          "weight": 5
+        },
+        {
+          "text": "Compassion cannot restore strength. go work",
+          "next": "rude_exit",
+          "weight": -25
+        }
       ]
     },
     "neu_3": {
-      "text": "Може й так. Спробую зафіксувати ризики і поставити менеджера перед фактом.",
+      "text": "Maybe so. I will try to record the risks and put the manager in front of the fact.",
       "options": [
-        { "text": "Правильний крок. Тепер відпочинь.", "next": "emp_4", "weight": 15 },
-        { "text": "Зафіксуй і вимикай ноут. Решта почекає.", "next": "neu_4", "weight": 10 },
-        { "text": "Вирішено. Виходжу з мережі. До понеділка.", "next": "kind_exit", "weight": 0 },
-        { "text": "Зафіксував і задоволений? Ну-ну.", "next": "rude_exit", "weight": -30 }
+        {
+          "text": "The right step. Now rest.",
+          "next": "emp_4",
+          "weight": 15
+        },
+        {
+          "text": "Lock and turn off the laptop. The rest will wait.",
+          "next": "neu_4",
+          "weight": 10
+        },
+        {
+          "text": "It has been resolved. I am leaving the network. Until Monday.",
+          "next": "kind_exit",
+          "weight": 0
+        },
+        {
+          "text": "Fixed and satisfied? Well, well.",
+          "next": "rude_exit",
+          "weight": -30
+        }
       ]
     },
     "bad_3": {
-      "text": "Забудь. Нікому немає діла. Буду пахати, поки не впаду.",
+      "text": "forget it No one cares. I will plow until I drop.",
       "options": [
-        { "text": "Мені є діло. Давай переглянемо список тасок.", "next": "neu_4", "weight": 10 },
-        { "text": "Працюй. Але коли зляжеш — не звинувачуй інших.", "next": "bad_4", "weight": -20 },
-        { "text": "Ти зараз не в стані думати. Поспи.", "next": "kind_exit", "weight": -5 },
-        { "text": "Як хочеш. Не моя проблема.", "next": "rude_exit", "weight": -40 }
+        {
+          "text": "I have business. Let's look at the list of tusks.",
+          "next": "neu_4",
+          "weight": 10
+        },
+        {
+          "text": "work But when you get laid, don't blame others.",
+          "next": "bad_4",
+          "weight": -20
+        },
+        {
+          "text": "You can't think right now. get some sleep",
+          "next": "kind_exit",
+          "weight": -5
+        },
+        {
+          "text": "As you wish Not my problem.",
+          "next": "rude_exit",
+          "weight": -40
+        }
       ]
     },
     "emp_4": {
-      "text": "Спробую закрити ноут прямо зараз. Дякую.",
+      "text": "I will try to close the laptop right now. Thank you.",
       "options": [
-        { "text": "Чудово! Гарного сну!", "next": "emp_5", "weight": 15 },
-        { "text": "Давай. Відпочинь як слід.", "next": "neu_5", "weight": 5 },
-        { "text": "Нарешті домовилися...", "next": "neu_5", "weight": -5 },
-        { "text": "Давно б так, замість ниття.", "next": "bad_5", "weight": -15 }
+        {
+          "text": "Perfectly! Have a good sleep!",
+          "next": "emp_5",
+          "weight": 15
+        },
+        {
+          "text": "come on Rest properly.",
+          "next": "neu_5",
+          "weight": 5
+        },
+        {
+          "text": "Finally agreed...",
+          "next": "neu_5",
+          "weight": -5
+        },
+        {
+          "text": "It would have been like this, instead of whining.",
+          "next": "bad_5",
+          "weight": -15
+        }
       ]
     },
     "neu_4": {
-      "text": "Добре, ти правий. Вимикаю ноут і лягаю. Побачимо в понеділок.",
+      "text": "OK, you're right. I turn off the laptop and go to bed. See you on Monday.",
       "options": [
-        { "text": "Правильно. Спокійних вихідних!", "next": "emp_5", "weight": 10 },
-        { "text": "Побачимося в понеділок.", "next": "neu_5", "weight": 5 },
-        { "text": "Роботу зроблено. Всього доброго.", "next": "bad_5", "weight": -10 },
-        { "text": "Зробив і добре, менше проблем...", "next": "neu_5", "weight": -5 }
+        {
+          "text": "Right. Have a peaceful weekend!",
+          "next": "emp_5",
+          "weight": 10
+        },
+        {
+          "text": "See you on Monday.",
+          "next": "neu_5",
+          "weight": 5
+        },
+        {
+          "text": "The work is done. All the best.",
+          "next": "bad_5",
+          "weight": -10
+        },
+        {
+          "text": "I did it and it's good, less problems...",
+          "next": "neu_5",
+          "weight": -5
+        }
       ]
     },
     "bad_4": {
-      "text": "Ти егоїст. Шкодую, що звернувся.",
+      "text": "You are selfish. I'm sorry for reaching out.",
       "options": [
-        { "text": "Пробач, нерви. Давай подивимось, що зняти з тебе.", "next": "emp_5", "weight": 15 },
-        { "text": "Залишимо образи. Тобі треба відпочити.", "next": "neu_5", "weight": 5 },
-        { "text": "Чому спроба поговорити робить мене егоїстом?", "next": "bad_5", "weight": -10 },
-        { "text": "Шкодуй скільки хочеш. Начхати.", "next": "bad_5", "weight": -20 }
+        {
+          "text": "Sorry, nerves. Let's see what we can get out of you.",
+          "next": "emp_5",
+          "weight": 15
+        },
+        {
+          "text": "Let's leave the insults. You need to rest.",
+          "next": "neu_5",
+          "weight": 5
+        },
+        {
+          "text": "Why does trying to talk make me selfish?",
+          "next": "bad_5",
+          "weight": -10
+        },
+        {
+          "text": "Sorry as much as you want. Sneeze.",
+          "next": "bad_5",
+          "weight": -20
+        }
       ]
     },
     "emp_5": {
-      "text": "Ноут вимкнув. Відчуваю полегшення. Дякую.",
+      "text": "The laptop turned off. I feel relief. Thank you.",
       "options": [
-        { "text": "Радий! Гарних вихідних!", "next": "good_end", "weight": 20 },
-        { "text": "Чудово. До понеділка.", "next": "neutral_end", "weight": 5 },
-        { "text": "Закрив чат. Бувай!", "next": "kind_exit", "weight": 5 },
-        { "text": "Сподіваюсь, більше не будеш скиглити.", "next": "rude_exit", "weight": -20 }
+        {
+          "text": "Glad! Have a nice weekend!",
+          "next": "good_end",
+          "weight": 20
+        },
+        {
+          "text": "Perfectly. Until Monday.",
+          "next": "neutral_end",
+          "weight": 5
+        },
+        {
+          "text": "Closed the chat. Bye!",
+          "next": "kind_exit",
+          "weight": 5
+        },
+        {
+          "text": "I hope you won't whine anymore.",
+          "next": "rude_exit",
+          "weight": -20
+        }
       ]
     },
     "neu_5": {
-      "text": "Я оффлайн. Сподіваюся, висплюся.",
+      "text": "I am offline. I hope I get some sleep.",
       "options": [
-        { "text": "Обов'язково. Гарного відпочинку!", "next": "good_end", "weight": 15 },
-        { "text": "До зустрічі.", "next": "neutral_end", "weight": 5 },
-        { "text": "Щасти. Відключаюсь.", "next": "kind_exit", "weight": 0 },
-        { "text": "Нарешті. Менше спаму.", "next": "rude_exit", "weight": -25 }
+        {
+          "text": "Necessarily. Have a nice rest!",
+          "next": "good_end",
+          "weight": 15
+        },
+        {
+          "text": "See you soon.",
+          "next": "neutral_end",
+          "weight": 5
+        },
+        {
+          "text": "Good luck Disconnecting",
+          "next": "kind_exit",
+          "weight": 0
+        },
+        {
+          "text": "Finally. Less spam.",
+          "next": "rude_exit",
+          "weight": -25
+        }
       ]
     },
     "bad_5": {
-      "text": "Все, я вийшов. Більше не пиши.",
+      "text": "That's it, I'm out. Don't write anymore.",
       "options": [
-        { "text": "Добре, відпочивай. В понеділок.", "next": "neutral_end", "weight": 0 },
-        { "text": "З радістю. Менше скарг.", "next": "bad_end", "weight": -20 },
-        { "text": "Усім треба охолонути.", "next": "kind_exit", "weight": -5 },
-        { "text": "Зникни взагалі.", "next": "rude_exit", "weight": -40 }
+        {
+          "text": "OK, rest. On Monday.",
+          "next": "neutral_end",
+          "weight": 0
+        },
+        {
+          "text": "With pleasure. Fewer complaints.",
+          "next": "bad_end",
+          "weight": -20
+        },
+        {
+          "text": "Everyone needs to cool down.",
+          "next": "kind_exit",
+          "weight": -5
+        },
+        {
+          "text": "Disappear altogether.",
+          "next": "rude_exit",
+          "weight": -40
+        }
       ]
     },
     "good_end": {
-      "text": "Ви допомогли колезі розпізнати вигорання і зберегти здоров'я.",
+      "text": "You helped a colleague recognize burnout and maintain health.",
       "options": [],
       "isFinal": true,
       "score": 100
     },
     "neutral_end": {
-      "text": "Колега відпочив, але осад від розмови залишився.",
+      "text": "The colleague rested, but the sediment from the conversation remained.",
       "options": [],
       "isFinal": true,
       "score": 60
     },
     "bad_end": {
-      "text": "Контакт втрачено. Колега працює на межі виснаження.",
+      "text": "Contact lost. A colleague is working on the verge of exhaustion.",
       "options": [],
       "isFinal": true,
       "score": 10
     },
     "kind_exit": {
-      "text": "Ви дистанціювалися від чужого вигорання, зберігши сили.",
+      "text": "You distanced yourself from someone else's burnout, saving your strength.",
       "options": [],
       "isFinal": true,
       "score": 45
     },
     "rude_exit": {
-      "text": "Ви обірвали розмову, посиливши безпорадність колеги.",
+      "text": "You interrupted the conversation, increasing the helplessness of your colleague.",
       "options": [],
       "isFinal": true,
       "score": 0

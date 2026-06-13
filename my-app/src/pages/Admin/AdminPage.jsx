@@ -22,7 +22,7 @@ export default function AdminPage() {
                         onClick={() => setActiveTab("content")}
                     >
                         <span className="dr-nav-icon">📚</span>
-                        <span className="dr-nav-label">Бібліотека</span>
+                        <span className="dr-nav-label">Library</span>
                     </button>
 
                     <button
@@ -30,14 +30,14 @@ export default function AdminPage() {
                         onClick={() => setActiveTab("scenarios")}
                     >
                         <span className="dr-nav-icon">🎮</span>
-                        <span className="dr-nav-label">Тренажери</span>
+                        <span className="dr-nav-label">Simulators</span>
                     </button>
                 </nav>
 
                 <div className="dr-sidebar-footer">
                     <button className="dr-admin-exit" onClick={() => navigate("/main")}>
                         <span className="dr-exit-icon">🚪</span>
-                        <span className="dr-exit-label">Вихід</span>
+                        <span className="dr-exit-label">Exit</span>
                     </button>
                 </div>
             </aside>

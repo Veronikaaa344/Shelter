@@ -3,15 +3,15 @@ import { Sparkles, AlertCircle, BookOpen, ChevronLeft, Target, BarChart3, Flame,
 
 
 function getSeverity(weight) {
-    if (weight <= -30) return { label: 'Критична помилка', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30', icon: '🔴' };
-    if (weight <= -15) return { label: 'Серйозна помилка', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/30', icon: '🟠' };
-    return { label: 'Незначна помилка', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/30', icon: '🟡' };
+    if (weight <= -30) return { label: 'Critical mistake', color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/30', icon: '🔴' };
+    if (weight <= -15) return { label: 'Serious mistake', color: 'text-rose-500', bg: 'bg-rose-500/10', border: 'border-rose-500/30', icon: '🟠' };
+    return { label: 'Minor mistake', color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/30', icon: '🟡' };
 }
 
 function getOptionTag(weight) {
-    if (weight > 0) return { label: 'Емпатія', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' };
-    if (weight < 0) return { label: 'Агресія', color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/20' };
-    return { label: 'Нейтрально', color: 'text-slate-400', bg: 'bg-slate-500/10 border-slate-500/20' };
+    if (weight > 0) return { label: 'Empathy', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/20' };
+    if (weight < 0) return { label: 'Aggression', color: 'text-rose-400', bg: 'bg-rose-500/10 border-rose-500/20' };
+    return { label: 'Neutral', color: 'text-slate-400', bg: 'bg-slate-500/10 border-slate-500/20' };
 }
 
 export default function MistakesAnalysis({ data, onBack }) {
@@ -22,8 +22,8 @@ export default function MistakesAnalysis({ data, onBack }) {
         return (
             <div className="flex flex-col items-center justify-center h-full text-slate-400 p-6">
                 <AlertCircle size={48} className="mb-4 opacity-50" />
-                <p className="font-bold uppercase tracking-widest text-xs">Немає даних для аналізу помилок.</p>
-                <button onClick={onBack} className="mt-6 bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest">Повернутися</button>
+                <p className="font-bold uppercase tracking-widest text-xs">No data for mistakes analysis.</p>
+                <button onClick={onBack} className="mt-6 bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-black text-xs uppercase tracking-widest">Return</button>
             </div>
         );
     }
@@ -75,13 +75,13 @@ export default function MistakesAnalysis({ data, onBack }) {
                 <div className="flex-1 min-w-0">
                     <h2 className="text-lg font-black text-white flex items-center gap-2 uppercase italic tracking-tighter">
                         <BookOpen className="text-amber-500 shrink-0" size={20} />
-                        Розширений аналіз
+                        Advanced Analysis
                     </h2>
                     <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold truncate">{scenario.name}</p>
                 </div>
                 <div className="shrink-0 text-right">
                     <div className="text-2xl font-black text-white">{positiveRate}%</div>
-                    <div className="text-[9px] uppercase tracking-widest text-slate-500 font-black">Емпатія</div>
+                    <div className="text-[9px] uppercase tracking-widest text-slate-500 font-black">Empathy</div>
                 </div>
             </div>
 
@@ -92,15 +92,15 @@ export default function MistakesAnalysis({ data, onBack }) {
                     <div className="grid grid-cols-3 gap-3">
                         <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-2xl p-4 text-center">
                             <div className="text-2xl font-black text-emerald-400">{positives.length}</div>
-                            <div className="text-[9px] uppercase tracking-widest text-emerald-500/70 font-black mt-1">Правильних</div>
+                            <div className="text-[9px] uppercase tracking-widest text-emerald-500/70 font-black mt-1">Correct</div>
                         </div>
                         <div className="bg-rose-500/5 border border-rose-500/20 rounded-2xl p-4 text-center">
                             <div className="text-2xl font-black text-rose-400">{mistakes.length}</div>
-                            <div className="text-[9px] uppercase tracking-widest text-rose-500/70 font-black mt-1">Помилок</div>
+                            <div className="text-[9px] uppercase tracking-widest text-rose-500/70 font-black mt-1">Mistakes</div>
                         </div>
                         <div className="bg-slate-500/5 border border-slate-700 rounded-2xl p-4 text-center">
                             <div className="text-2xl font-black text-slate-300">{neutrals.length}</div>
-                            <div className="text-[9px] uppercase tracking-widest text-slate-500 font-black mt-1">Нейтральних</div>
+                            <div className="text-[9px] uppercase tracking-widest text-slate-500 font-black mt-1">Neutral</div>
                         </div>
                     </div>
 
@@ -109,8 +109,8 @@ export default function MistakesAnalysis({ data, onBack }) {
                             <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mb-5">
                                 <Sparkles size={32} />
                             </div>
-                            <h3 className="text-xl font-black text-white italic uppercase tracking-tighter mb-2">Ідеальне проходження!</h3>
-                            <p className="text-slate-400 max-w-sm text-xs uppercase tracking-widest font-bold leading-relaxed">У вашій розмові не було агресивних або конфліктних відповідей.</p>
+                            <h3 className="text-xl font-black text-white italic uppercase tracking-tighter mb-2">Perfect run!</h3>
+                            <p className="text-slate-400 max-w-sm text-xs uppercase tracking-widest font-bold leading-relaxed">There were no aggressive or conflicting responses in your conversation.</p>
                         </div>
                     ) : (
                         <>
@@ -119,9 +119,9 @@ export default function MistakesAnalysis({ data, onBack }) {
                                 <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-4 flex gap-3 items-start shadow-lg shadow-red-500/5">
                                     <Flame size={20} className="text-red-400 shrink-0 mt-0.5" />
                                     <div>
-                                        <div className="text-[10px] font-black uppercase tracking-widest text-red-400 mb-1">Ваша найкритичніша помилка</div>
+                                        <div className="text-[10px] font-black uppercase tracking-widest text-red-400 mb-1">Your most critical mistake</div>
                                         <p className="text-slate-300 text-xs font-semibold">"{mostCritical.chosenOption.text}"</p>
-                                        <p className="text-slate-500 text-[10px] mt-1">Ця відповідь завдала найбільшої шкоди діалогу ({mostCritical.chosenOption.weight} балів)</p>
+                                        <p className="text-slate-500 text-[10px] mt-1">This response caused the most damage to the dialogue ({mostCritical.chosenOption.weight} points)</p>
                                     </div>
                                 </div>
                             )}
@@ -130,7 +130,7 @@ export default function MistakesAnalysis({ data, onBack }) {
                             <div className="space-y-4">
                                 <div className="text-[10px] uppercase font-black text-slate-500 tracking-widest flex items-center gap-2">
                                     <Target size={12} />
-                                    Аналіз ваших хибних кроків
+                                    Analysis of your missteps
                                 </div>
 
                                 {mistakes.map((mistake, index) => {
@@ -150,10 +150,10 @@ export default function MistakesAnalysis({ data, onBack }) {
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <div className={`text-[9px] uppercase font-black tracking-widest mb-1 ${severity.color}`}>
-                                                        {severity.icon} {severity.label} · {mistake.chosenOption.weight} балів
+                                                        {severity.icon} {severity.label} · {mistake.chosenOption.weight} points
                                                     </div>
                                                     <p className="text-slate-300 text-sm font-semibold truncate">"{mistake.chosenOption.text}"</p>
-                                                    <p className="text-slate-500 text-[10px] mt-1 truncate">Співрозмовник: "{botPhrase}"</p>
+                                                    <p className="text-slate-500 text-[10px] mt-1 truncate">Companion: "{botPhrase}"</p>
                                                 </div>
                                                 <div className={`text-slate-400 transition-transform duration-300 shrink-0 ${isExpanded ? 'rotate-180' : ''}`}>
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
@@ -163,14 +163,14 @@ export default function MistakesAnalysis({ data, onBack }) {
                                             {isExpanded && (
                                                 <div className="px-5 pb-5 space-y-4 border-t border-slate-800/50 pt-4 animate-in slide-in-from-top-2 duration-200">
                                                     <div>
-                                                        <div className="text-[9px] uppercase font-black text-slate-500 tracking-widest mb-2">Що сказав співрозмовник</div>
+                                                        <div className="text-[9px] uppercase font-black text-slate-500 tracking-widest mb-2">What the companion said</div>
                                                         <p className="text-slate-200 bg-[#0b0f1a] px-4 py-3 rounded-xl border border-slate-800 text-sm leading-relaxed">
                                                             "{botPhrase}"
                                                         </p>
                                                     </div>
 
                                                     <div>
-                                                        <div className="text-[9px] uppercase font-black text-slate-500 tracking-widest mb-2">Всі варіанти відповіді</div>
+                                                        <div className="text-[9px] uppercase font-black text-slate-500 tracking-widest mb-2">All answer options</div>
                                                         <div className="space-y-2">
                                                             {mistake.availableOptions.map((opt, i) => {
                                                                 const tag = getOptionTag(opt.weight || 0);
@@ -203,8 +203,8 @@ export default function MistakesAnalysis({ data, onBack }) {
                                                         <ShieldCheck size={16} className="text-blue-400 shrink-0 mt-0.5" />
                                                         <p className="text-blue-300/80 text-[11px] font-semibold leading-relaxed">
                                                             {(mistake.chosenOption.weight || 0) <= -20
-                                                                ? 'Ця відповідь може зруйнувати довіру. Краще спершу визнати почуття людини.'
-                                                                : 'Ця відповідь відштовхує. Спробуйте показати підтримку.'}
+                                                                ? 'This response can destroy trust. It is better to acknowledge the person\'s feelings first.'
+                                                                : 'This response pushes away. Try to show support.'}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -216,15 +216,14 @@ export default function MistakesAnalysis({ data, onBack }) {
                         </>
                     )}
 
-                    {/* Other Traps Section (The user's specific request) */}
                     {sampleTraps.length > 0 && (
                         <div className="space-y-4 mt-8 pt-8 border-t border-slate-800/50">
                             <div className="text-[10px] uppercase font-black text-amber-500 tracking-widest flex items-center gap-2">
                                 <AlertTriangle size={12} />
-                                Інші пастки у цьому чаті (яких ви уникнули)
+                                Other traps in this chat (that you avoided)
                             </div>
                             <p className="text-xs text-slate-400 mb-4 font-medium leading-relaxed">
-                                У цьому сценарії були й інші гілки розмови, куди ви не потрапили. Ось приклади критичних помилок, які можна було зробити в інших ситуаціях цього ж чату.
+                                There were other conversation branches in this scenario that you didn't reach. Here are examples of critical mistakes you could have made in other situations of this same chat.
                             </p>
 
                             {sampleTraps.map((trap, index) => {
@@ -239,10 +238,10 @@ export default function MistakesAnalysis({ data, onBack }) {
                                         >
                                             <div className="flex-1 min-w-0">
                                                 <div className={`text-[9px] uppercase font-black tracking-widest mb-1 text-amber-500`}>
-                                                    Прихована пастка · {trap.badOption.weight} балів
+                                                    Hidden trap · {trap.badOption.weight} points
                                                 </div>
                                                 <p className="text-slate-300 text-sm font-semibold truncate">"{trap.badOption.text}"</p>
-                                                <p className="text-slate-500 text-[10px] mt-1 truncate">Співрозмовник: "{trap.botPhrase}"</p>
+                                                <p className="text-slate-500 text-[10px] mt-1 truncate">Companion: "{trap.botPhrase}"</p>
                                             </div>
                                             <div className={`text-amber-500 transition-transform duration-300 shrink-0 ${isExpanded ? 'rotate-180' : ''}`}>
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
@@ -252,7 +251,7 @@ export default function MistakesAnalysis({ data, onBack }) {
                                         {isExpanded && (
                                             <div className="px-5 pb-5 space-y-4 border-t border-amber-500/10 pt-4 animate-in slide-in-from-top-2 duration-200">
                                                 <div>
-                                                    <div className="text-[9px] uppercase font-black text-amber-500/60 tracking-widest mb-2">Можлива ситуація</div>
+                                                    <div className="text-[9px] uppercase font-black text-amber-500/60 tracking-widest mb-2">Possible situation</div>
                                                     <p className="text-slate-200 bg-[#0b0f1a] px-4 py-3 rounded-xl border border-amber-500/10 text-sm leading-relaxed">
                                                         "{trap.botPhrase}"
                                                     </p>
@@ -261,13 +260,13 @@ export default function MistakesAnalysis({ data, onBack }) {
                                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                                                     <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4">
                                                         <div className="text-[9px] uppercase font-black text-rose-400 tracking-widest mb-2 flex items-center gap-2">
-                                                            ❌ Погана відповідь
+                                                            ❌ Bad response
                                                         </div>
                                                         <p className="text-slate-300 text-sm">{trap.badOption.text}</p>
                                                     </div>
                                                     <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-4">
                                                         <div className="text-[9px] uppercase font-black text-emerald-400 tracking-widest mb-2 flex items-center gap-2">
-                                                            ✅ Як треба було відповісти
+                                                            ✅ How you should have answered
                                                         </div>
                                                         <p className="text-slate-300 text-sm">{trap.bestOption.text}</p>
                                                     </div>
@@ -284,29 +283,29 @@ export default function MistakesAnalysis({ data, onBack }) {
                     <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
                         <div className="text-[10px] uppercase font-black text-slate-500 tracking-widest mb-3 flex items-center gap-2">
                             <BarChart3 size={12} />
-                            Загальний підсумок
+                            Overall summary
                         </div>
                         <div className="space-y-2">
                             <div className="flex justify-between items-center text-xs">
-                                <span className="text-slate-400 font-semibold">Втрачено балів через помилки</span>
+                                <span className="text-slate-400 font-semibold">Points lost due to mistakes</span>
                                 <span className="text-rose-400 font-black">−{totalWeightLost}</span>
                             </div>
                             <div className="flex justify-between items-center text-xs">
-                                <span className="text-slate-400 font-semibold">Частка емпатичних відповідей</span>
+                                <span className="text-slate-400 font-semibold">Share of empathetic responses</span>
                                 <span className={`font-black ${positiveRate >= 50 ? 'text-emerald-400' : 'text-amber-400'}`}>{positiveRate}%</span>
                             </div>
                             <div className="flex justify-between items-center text-xs">
-                                <span className="text-slate-400 font-semibold">Кроків у діалозі</span>
+                                <span className="text-slate-400 font-semibold">Steps in dialogue</span>
                                 <span className="text-slate-300 font-black">{totalSteps}</span>
                             </div>
                         </div>
                         <div className="mt-4 pt-4 border-t border-slate-800">
                             <p className="text-xs text-slate-400 leading-relaxed">
                                 {positiveRate >= 60
-                                    ? '💪 Ви показали хорошу емпатію у більшості моментів. Попрацюйте над кількома ключовими відповідями.'
+                                    ? '💪 You showed good empathy in most moments. Work on a few key responses.'
                                     : positiveRate >= 30
-                                    ? '📚 Є що покращити. Зверніть увагу на моменти, де ви обирали агресивні відповіді замість підтримки.'
-                                    : '🔄 Спробуйте пройти діалог знову, фокусуючись на тому, щоб спочатку визнати почуття співрозмовника.'}
+                                    ? '📚 There is room for improvement. Pay attention to the moments where you chose aggressive responses instead of support.'
+                                    : '🔄 Try to go through the dialogue again, focusing on acknowledging the companion\'s feelings first.'}
                             </p>
                         </div>
                     </div>
@@ -317,7 +316,7 @@ export default function MistakesAnalysis({ data, onBack }) {
                             onClick={onBack}
                             className="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-black uppercase text-[10px] tracking-widest py-4 rounded-2xl transition-all"
                         >
-                            Завершити аналіз
+                            Finish analysis
                         </button>
                     </div>
                 </div>

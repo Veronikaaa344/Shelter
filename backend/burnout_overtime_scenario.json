@@ -1,167 +1,167 @@
 {
   "scenarioId": "burnout-overtime",
-  "name": "Вигорання: Овертайми та дедлайни",
+  "name": "Burnout: Overtime and deadlines",
   "type": "dialogue",
   "category": "stress",
-  "duration": "5 хв",
+  "duration": "5 min",
   "difficulty": 80,
-  "description": "Симулятор розмови з керівником в умовах жорстких дедлайнів. Вчіться асертивно захищати власні кордони, домовлятися про компроміси та запобігати професійному вигоранню.",
+  "description": "A simulator of a conversation with a manager under strict deadlines. Learn to assertively defend your own boundaries, negotiate compromises and prevent professional burnout.",
   "nodes": {
     "start": {
-      "text": "Я подивився твої звіти за останній тиждень.  Показники впали, та й загалом твоя залученість у проєкт зараз мінімальна.",
+      "text": "I looked at your reports for the last week.  The indicators have fallen, and in general, your involvement in the project is now minimal.",
       "options": [
         {
-          "text": "Ви знущаєтесь?",
+          "text": "are you being bullied",
           "next": "boss_confrontation",
           "weight": -20
         },
         {
-          "text": "Я розумію, що проєкт зараз у...",
+          "text": "I understand that the project is currently in...",
           "next": "constructive_negotiation",
           "weight": 20
         },
         {
-          "text": "Знаєте що?",
+          "text": "You know what?",
           "next": "exit_burnout_1",
           "weight": -50
         }
       ]
     },
     "boss_confrontation": {
-      "text": "Тобі одному важко?  Ми всі працюємо в такому ритмі!",
+      "text": "Is it difficult for you alone?  We all work in this rhythm!",
       "options": [
         {
-          "text": "Якщо робота в компанії означає повне...",
+          "text": "If working in the company means full...",
           "next": "exit_burnout_2",
           "weight": -30
         },
         {
-          "text": "Я розумію, що від моєї відмови...",
+          "text": "I understand that my refusal...",
           "next": "boss_transit",
           "weight": 30
         },
         {
-          "text": "Я розумію вашу позицію, але звинувачення...",
+          "text": "I understand your position, but the accusations…",
           "next": "assertive_boundary",
           "weight": 15
         }
       ]
     },
     "assertive_boundary": {
-      "text": "Природна реакція?  Я розумію.",
+      "text": "A natural reaction?  I understand.",
       "options": [
         {
-          "text": "Давайте подивимося, які завдання дійсно критичні.",
+          "text": "Let's see which tasks are really critical.",
           "next": "boss_transit",
           "weight": 25
         },
         {
-          "text": "Це завдання менеджменту — планувати взаємозамінність...",
+          "text": "It is the task of management to plan interchangeability...",
           "next": "exit_burnout_2",
           "weight": -20
         }
       ]
     },
     "exit_burnout_1": {
-      "text": "Якщо ти приймаєш такі важливі рішення на емоціях через перше ж прохання про допомогу, то нам дійсно немає про що говорити.  Заяву на стіл.",
+      "text": "If you make such important decisions on emotions because of the first request for help, then we really have nothing to talk about.  Application on the table.",
       "options": [],
       "isFinal": true,
       "score": 10
     },
     "exit_burnout_2": {
-      "text": "Твоє ставлення до процесів абсолютно непрофесійне.  Працювати з людиною, якій байдуже на команду, я не здатний.",
+      "text": "Your attitude towards processes is completely unprofessional.  I am not capable of working with a person who does not care about the team.",
       "options": [],
       "isFinal": true,
       "score": 20
     },
     "boss_transit": {
-      "text": "(Зітхає) Я теж на межі через ці дедлайни, тому розмовляю занадто жорстко.  Добре, що ти прямо сказав про свій стан, а не просто мовчки завалив дедлайн у понеділок.",
+      "text": "(Sighs) I'm on edge too with these deadlines, so I talk too tough.  It's good that you spoke directly about your condition, and did not just silently block the deadline on Monday.",
       "options": [
         {
-          "text": "Дякую за розуміння.",
+          "text": "Thank you for your understanding.",
           "next": "boss_happy_end",
           "weight": 40
         },
         {
-          "text": "Ну от і добре.",
+          "text": "Well, that's good.",
           "next": "boss_neutral_end",
           "weight": -10
         },
         {
-          "text": "Давайте я перегляну завдання прямо зараз.",
+          "text": "Let me review the assignment right now.",
           "next": "compromise_deal",
           "weight": 25
         }
       ]
     },
     "compromise_deal": {
-      "text": "Це непоганий варіант.  Якщо ти підготуєш базу сьогодні, а в понеділок почнеш раніше, ми встигнемо показати демо клієнту о 12:00.",
+      "text": "This is a good option.  If you prepare the base today and start earlier on Monday, we will have time to show the demo to the client at 12:00.",
       "options": [
         {
-          "text": "Так, це чудовий план.",
+          "text": "Yes, that's a great plan.",
           "next": "boss_happy_end",
           "weight": 40
         },
         {
-          "text": "Сьогодні я вже нічого не встигну...",
+          "text": "I won't have time for anything today...",
           "next": "boss_neutral_end",
           "weight": -10
         }
       ]
     },
     "constructive_negotiation": {
-      "text": "Твої аргументи звучать раціонально, але якщо цей блок не буде готовий у понеділок о дев'ятій ранку, клієнт розірве контракт.  Я не можу ризикувати проєктом.",
+      "text": "Your arguments sound rational, but if this unit is not ready on Monday at nine in the morning, the client will terminate the contract.  I can't risk the project.",
       "options": [
         {
-          "text": "Давай я прямо зараз, до кінця...",
+          "text": "Let me right now, until the end...",
           "next": "boss_deep_connection",
           "weight": 50
         },
         {
-          "text": "Це не моя проблема, що у...",
+          "text": "It's not my problem that in...",
           "next": "boss_confrontation",
           "weight": -30
         },
         {
-          "text": "Якщо ситуація критична, я готовий допомогти...",
+          "text": "If the situation is critical, I am ready to help...",
           "next": "burnout_compensation",
           "weight": 35
         }
       ]
     },
     "burnout_compensation": {
-      "text": "Компенсація...  Гаразд, це справедливо.",
+      "text": "Compensation... Okay, that's fair.",
       "options": [
         {
-          "text": "Домовилися.",
+          "text": "Agreed.",
           "next": "boss_happy_end",
           "weight": 40
         },
         {
-          "text": "Знаєте, я подумав...",
+          "text": "You know, I thought...",
           "next": "boss_neutral_end",
           "weight": -10
         }
       ]
     },
     "boss_deep_connection": {
-      "text": "Ти пропонуєш чудовий вихід.  Твій план з Олегом дійсно рятує ситуацію, і я бачу твою відповідальність навіть у стані втоми.",
+      "text": "You offer a great way out.  Your plan with Oleg really saves the situation, and I can see your responsibility even in a state of fatigue.",
       "options": [
         {
-          "text": "Домовилися.",
+          "text": "Agreed.",
           "next": "boss_happy_end",
           "weight": 50
         }
       ]
     },
     "boss_neutral_end": {
-      "text": "Гаразд.  Залишимо все як є до понеділка.",
+      "text": "OK.  Let's leave everything as it is until Monday.",
       "options": [],
       "isFinal": true,
       "score": 50
     },
     "boss_happy_end": {
-      "text": "Дякую тобі.  Ця розмова допомогла мені подивитися на ситуацію не лише через призму дедлайнів, а й через повагу до людського ресурсу.",
+      "text": "Thank you  This conversation helped me look at the situation not only through the prism of deadlines, but also through respect for human resources.",
       "options": [],
       "isFinal": true,
       "score": 100

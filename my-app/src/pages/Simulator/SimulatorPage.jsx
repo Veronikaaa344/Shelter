@@ -25,12 +25,27 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
 
     useEffect(() => {
         api.getScenarioById(id)
-            .then((data) => {
+            .then(async (data) => {
                 if (data && data.nodes) {
                     setScenario(data);
                     const startId = data.nodes["start"] ? "start" : Object.keys(data.nodes)[0];
                     setCurrentNodeId(startId);
-                    setHistory([{ role: "bot", text: data.nodes[startId].text }]);
+
+                    let initialText = data.nodes[startId].text;
+                    try {
+                        const aiResponse = await api.sendChatMessage({
+                            scenarioName: data.name,
+                            userOption: "Starts the conversation",
+                            nextNodeText: initialText,
+                        });
+                        if (aiResponse && aiResponse.text) {
+                            initialText = aiResponse.text;
+                        }
+                    } catch (e) {
+                        console.error("AI generation failed for initial message:", e);
+                    }
+
+                    setHistory([{ role: "bot", text: initialText }]);
                 }
                 setLoading(false);
             })
@@ -41,7 +56,7 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
         scrollToBottom();
     }, [history, isFinished]);
 
-    const handleOption = (option) => {
+    const handleOption = async (option) => {
         const nextId = option.next;
         const newHistory = [...history, { role: "user", text: option.text }];
         const weight = option.weight || 0;
@@ -51,21 +66,19 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
         setSessionScore(currentTotalScore);
         setChoicesCount(currentTotalChoices);
 
-        
         if (applyResilienceChange) {
             applyResilienceChange('simulator_choice', { weight, name: scenario.name });
         } else {
-            
             if (weight < 0) {
                 const userId = localStorage.getItem("userId");
                 if (userId) api.updateResilience(userId, "wrong_answer", { weight }, scenario.name);
             }
         }
 
-        if (option.text.toLowerCase().includes("ні")) {
+        if (option.text.toLowerCase().includes("no")) {
             setHistory([...newHistory, { 
                 role: "bot", 
-                text: "Бажаєш спробувати інший сценарій чи продовжити цей?",
+                text: "Do you want to try another scenario or continue this one?",
                 isChoice: true
             }]);
             return;
@@ -77,11 +90,30 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
         }
 
         const nextNode = scenario.nodes[nextId];
-        setHistory([...newHistory, { role: "bot", text: nextNode.text }]);
         setCurrentNodeId(nextId);
 
-        if (nextNode.options && nextNode.options.length === 0 || nextNode.isFinal || nextNode.score !== undefined) {
-            finishSession([...newHistory, { role: "bot", text: nextNode.text }], currentTotalScore, currentTotalChoices, nextNode.score);
+        // Show typing indicator or temp text
+        setHistory([...newHistory, { role: "bot", text: "...", isTyping: true }]);
+
+        let responseText = nextNode.text;
+        try {
+            const aiResponse = await api.sendChatMessage({
+                scenarioName: scenario.name,
+                userOption: option.text,
+                nextNodeText: responseText,
+            });
+            if (aiResponse && aiResponse.text) {
+                responseText = aiResponse.text;
+            }
+        } catch (e) {
+            console.error("AI generation failed:", e);
+        }
+
+        const finalHistory = [...newHistory, { role: "bot", text: responseText }];
+        setHistory(finalHistory);
+
+        if ((nextNode.options && nextNode.options.length === 0) || nextNode.isFinal || nextNode.score !== undefined) {
+            finishSession(finalHistory, currentTotalScore, currentTotalChoices, nextNode.score);
         } else {
             setProgress((prev) => Math.min(prev + 15, 90));
         }
@@ -141,7 +173,7 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
         setTimeout(() => setShowCompletionMenu(true), 1500);
     };
 
-    if (loading) return <div className="dr-new-layout dr-st-center"><h2>Завантаження...</h2></div>;
+    if (loading) return <div className="dr-new-layout dr-st-center"><h2>Loading...</h2></div>;
 
     const currentNode = scenario.nodes[currentNodeId];
 
@@ -153,15 +185,15 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
 
             {!isFinished && (
                 <aside className="dr-sorting-sidebar">
-                    <h2 className="dr-sorting-title">Психологічний тренажер</h2>
+                    <h2 className="dr-sorting-title">Psychological Simulator</h2>
                     <p className="dr-sorting-desc">
-                        Обирай варіанти відповідей, щоб навчитися конструктивно виходити з ситуацій.
+                        Choose your response to learn how to constructively handle situations.
                     </p>
                 </aside>
             )}
 
             <header className="dr-trainer-header">
-                <button className="dr-back-btn" onClick={() => isEmbedded && onBack ? onBack() : navigate("/exercises")}>← Вийти</button>
+                <button className="dr-back-btn" onClick={() => isEmbedded && onBack ? onBack() : navigate("/exercises")}>← Back</button>
                 <span className="dr-trainer-title">{scenario.name}</span>
                 <div style={{ width: "80px" }}></div>
             </header>
@@ -176,8 +208,8 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
                     {isFinished && (
                         <div className="dr-feedback-block">
                             <div className="dr-feedback-icon">🌟</div>
-                            <h3>Вправа завершена!</h3>
-                            <p>Дякуємо за практику. Твій рівень стійкості оновлено.</p>
+                            <h3>Exercise completed!</h3>
+                            <p>Thank you for practicing. Your resilience level has been updated.</p>
                         </div>
                     )}
                     <div ref={chatEndRef} />
@@ -189,8 +221,8 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
                     {!isFinished && (
                         history[history.length - 1]?.isChoice ? (
                             <>
-                                <button className="dr-choice-btn" onClick={() => handleChoice('other')}>Спробувати інший сценарій</button>
-                                <button className="dr-choice-btn" onClick={() => handleChoice('continue')}>Продовжити цей</button>
+                                <button className="dr-choice-btn" onClick={() => handleChoice('other')}>Try another scenario</button>
+                                <button className="dr-choice-btn" onClick={() => handleChoice('continue')}>Continue this one</button>
                             </>
                         ) : (
                             currentNode?.options?.map((opt, idx) => {
@@ -222,24 +254,24 @@ export default function SimulatorPage({ isEmbedded, embeddedId, onBack, applyRes
             {showCompletionMenu && (
                 <div className="dr-completion-overlay">
                     <div className="dr-completion-menu">
-                        <h2>{sessionScore < 30 ? "😟 Потрібна пауза" : "🌟 Вправа завершена!"}</h2>
+                        <h2>{sessionScore < 30 ? "😟 Need a break?" : "🌟 Exercise completed!"}</h2>
                         <p className="dr-card-description">
                             {sessionScore < 30 
-                                ? "Схоже, цей діалог був складним. Давай відновимо спокій?" 
-                                : "Кожна практика робить тебе сильнішим."}
+                                ? "It seems this dialogue was difficult. Let's restore our calm?" 
+                                : "Every practice makes you stronger."}
                         </p>
                         <div className="dr-completion-buttons grid grid-cols-1 sm:grid-cols-3 gap-4 w-full">
                             {sessionScore < 30 ? (
                                 <>
-                                    <button className="dr-completion-btn primary pulse" onClick={() => navigate("/breathing")}>Заспокоїтися</button>
-                                    <button className="dr-completion-btn secondary" onClick={() => navigate("/main")}>На головну</button>
-                                    <button className="dr-completion-btn secondary" onClick={() => window.location.reload()}>Спробувати ще раз</button>
+                                    <button className="dr-completion-btn primary pulse" onClick={() => navigate("/breathing")}>Calm down</button>
+                                    <button className="dr-completion-btn secondary" onClick={() => navigate("/main")}>Home</button>
+                                    <button className="dr-completion-btn secondary" onClick={() => window.location.reload()}>Try again</button>
                                 </>
                             ) : (
                                 <>
-                                    <button className="dr-completion-btn secondary" onClick={() => isEmbedded && onBack ? onBack() : navigate("/exercises")}>Вийти</button>
-                                    <button className="dr-completion-btn primary pulse" onClick={() => navigate("/main")}>Прогрес</button>
-                                    <button className="dr-completion-btn secondary" onClick={() => window.location.reload()}>Ще раз</button>
+                                    <button className="dr-completion-btn secondary" onClick={() => isEmbedded && onBack ? onBack() : navigate("/exercises")}>Exit</button>
+                                    <button className="dr-completion-btn primary pulse" onClick={() => navigate("/main")}>Progress</button>
+                                    <button className="dr-completion-btn secondary" onClick={() => window.location.reload()}>Again</button>
                                 </>
                             )}
                         </div>

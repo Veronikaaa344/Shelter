@@ -14,40 +14,40 @@ const characterImages = {
 
 const characterPhrases = {
 	normal: [
-		"Опа! Дивись, як я вмію розслаблятися. Головне — знайти уявне гаряче джерело!",
-		"Тиць! Ой, вибач, я просто жував травинку і випадково тицьнув носом в екран.",
-		"А ти знав, що я завжди тут, щоб тебе підтримати?",
-		"Хвилинка статистики: я можу не рухатися три години. Ефектно, правда?",
-		"Якби я був справжнім, я б обов'язково подрімав поруч із тобою.",
-		"Сьогодні така гарна погода... Хоча я застряг у твоєму екрані!",
-		"Як гадаєш, мені більше личить мандаринка на голові чи квіточка?",
-		"Я щойно намагався порахувати всі травинки на твоєму робочому столі. Збився на одинадцятій.",
-		"Знаєш, бути цифровим помічником зручно — я завжди можу бути поруч із тобою",
-		"Ого, який у тебе курсор швидкий! Я краще просто посиджу тут і подивлюся."
+		"Oops! Look how I can relax. The main thing is to find an imaginary hot spring!",
+		"Poke! Oh, excuse me, I was just chewing a blade of grass and accidentally poked my nose on the screen.",
+		"Did you know I'm always here to support you?",
+		"A moment for statistics: I can stay still for three hours. Impressive, right?",
+		"If I were real, I'd definitely take a nap next to you.",
+		"The weather's so nice today... Even though I'm stuck on your screen!",
+		"What do you think, does a tangerine on my head suit me better, or a flower?",
+		"I just tried to count all the blades of grass on your desktop. I lost count at eleven.",
+		"You know, being a digital assistant is convenient — I can always be by your side.",
+		"Wow, your cursor is fast! I'd better just sit here and watch."
 	],
 	sad: [
-		"Пам'ятай: навіть найменший крок сьогодні — це вже величезний рух уперед. Я розумію, як буває важко.",
-		"Ти сьогодні молодець вже тому, що просто знайшов сили зайти сюди. Я з тобою.",
-		"Просто видихни. Весь цей величезний світ може зачекати одну хвилину.",
-		"Я вірю в тебе навіть тоді, коли ти сам у собі сумніваєшся.",
-		"Твоя стійкість — це твоя суперсила. Навіть коли здається, що сил немає.",
-		"Ти не один у цьому штормі. Я поруч, і ми разом спокійно перечекаємо його.",
-		"Дозволь собі сумувати чи помилятися. Це просто частина твого шляху.",
-		"Ти робиш неймовірну роботу щодня. Зупинись на хвилинку і видихни.",
-		"Кожна хмара має світлий край. Ми обов'язково його знайдемо!",
-		"Твоя енергія дуже цінна. Не витрачай її на те, що зараз поза твоїм контролем."
+		"Remember: even the smallest step today is already a huge move forward. I understand how difficult it can be.",
+		"You're doing great today just because you found the strength to come here. I'm with you.",
+		"Just breathe out. This whole big world can wait one minute.",
+		"I believe in you even when you doubt yourself.",
+		"Your resilience is your superpower. Even when it feels like there's no strength left.",
+		"You're not alone in this storm. I'm here, and together we'll calmly weather it.",
+		"Allow yourself to be sad or make mistakes. It's just part of your journey.",
+		"You do amazing work every day. Stop for a moment and breathe.",
+		"Every cloud has a silver lining. We'll definitely find it!",
+		"Your energy is very valuable. Don't waste it on things beyond your control right now."
 	],
 	happy: [
-		"Вау! Ти просто неймовірний! Я аж підстрибнув! 🎉",
-		"Я знав, що ти впораєшся! Ти справжній майстер! 🌟",
-		"Це була фантастична робота! 100 балів тобі! ⭐",
-		"Неймовірно! Ти переміг! Я пишаюся тобою! 🏆",
-		"Ти зробив це! Тепер можна спокійно йти відпочивати! 🎊",
-		"Я так радий за тебе! Ти справжній молодець! 🌟",
-		"Ти просто геній! Навіть я б так не зміг! 🎯",
-		"Браво! Твоя наполегливість принесла результат! 🏅",
-		"Ти все розв'язав! Це справжнє мистецтво спокою! 🎨",
-		"Вітаю! Ти пройшов завдання на відмінно! 🎪"
+		"Wow! You're simply incredible! I literally jumped! 🎉",
+		"I knew you'd handle it! You're a true master! 🌟",
+		"That was fantastic work! 100 points for you! ⭐",
+		"Incredible! You won! I'm proud of you! 🏆",
+		"You did it! Now you can relax in peace! 🎊",
+		"I'm so happy for you! You're doing great! 🌟",
+		"You're a genius! Even I couldn't do that! 🎯",
+		"Bravo! Your persistence paid off! 🏅",
+		"You solved everything! That's true art of calm! 🎨",
+		"Congratulations! You completed the task perfectly! 🎪"
 	]
 };
 
@@ -58,27 +58,27 @@ const phrases = {
 	stress: characterPhrases.sad,
 	apathy: characterPhrases.sad,
 	test: [
-		"Ти робиш чудово! Продовжуй! 🌟",
-		"Кожна відповідь наближає тебе до мети! 💪",
-		"Вір у себе, ти на правильному шляху! ✨",
+		"You're doing great! Keep going! 🌟",
+		"Every answer brings you closer to your goal! 💪",
+		"Believe in yourself, you're on the right track! ✨",
 	],
 	'main-hints': [
-		"💡 Спробуй вправи в тренажері — це розслабить",
-		"📚 Порада: переглянь освітній контент про стрес",
-		"🎯 Натисни SOS якщо потрібна швидка допомога",
-		"🧘 Дихальні вправи допоможуть заспокоїтися",
+		"💡 Try the exercises in the simulator — it will relax you",
+		"📚 Tip: review educational content about stress",
+		"🎯 Press SOS if you need quick help",
+		"🧘 Breathing exercises will help you calm down",
 	],
 	exercise: [
-		"Ти герой! Відпрацьовуй навички! 🦸",
-		"Практика робить майстром! Продовжуй! 💪",
+		"You're a hero! Practice your skills! 🦸",
+		"Practice makes perfect! Keep going! 💪",
 	],
 	content: [
-		"Чудово, що ти навчаєшся! 📚",
-		"Знання — це сила! Продовжуй! 💡",
+		"Great that you're learning! 📚",
+		"Knowledge is power! Keep going! 💡",
 	],
 	default: [
-		"Привіт! Я тут, щоб підтримати тебе! 👋",
-		"Сьогодні чудовий день для прогресу! ☀️",
+		"Hi! I'm here to support you! 👋",
+		"Today is a great day for progress! ☀️",
 	],
 };
 
@@ -138,10 +138,10 @@ const CharacterCompanion = forwardRef(({
 		} else if (phraseType === 'main-hints') {
 			emotion = 'normal';
 			arr = [
-				t('companion.hint_simulator', "💡 Спробуй вправи в тренажері — це розслабить"),
-				t('companion.hint_library', "📚 Порада: переглянь освітній контент про стрес"),
-				t('companion.hint_sos', "🎯 Натисни SOS якщо потрібна швидка допомога"),
-				t('companion.hint_breathing', "🧘 Дихальні вправи допоможуть заспокоїтися")
+				t('companion.hint_simulator', "💡 Try the exercises in the simulator — it will relax you"),
+				t('companion.hint_library', "📚 Tip: review educational content about stress"),
+				t('companion.hint_sos', "🎯 Press SOS if you need quick help"),
+				t('companion.hint_breathing', "🧘 Breathing exercises will help you calm down")
 			];
 		} else if (['anxiety', 'stress', 'apathy'].includes(phraseType)) {
 			emotion = 'sad';
@@ -198,19 +198,19 @@ const CharacterCompanion = forwardRef(({
 		if (!tourStep || tourStep === '0') return;
 		let text = "";
 		if (tourStep === '1_diagnostics') {
-			text = "Привіт! 👋 Я тут, щоб провести для тебе невеличку екскурсію. Почнемо з Діагностики! Натисни на неї зліва.";
+			text = "Hi! 👋 I'm here to give you a little tour. Let's start with Diagnostics! Click on it on the left.";
 		} else if (tourStep === '3_quests') {
-			text = "Чудово! Ти знаєш свій рівень. Тепер давай перейдемо до Квестів, де ти знайдеш вправи. Тисни на Квести!";
+			text = "Great! You know your level. Now let's move on to Quests, where you'll find exercises. Click on Quests!";
 		} else if (tourStep === '4_do_chaos') {
-			text = "Спробуй міні-гру 'Сортування Хаосу'. Вона чудово розвантажує голову!";
+			text = "Try the mini-game 'Sorting Chaos'. It's great for clearing your head!";
 		} else if (tourStep === '5_do_chat') {
-			text = "Гарна робота! Тепер спробуй Чат-тренажер. Він навчить тебе вирішувати складні ситуації.";
+			text = "Good job! Now try the Chat Simulator. It will teach you how to resolve difficult situations.";
 		} else if (tourStep === '6_library') {
-			text = "Молодець! Останній розділ — Медіатека. Переходь туди, щоб знайти корисні матеріали.";
+			text = "Well done! The last section is the Media Library. Go there to find useful materials.";
 		} else if (tourStep === '7_do_library') {
-			text = "Вибери будь-який матеріал і відкрий його. Це завершить наш туторіал!";
+			text = "Choose any material and open it. This will complete our tutorial!";
 		} else if (tourStep === '8_finish') {
-			text = "Вітаю! Ти пройшов навчання і тепер готовий користуватися всіма інструментами. Успіхів! 🌟";
+			text = "Congratulations! You've completed the training and are now ready to use all the tools. Good luck! 🌟";
 		}
 		if (text) {
 			setIsVisible(true);
@@ -307,14 +307,14 @@ const CharacterCompanion = forwardRef(({
 				{}
 				{(resilience < 35 || forceSpeakMode === 'main-hints') && tourStep === '0' && (
 					<div className="character-quick-actions">
-						<button onClick={() => onAction && onAction('breathing')} className="qa-btn">🫁 Дихання</button>
-						<button onClick={() => onAction && onAction('sorting')} className="qa-btn">🧩 Сортування</button>
+						<button onClick={() => onAction && onAction('breathing')} className="qa-btn">🫁 Breathing</button>
+						<button onClick={() => onAction && onAction('sorting')} className="qa-btn">🧩 Sorting</button>
 						<button onClick={() => onAction && onAction('sos')} className="qa-btn sos">🆘 SOS</button>
 					</div>
 				)}
 				{tourStep !== '0' && (
 					<div className="mt-4 flex justify-end">
-						<button onClick={() => onAction && onAction('skip_tour')} className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-lg">Пропустити навчання</button>
+						<button onClick={() => onAction && onAction('skip_tour')} className="bg-red-500 hover:bg-red-600 text-white px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-lg">Skip tutorial</button>
 					</div>
 				)}
 			</div>

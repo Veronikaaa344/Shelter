@@ -451,6 +451,20 @@ export const api = {
 			headers: getHeaders()
 		}).then((res) => res.json());
 	},
+
+	sendChatMessage: (params) => {
+		return fetch(`${API_URL}/chat`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(params)
+		}).then(async res => {
+			if (!res.ok) {
+				const error = await res.json().catch(() => ({}));
+				throw new Error(error.error || `HTTP error ${res.status}`);
+			}
+			return res.json();
+		});
+	}
 };
 
 export default api;

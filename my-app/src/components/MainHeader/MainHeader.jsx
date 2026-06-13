@@ -61,7 +61,7 @@ const MainHeader = React.memo(({
                         {username ? username.charAt(0).toUpperCase() : 'G'}
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-[10px] font-black text-white leading-none mb-1 max-w-[100px] truncate">{username === 'Гість' ? t('header.guest') : username}</span>
+                        <span className="text-[10px] font-black text-white leading-none mb-1 max-w-[100px] truncate">{username === 'Guest' ? t('header.guest') : username}</span>
                         <span className="text-[8px] text-emerald-400 uppercase font-bold tracking-widest leading-none whitespace-nowrap">{t('header.resilience')}: {Math.round(resilience || 0)}%</span>
                     </div>
                 </div>
@@ -79,7 +79,7 @@ const MainHeader = React.memo(({
                 <button
                     onClick={toggleLanguage}
                     className="w-10 h-10 rounded-2xl border border-slate-800 bg-slate-900/40 text-slate-400 hover:text-white hover:border-emerald-500 transition-all flex items-center justify-center cursor-pointer text-[10px] font-black uppercase"
-                    title="Change language / Змінити мову"
+                    title="Change language"
                 >
                     {i18n.language ? i18n.language.slice(0,2).toUpperCase() : 'EN'}
                 </button>

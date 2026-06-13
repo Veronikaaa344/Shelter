@@ -111,10 +111,10 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                         } catch (e) { console.error(e); }
                         
                         if (applyResilienceChange) {
-                            applyResilienceChange('level_complete', { score: finalScore, name: scenario?.name || "Знайди відмінності" });
+                            applyResilienceChange('level_complete', { score: finalScore, name: scenario?.name || "Find the Differences" });
                         } else if (userId) {
                             try {
-                                await api.updateResilience(userId, "level_complete", {}, scenario?.name || "Знайди відмінності");
+                                await api.updateResilience(userId, "level_complete", {}, scenario?.name || "Find the Differences");
                             } catch (e) {}
                         }
                         
@@ -163,7 +163,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
 
     const handleSosClick = async () => {
         const userId = localStorage.getItem("userId");
-        if (userId) await api.updateResilience(userId, "sos", { panic: true }, "Натиснута кнопка SOS");
+        if (userId) await api.updateResilience(userId, "sos", { panic: true }, "SOS button pressed");
         navigate("/sos");
     };
 
@@ -205,7 +205,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
         <div className="dr-updated-find-layout">
             <div className="dr-loading-container">
                 <div className="dr-loading-spinner"></div>
-                <h2>Завантаження...</h2>
+                <h2>Loading...</h2>
             </div>
         </div>
     );
@@ -214,10 +214,10 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
         <div className="dr-updated-find-layout">
             <div className="dr-error-container">
                 <Search size={48} />
-                <h2>Сценарій не знайдено</h2>
-                <p>Перевірте правильність URL або спробуйте інший сценарій</p>
+                <h2>Scenario not found</h2>
+                <p>Check the URL or try another scenario</p>
                 <button onClick={handleClose} className="dr-back-btn">
-                    Повернутися до вправ
+                    Back to exercises
                 </button>
             </div>
         </div>
@@ -229,9 +229,9 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
             <div className="dr-updated-find-layout">
                 <div className="dr-error-container">
                     <Target size={48} />
-                    <h2>Рівень не знайдено</h2>
+                    <h2>Level not found</h2>
                     <button onClick={handleClose} className="dr-back-btn">
-                        Повернутися до вправ
+                        Back to exercises
                     </button>
                 </div>
             </div>
@@ -243,9 +243,9 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
             <div className="dr-updated-find-layout">
                 <div className="dr-error-container">
                     <Eye size={48} />
-                    <h2>Зображення не знайдено</h2>
+                    <h2>Image not found</h2>
                     <button onClick={handleClose} className="dr-back-btn">
-                        Повернутися до вправ
+                        Back to exercises
                     </button>
                 </div>
             </div>
@@ -262,12 +262,12 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                 <div className="dr-header-content">
                     <button className="dr-back-btn" onClick={handleClose}>
                         <ArrowLeft size={20} />
-                        <span>До вправ</span>
+                        <span>To exercises</span>
                     </button>
 
                     <div className="dr-header-info">
                         <h1 className="dr-scenario-title">{scenario.name}</h1>
-                        <p className="dr-level-info">Рівень {currentLevelIndex + 1} з {scenario.levels?.length || 1}</p>
+                        <p className="dr-level-info">Level {currentLevelIndex + 1} of {scenario.levels?.length || 1}</p>
                     </div>
 
                     <div className="dr-header-stats">
@@ -294,35 +294,35 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                         <div className="dr-completion-card">
                             <div className="dr-completion-header">
                                 <div className="dr-completion-icon">🎉</div>
-                                <h2>Рівень завершено!</h2>
-                                <p>Ти знайшов всі відмінності!</p>
+                                <h2>Level completed!</h2>
+                                <p>You found all the differences!</p>
                             </div>
                             <div className="dr-completion-stats">
                                 <div className="dr-stat-row">
-                                    <span>Час:</span>
+                                    <span>Time:</span>
                                     <span>{formatTime(sessionTime)}</span>
                                 </div>
                                 <div className="dr-stat-row">
-                                    <span>Результат:</span>
-                                    <span>{score} очок</span>
+                                    <span>Score:</span>
+                                    <span>{score} points</span>
                                 </div>
                                 <div className="dr-stat-row">
-                                    <span>Підказки:</span>
+                                    <span>Hints:</span>
                                     <span>{hintsUsed}</span>
                                 </div>
                             </div>
                             <div className="dr-completion-actions">
                                 {currentLevelIndex + 1 < (scenario.levels?.length || 0) ? (
                                     <button className="dr-completion-btn primary" onClick={handleNextLevel}>
-                                        Наступний рівень →
+                                        Next level →
                                     </button>
                                 ) : (
                                     <button className="dr-completion-btn primary" onClick={handleClose}>
-                                        До списку вправ
+                                        To exercise list
                                     </button>
                                 )}
                                 <button className="dr-completion-btn secondary" onClick={() => window.location.reload()}>
-                                    Спробувати ще раз
+                                    Try again
                                 </button>
                             </div>
                         </div>
@@ -359,7 +359,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                                     disabled={hintsUsed >= 3}
                                 >
                                     <Eye size={18} />
-                                    <span>Підказка ({3 - hintsUsed})</span>
+                                    <span>Hint ({3 - hintsUsed})</span>
                                 </button>
                             </div>
                         </div>
@@ -367,7 +367,7 @@ export default function UpdatedFindDifferencesPage({ isEmbedded, embeddedId, onB
                         {}
                         <div className="dr-image-container">
                             <div className="dr-find-counter">
-                                Знайдено: <span className="dr-found-count">{foundCount}</span> / {differences.length}
+                                Found: <span className="dr-found-count">{foundCount}</span> / {differences.length}
                             </div>
 
                             <div className="dr-image-wrapper">

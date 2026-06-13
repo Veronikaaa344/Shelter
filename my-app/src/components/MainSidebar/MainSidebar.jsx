@@ -45,7 +45,7 @@ const MainSidebar = React.memo(({
                         {username.charAt(0).toUpperCase()}
                     </div>
                     <div className="hidden md:block">
-                        <p className="font-bold text-white tracking-wide">{username === 'Гість' ? t('sidebar.guest') : username}</p>
+                        <p className="font-bold text-white tracking-wide">{username === 'Guest' ? t('sidebar.guest') : username}</p>
                         <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">{t('sidebar.resilience')}: {Math.round(resilience)}%</p>
                     </div>
                 </div>

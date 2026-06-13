@@ -13,6 +13,7 @@ import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/user.js";
 import diagnosticRoutes from "./routes/diagnostic.js";
 import adviceRoutes from "./routes/advice.js";
+import chatRoutes from "./routes/chat.js";
 import { ensureSortingScenarios } from "./utils/ensureSortingScenarios.js";
 import { ensureAdvices } from "./utils/ensureAdvices.js";
 
@@ -90,6 +91,7 @@ app.use("/api/stats", statsRouter);
 app.use("/api/users", userRoutes);
 app.use("/api/diagnostic", diagnosticRoutes);
 app.use("/api/advice", adviceRoutes);
+app.use("/api/chat", chatRoutes);
 
 
 app.get("/api/health", async (req, res) => {

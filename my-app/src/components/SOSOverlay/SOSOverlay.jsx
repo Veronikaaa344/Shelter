@@ -20,9 +20,9 @@ export default function SOSOverlay({ onClose, onPracticeClick }) {
 
             {!showSOSPhones ? (
                 <>
-                    <h2 className="text-3xl sm:text-[32px] font-black text-white uppercase mb-4 tracking-tight">Екстрена допомога</h2>
+                    <h2 className="text-3xl sm:text-[32px] font-black text-white uppercase mb-4 tracking-tight">Emergency Assistance</h2>
                     <p className="text-slate-400 mb-10 text-[17px] leading-relaxed font-medium">
-                        Зараз ми проведемо коротку практику «Квадратне дихання». Це допоможе вашій нервовій системі повернутися до стану спокою.
+                        We will now conduct a short "Box Breathing" practice. This will help your nervous system return to a state of calm.
                     </p>
                     
                     <div className="flex flex-col gap-4">
@@ -31,13 +31,13 @@ export default function SOSOverlay({ onClose, onPracticeClick }) {
                         className="w-full bg-white text-black py-5 rounded-[20px] font-bold text-[17px] hover:bg-slate-200 transition-all flex items-center justify-center gap-3"
                     >
                         <Wind size={22} />
-                        Почати дихання (4-4-4)
+                        Start Breathing (4-4-4)
                     </button>
                     <button 
                         onClick={() => setShowSOSPhones(true)}
                         className="w-full bg-[#1b2336] text-white py-5 rounded-[20px] font-bold text-[17px] hover:bg-[#252f48] transition-all"
                     >
-                        Зв'язатися з фахівцем
+                        Contact a Specialist
                     </button>
                     </div>
                 </>
@@ -47,31 +47,31 @@ export default function SOSOverlay({ onClose, onPracticeClick }) {
                         <button onClick={() => setShowSOSPhones(false)} className="text-slate-500 hover:text-white transition-colors -ml-2 p-2">
                             <ChevronLeft size={28} />
                         </button>
-                        <h2 className="text-3xl font-black text-white uppercase tracking-tight">Гарячі лінії</h2>
+                        <h2 className="text-3xl font-black text-white uppercase tracking-tight">Hotlines</h2>
                     </div>
                     <p className="text-slate-400 mb-8 text-[15px] leading-relaxed font-medium">
-                        Ці служби працюють безкоштовно та анонімно. Оберіть потрібну лінію:
+                        These services are free and anonymous. Choose the line you need:
                     </p>
                     
                     <div className="flex flex-col gap-3">
                         <a href="tel:7333" className="w-full bg-[#1b2336] border border-slate-800 text-white p-5 rounded-[20px] hover:bg-[#252f48] transition-all flex justify-between items-center group">
                             <div>
                                 <p className="font-bold text-[17px] mb-1">Lifeline Ukraine</p>
-                                <p className="text-slate-400 text-sm">Психологічна підтримка</p>
+                                <p className="text-slate-400 text-sm">Psychological support</p>
                             </div>
                             <span className="bg-emerald-500/10 text-emerald-500 font-black px-4 py-2 rounded-xl group-hover:bg-emerald-500 group-hover:text-white transition-colors">7333</span>
                         </a>
                         <a href="tel:1558" className="w-full bg-[#1b2336] border border-slate-800 text-white p-5 rounded-[20px] hover:bg-[#252f48] transition-all flex justify-between items-center group">
                             <div>
-                                <p className="font-bold text-[17px] mb-1">Лінія підтримки</p>
-                                <p className="text-slate-400 text-sm">Ветеран Хаб</p>
+                                <p className="font-bold text-[17px] mb-1">Support Line</p>
+                                <p className="text-slate-400 text-sm">Veteran Hub</p>
                             </div>
                             <span className="bg-emerald-500/10 text-emerald-500 font-black px-4 py-2 rounded-xl group-hover:bg-emerald-500 group-hover:text-white transition-colors">1558</span>
                         </a>
                         <a href="tel:0800501701" className="w-full bg-[#1b2336] border border-slate-800 text-white p-5 rounded-[20px] hover:bg-[#252f48] transition-all flex justify-between items-center group">
                             <div>
-                                <p className="font-bold text-[17px] mb-1">Телефон довіри</p>
-                                <p className="text-slate-400 text-sm">Всеукраїнська лінія</p>
+                                <p className="font-bold text-[17px] mb-1">Trust Line</p>
+                                <p className="text-slate-400 text-sm">National Line</p>
                             </div>
                             <span className="bg-emerald-500/10 text-emerald-500 font-black px-4 py-2 rounded-xl group-hover:bg-emerald-500 group-hover:text-white transition-colors">0 800 501 701</span>
                         </a>

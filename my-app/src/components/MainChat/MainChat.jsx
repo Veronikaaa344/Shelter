@@ -12,24 +12,7 @@ const limitWords = (str, limit = 6) => {
     return words.slice(0, limit).join(' ') + '...';
 };
 
-const getFourOptions = (options, nodeId) => {
-    if (!options) return [];
-    let result = [...options];
-    const genericOptions = [
-        { text: "Розумію твої почуття.", next: options[0]?.next || nodeId },
-        { text: "Давай знайдемо вихід.", next: options[0]?.next || nodeId },
-        { text: "Це дійсно важливо.", next: options[0]?.next || nodeId },
-        { text: "Давай рухатися далі.", next: options[0]?.next || nodeId }
-    ];
-    while (result.length < 4) {
-        const filler = genericOptions[result.length % genericOptions.length];
-        result.push({
-            ...filler,
-            next: options[0]?.next || filler.next
-        });
-    }
-    return result.slice(0, 4);
-};
+
 
 
 
@@ -41,6 +24,7 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
     const [scenario, setScenario] = useState(null);
     const [scenariosList, setScenariosList] = useState([]);
     const [currentNodeId, setCurrentNodeId] = useState('start');
+    const [dynamicOptions, setDynamicOptions] = useState([]);
     const [isChatMode, setIsChatMode] = useState('scenario'); 
     const [loading, setLoading] = useState(false);
     const [flyingMessage, setFlyingMessage] = useState(null);
@@ -102,26 +86,43 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
         triggerCompletion(1200, finalScoreValue);
     };
 
-    const selectScenario = (s) => {
-        if (!s || !s.nodes) {
-            console.error("Scenario has no nodes:", s);
+    const selectScenario = async (s) => {
+        if (!s) {
+            console.error("Scenario is empty:", s);
             return;
         }
         setScenario(s);
         setIsChatMode('scenario');
-        const startId = s.nodes["start"] ? "start" : (Object.keys(s.nodes)[0] || 'start');
-        setCurrentNodeId(startId);
         setChoiceStats({ positive: 0, negative: 0, neutral: 0 });
-        setMessages([
-            {
-                id: 1,
-                text: s.nodes[startId]?.text || "Помилка завантаження вмісту сценарію",
-                sender: 'bot',
-                timestamp: new Date(),
-                isScenario: true
-            }
-        ]);
         setChatView("chat");
+        setIsTyping(true);
+
+        try {
+            const aiResponse = await api.sendChatMessage({
+                scenarioName: s.name,
+                scenarioDescription: s.description || "Start a realistic training scenario.",
+                userOption: "", // blank for start
+                history: []
+            });
+            if (aiResponse) {
+                setMessages([
+                    {
+                        id: 1,
+                        text: aiResponse.text || "Hello. How can I help you today?",
+                        sender: 'bot',
+                        timestamp: new Date(),
+                        isScenario: true
+                    }
+                ]);
+                setDynamicOptions(aiResponse.options || []);
+            }
+        } catch (err) {
+            console.error("AI generation failed for initial message:", err);
+            setMessages([{ id: 1, text: "Error loading scenario AI.", sender: 'bot', timestamp: new Date() }]);
+            setDynamicOptions([]);
+        } finally {
+            setIsTyping(false);
+        }
     };
 
     useEffect(() => {
@@ -175,14 +176,7 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
 
         
         setTimeout(() => {
-            const nextId = option.next;
             const weight = option.weight || 0;
-            
-            const stepRecord = {
-                nodeId: currentNodeId,
-                chosenOption: option,
-                availableOptions: scenario?.nodes[currentNodeId]?.options || []
-            };
             
             setChoiceStats(prev => ({
                 ...prev,
@@ -190,8 +184,6 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
                 negative: prev.negative + (weight < 0 ? 1 : 0),
                 neutral: prev.neutral + (weight === 0 ? 1 : 0)
             }));
-            
-            setUserPath(prev => [...prev, stepRecord]);
 
             const userMessage = {
                 id: messages.length + 1,
@@ -200,40 +192,46 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
                 timestamp: new Date()
             };
 
-            setMessages(prev => [...prev, userMessage]);
+            const updatedHistory = [...messages, userMessage];
+            setMessages(updatedHistory);
             setFlyingMessage(null);
             setIsTyping(true);
+            setDynamicOptions([]); // clear options while thinking
 
-            setTimeout(() => {
-                setIsTyping(false);
-                let nextNode = scenario?.nodes?.[nextId];
-
-                if (!nextNode) {
-                    const endText = "🌟 Вправу завершено! Дякую за практику.";
+            setTimeout(async () => {
+                try {
+                    const aiResponse = await api.sendChatMessage({
+                        scenarioName: scenario.name,
+                        scenarioDescription: scenario.description,
+                        userOption: option.text,
+                        history: updatedHistory
+                    });
                     
+                    if (aiResponse) {
+                        setMessages(prev => [...prev, {
+                            id: prev.length + 1,
+                            text: aiResponse.text || "...",
+                            sender: 'bot',
+                            timestamp: new Date(),
+                            isScenario: true
+                        }]);
+
+                        if (aiResponse.isFinish) {
+                            finishDialogue(aiResponse.score || 100);
+                        } else {
+                            setDynamicOptions(aiResponse.options || []);
+                        }
+                    }
+                } catch (err) {
+                    console.error("AI generation failed:", err);
                     setMessages(prev => [...prev, {
                         id: prev.length + 1,
-                        text: endText,
+                        text: "Error connecting to AI.",
                         sender: 'bot',
                         timestamp: new Date()
                     }]);
-                    finishDialogue(100);
-                    return;
-                }
-
-                setCurrentNodeId(nextId);
-                setMessages(prev => [...prev, {
-                    id: prev.length + 1,
-                    text: nextNode.text,
-                    sender: 'bot',
-                    timestamp: new Date(),
-                    isScenario: true
-                }]);
-
-                const hasOptions = nextNode.options && nextNode.options.length > 0;
-                if (!hasOptions) {
-                    const score = nextNode.score !== undefined ? nextNode.score : 100;
-                    finishDialogue(score);
+                } finally {
+                    setIsTyping(false);
                 }
             }, 350); 
         }, 150); 
@@ -249,8 +247,8 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
                                 <MessageSquare className="w-6 h-6" />
                             </div>
                             <div>
-                                <h2 className="dr-chat-title">{t('chat.title', 'Чат-тренажери')}</h2>
-                                <p className="dr-chat-subtitle">{t('chat.subtitle', 'Оберіть тему розмови')}</p>
+                                <h2 className="dr-chat-title">{t('chat.title', 'Chat Trainers')}</h2>
+                                <p className="dr-chat-subtitle">{t('chat.subtitle', 'Choose a conversation topic')}</p>
                             </div>
                         </div>
                     </div>
@@ -259,13 +257,13 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
                 <div className="dr-chat-selection-container p-8 overflow-y-auto max-h-[calc(100vh-96px)] flex flex-col gap-6">
                     <div className="dr-chat-hero bg-slate-900/40 border border-slate-800 p-8 rounded-[32px] flex items-center justify-between gap-6 max-w-[1200px] mx-auto w-full">
                         <div className="max-w-2xl">
-                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tight mb-2">{t('chat.interactive_title', 'Інтерактивні чат-тренажери')}</h3>
+                            <h3 className="text-2xl font-black text-white italic uppercase tracking-tight mb-2">{t('chat.interactive_title', 'Interactive Chat Trainers')}</h3>
                             <p className="text-slate-400 text-sm leading-relaxed">
-                                {t('chat.interactive_desc', 'Відпрацюйте складні життєві та робочі ситуації у безпечному середовищі. Оберіть один із сценаріїв, щоб навчитися розпізнавати когнітивні спотворення, виражати емпатію та знаходити конструктивний вихід із конфліктів разом із помічником.')}
+                                {t('chat.interactive_desc', 'Practice difficult life and work situations in a safe environment. Choose one of the scenarios to learn how to recognize cognitive distortions, express empathy, and find constructive solutions to conflicts with the help of an assistant.')}
                             </p>
                         </div>
                         <div className="dr-hero-stats bg-slate-900/60 p-5 rounded-2xl border border-slate-800 text-center min-w-[160px]">
-                            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black block mb-1">{t('chat.available_topics', 'Доступно тем')}</span>
+                            <span className="text-[10px] text-slate-500 uppercase tracking-widest font-black block mb-1">{t('chat.available_topics', 'Available Topics')}</span>
                             <span className="text-4xl font-black text-emerald-500 italic block">{scenariosList.length}</span>
                         </div>
                     </div>
@@ -279,11 +277,11 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
                             >
                                 <div className="dr-card-icon"><Target size={24} /></div>
                                 <h3>{s.name}</h3>
-                                <p>{t('chat.practice_situation', 'Відпрацюйте конкретну ситуацію:')} {t(`categories.${s.category}`, s.category || 'General')}</p>
+                                <p>{t('chat.practice_situation', 'Practice a specific situation:')} {t(`categories.${s.category}`, s.category || 'General')}</p>
                                 <div className="dr-scenario-tags">
-                                    <span className="tag"><Clock size={12} className="inline mr-1" /> {s.duration ? s.duration.replace('хв', t('common.min', 'хв')) : `5 ${t('common.min', 'хв')}`}</span>
+                                    <span className="tag"><Clock size={12} className="inline mr-1" /> {s.duration ? s.duration.replace('хв', t('common.min', 'min')) : `5 ${t('common.min', 'min')}`}</span>
                                     <span className="tag"><Zap size={12} className="inline mr-1 text-amber-500" /> {s.difficulty || 50}%</span>
-                                    <button className="start-btn">Тренуватись <Play size={14} fill="currentColor" /></button>
+                                    <button className="start-btn">Train <Play size={14} fill="currentColor" /></button>
                                 </div>
                             </div>
                         ))}
@@ -308,7 +306,7 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
                         </div>
                         <div>
                             <h2 className="dr-chat-title">{scenario?.name}</h2>
-                            <p className="dr-chat-subtitle">{t('chat.training_scenario', 'Сценарій тренування')}</p>
+                            <p className="dr-chat-subtitle">{t('chat.training_scenario', 'Training Scenario')}</p>
                         </div>
                     </div>
                 </div>
@@ -321,7 +319,7 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
                         className={`dr-message ${message.sender === 'user' ? 'user' : 'bot'} ${message.isSystem ? 'system' : ''}`}
                     >
                         <span className="font-bold text-[10px] text-slate-500 uppercase tracking-widest block mb-2">
-                            {message.sender === 'bot' ? t('chat.assistant', 'Помічник') : username}
+                            {message.sender === 'bot' ? t('chat.assistant', 'Assistant') : username}
                         </span>
                         <div className="dr-message-content">
                             {message.text}
@@ -331,7 +329,7 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
 
                 {isTyping && (
                     <div className="dr-message bot">
-                        <div className="dr-message-header">ШІ-помічник</div>
+                        <div className="dr-message-header">AI Assistant</div>
                         <div className="dr-message-content">
                             <div className="dr-typing-indicator">
                                 <span></span><span></span><span></span>
@@ -344,16 +342,28 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
 
             <div className="dr-chat-footer">
                 <div className="dr-scenario-options">
-                    {currentNodeId && getFourOptions(scenario?.nodes?.[currentNodeId]?.options, currentNodeId).map((option, index) => (
-                        <button
-                            key={index}
-                            className="dr-option-btn"
-                            onClick={(e) => handleOptionSelect(option, e)}
-                            disabled={isTyping || flyingMessage}
-                        >
-                            {option.text}
-                        </button>
-                    ))}
+                    {!isFinished && dynamicOptions && dynamicOptions.length > 0 ? (
+                        dynamicOptions.map((option, index) => (
+                            <button
+                                key={index}
+                                className="dr-option-btn"
+                                onClick={(e) => handleOptionSelect(option, e)}
+                                disabled={isTyping || flyingMessage}
+                            >
+                                {option.text}
+                            </button>
+                        ))
+                    ) : (
+                        !isFinished && !isTyping && (
+                            <button
+                                className="dr-option-btn"
+                                onClick={() => selectScenario(scenario)}
+                                style={{ backgroundColor: '#ef4444', color: 'white', borderColor: '#b91c1c' }}
+                            >
+                                ⚠️ Error: Failed to generate options. Click here to restart scenario.
+                            </button>
+                        )
+                    )}
                 </div>
             </div>
 
@@ -400,8 +410,8 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
                     };
 
                 const Icon = isPositive ? Sparkles : AlertCircle;
-                const titleText = isPositive ? "Чудова розмова!" : "Складний фінал";
-                const badgeText = isPositive ? "+4 Стійкості нараховано" : "-4 Стійкості нараховано";
+                const titleText = isPositive ? "Great conversation!" : "Difficult ending";
+                const badgeText = isPositive ? "+4 Resilience awarded" : "-4 Resilience deducted";
 
                 return (
                 <div className="absolute inset-0 z-[100] flex items-center justify-center p-6 bg-[#0b0f1a]/95  animate-in fade-in duration-500 overflow-hidden">
@@ -441,23 +451,23 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
 
                         <div className="flex justify-center gap-4 mb-6">
                             <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-2 text-emerald-500">
-                                <span className="block text-[10px] uppercase tracking-widest font-black mb-1">Позитивні</span>
+                                <span className="block text-[10px] uppercase tracking-widest font-black mb-1">Positive</span>
                                 <span className="block text-2xl font-black">{choiceStats.positive}</span>
                             </div>
                             <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-2 text-rose-500">
-                                <span className="block text-[10px] uppercase tracking-widest font-black mb-1">Негативні</span>
+                                <span className="block text-[10px] uppercase tracking-widest font-black mb-1">Negative</span>
                                 <span className="block text-2xl font-black">{choiceStats.negative}</span>
                             </div>
                             <div className="bg-slate-500/10 border border-slate-500/20 rounded-xl px-4 py-2 text-slate-400">
-                                <span className="block text-[10px] uppercase tracking-widest font-black mb-1">Нейтральні</span>
+                                <span className="block text-[10px] uppercase tracking-widest font-black mb-1">Neutral</span>
                                 <span className="block text-2xl font-black">{choiceStats.neutral}</span>
                             </div>
                         </div>
 
                         <p className="text-slate-400 mb-8 text-sm uppercase tracking-widest font-bold">
                             {isPositive 
-                                ? "Ваші емпатичні відповіді допомогли вирішити ситуацію." 
-                                : "Спробуйте ще раз, обираючи більш конструктивні відповіді."}
+                                ? "Your empathetic responses helped resolve the situation." 
+                                : "Try again, choosing more constructive responses."}
                         </p>
                         
                         <div className="grid grid-cols-1 gap-3">
@@ -468,14 +478,14 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
                                 }}
                                 className="bg-slate-800 hover:bg-slate-700 text-white py-4 rounded-[20px] font-black uppercase text-[10px] tracking-widest transition-all"
                             >
-                                Вийти
+                                Exit
                             </button>
                             {isPositive && (
                                 <button 
                                     onClick={() => onBack()} 
                                     className={`${classes.btnBg} ${classes.btnHover} text-[#0b0f1a] py-4 rounded-[20px] font-black uppercase text-[10px] tracking-widest transition-all shadow-lg ${classes.btnShadow}`}
                                 >
-                                    До прогресу
+                                    To progress
                                 </button>
                             )}
                             {!isPositive && (
@@ -483,7 +493,7 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
                                     onClick={() => onStartMistakesAnalysis && onStartMistakesAnalysis(scenario, userPath)}
                                     className="bg-rose-500/20 hover:bg-rose-500/30 text-rose-500 border border-rose-500/50 py-4 rounded-[20px] font-black uppercase text-[10px] tracking-widest transition-all shadow-lg shadow-rose-500/10"
                                 >
-                                    Робота над помилками
+                                    Work on mistakes
                                 </button>
                             )}
                             <button 
@@ -494,7 +504,7 @@ export default function MainChat({ onBack, username, resilience, onComplete, onM
                                 }}
                                 className={`bg-slate-800 hover:bg-slate-700 text-white py-4 rounded-[20px] font-black uppercase text-[10px] tracking-widest transition-all ${!isPositive ? 'border border-rose-500/50' : ''}`}
                             >
-                                Почати знову
+                                Start over
                             </button>
                         </div>
                     </div>

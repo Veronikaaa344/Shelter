@@ -17,7 +17,7 @@ export default function AdminMaterials() {
         image: "",
         content: "",
         category: "general",
-        duration: "5 хв",
+        duration: "5 min",
     });
 
     const loadData = useCallback(async () => {
@@ -45,7 +45,7 @@ export default function AdminMaterials() {
             image: item.image || "",
             content: item.content || "",
             category: item.category || "general",
-            duration: item.duration || "5 хв",
+            duration: item.duration || "5 min",
         });
         setJsonInput(JSON.stringify(item, null, 4));
         setViewMode("create");
@@ -63,7 +63,7 @@ export default function AdminMaterials() {
             image: "",
             content: "",
             category: "general",
-            duration: "5 хв",
+            duration: "5 min",
         });
         setViewMode("list");
     };
@@ -77,12 +77,12 @@ export default function AdminMaterials() {
                 : await api.createMaterial(payload);
             
             if (res && !res.error) {
-                alert("Успішно збережено!");
+                alert("Successfully saved!");
                 resetForms();
                 loadData();
             }
         } catch (err) {
-            alert("Помилка збереження");
+            alert("Error saving");
         }
     };
 
@@ -90,14 +90,14 @@ export default function AdminMaterials() {
         return (
             <div className="dr-admin-content-wrapper">
                 <div className="dr-admin-header-row">
-                    <h1>Бібліотека знань</h1>
-                    <button className="dr-create-btn" onClick={() => setViewMode("create")}>➕ Створити</button>
+                    <h1>Knowledge Library</h1>
+                    <button className="dr-create-btn" onClick={() => setViewMode("create")}>➕ Create</button>
                 </div>
                 <div className="dr-admin-table">
                     <div className="dr-table-header">
-                        <div>Назва</div>
-                        <div>Тип</div>
-                        <div>Дії</div>
+                        <div>Title</div>
+                        <div>Type</div>
+                        <div>Actions</div>
                     </div>
                     {materials.map((item) => (
                         <div key={item._id} className="dr-table-row">
@@ -106,7 +106,7 @@ export default function AdminMaterials() {
                             <div className="dr-table-cell dr-actions">
                                 <button className="dr-edit-btn" onClick={() => handleEditMaterial(item)}>✏️</button>
                                 <button className="dr-delete-btn" onClick={async () => {
-                                    if (window.confirm("Видалити?")) {
+                                    if (window.confirm("Delete?")) {
                                         await api.deleteMaterial(item._id);
                                         loadData();
                                     }
@@ -122,29 +122,29 @@ export default function AdminMaterials() {
     return (
         <div className="dr-admin-content-wrapper">
             <div className="dr-admin-header-row">
-                <h1>{editId ? "Редагувати" : "Створити"} матеріал</h1>
-                <button className="dr-back-btn" onClick={resetForms}>Назад</button>
+                <h1>{editId ? "Edit" : "Create"} material</h1>
+                <button className="dr-back-btn" onClick={resetForms}>Back</button>
             </div>
             <form onSubmit={handleSaveMaterial} className="dr-material-form">
                 <div className="dr-form-grid">
                     <div className="dr-input-group full">
-                        <label>Назва</label>
+                        <label>Title</label>
                         <input type="text" value={materialForm.title} onChange={(e) => setMaterialForm({...materialForm, title: e.target.value})} required />
                     </div>
                     <div className="dr-input-group">
-                        <label>Тип</label>
+                        <label>Type</label>
                         <select value={materialForm.type} onChange={(e) => setMaterialForm({...materialForm, type: e.target.value})}>
-                            <option value="text">Текст</option>
-                            <option value="video">Відео</option>
-                            <option value="audio">Аудіо</option>
+                            <option value="text">Text</option>
+                            <option value="video">Video</option>
+                            <option value="audio">Audio</option>
                         </select>
                     </div>
                     <div className="dr-input-group full">
-                        <label>Контент (HTML)</label>
+                        <label>Content (HTML)</label>
                         <textarea value={materialForm.content} onChange={(e) => setMaterialForm({...materialForm, content: e.target.value})} rows={10} />
                     </div>
                 </div>
-                <button type="submit" className="dr-save-btn">Зберегти</button>
+                <button type="submit" className="dr-save-btn">Save</button>
             </form>
         </div>
     );

@@ -4,26 +4,26 @@ import "./adminPage.css";
 
 const SAMPLE_SCENARIO_JSON = JSON.stringify({
     scenarioId: "my-scenario",
-    name: "Назва сценарію",
+    name: "Scenario Name",
     category: "general",
-    duration: "5 хв",
+    duration: "5 min",
     difficulty: 50,
     nodes: {
         start: {
-            text: "Привіт! Як ти себе почуваєш сьогодні?",
+            text: "Hello! How are you feeling today?",
             isFinal: false,
             options: [
-                { text: "Чудово!", next: "good", weight: 1 },
-                { text: "Не дуже", next: "bad", weight: -1 }
+                { text: "Great!", next: "good", weight: 1 },
+                { text: "Not so good", next: "bad", weight: -1 }
             ]
         },
         good: {
-            text: "Супер! Продовжуй в тому ж дусі! 🌟",
+            text: "Great! Keep up the good work! 🌟",
             isFinal: true,
             options: []
         },
         bad: {
-            text: "Я поруч. Зроби глибокий вдих... 🫁",
+            text: "I'm here for you. Take a deep breath... 🫁",
             isFinal: true,
             options: []
         }
@@ -40,7 +40,7 @@ export default function AdminScenarios() {
     const [scenarioTitle, setScenarioTitle] = useState("");
     const [scenarioSlug, setScenarioSlug] = useState("");
     const [scenarioCategory, setScenarioCategory] = useState("general");
-    const [scenarioDuration, setScenarioDuration] = useState("5 хв");
+    const [scenarioDuration, setScenarioDuration] = useState("5 min");
     const [scenarioDifficulty, setScenarioDifficulty] = useState(50);
     const [scenarioType, setScenarioType] = useState("dialogue");
     const [showTypeSelector, setShowTypeSelector] = useState(false);
@@ -63,8 +63,8 @@ export default function AdminScenarios() {
     const [draggingMarker, setDraggingMarker] = useState(null);
 
     const [boxes, setBoxes] = useState([
-        { id: 0, name: "Корисні", color: "#10b981" },
-        { id: 1, name: "Шкідливі", color: "#ef4444" }
+        { id: 0, name: "Useful", color: "#10b981" },
+        { id: 1, name: "Harmful", color: "#ef4444" }
     ]);
     const [items, setItems] = useState([]);
 
@@ -122,7 +122,7 @@ export default function AdminScenarios() {
         setScenarioTitle(item.name);
         setScenarioSlug(item.scenarioId);
         setScenarioCategory(item.category || "general");
-        setScenarioDuration(item.duration || "5 хв");
+        setScenarioDuration(item.duration || "5 min");
         setScenarioDifficulty(item.difficulty || 50);
         setScenarioType(item.type || "dialogue");
 
@@ -155,14 +155,14 @@ export default function AdminScenarios() {
         setScenarioTitle("");
         setScenarioSlug("");
         setScenarioCategory("general");
-        setScenarioDuration("5 хв");
+        setScenarioDuration("5 min");
         setScenarioDifficulty(50);
         setNodes([{ id: "start", text: "", isFinal: false, options: [{ text: "", next: "", weight: 0 }] }]);
         setFindImage2("");
         setDifferences([]);
         setVideoUrl("");
         setVideoTranscript("");
-        setBoxes([{ id: 0, name: "Корисні", color: "#10b981" }, { id: 1, name: "Шкідливі", color: "#ef4444" }]);
+        setBoxes([{ id: 0, name: "Useful", color: "#10b981" }, { id: 1, name: "Harmful", color: "#ef4444" }]);
         setItems([]);
         setViewMode("list");
     };
@@ -176,7 +176,7 @@ export default function AdminScenarios() {
             try {
                 payload = JSON.parse(jsonInput);
             } catch (e) {
-                alert("Некоректний формат JSON");
+                alert("Invalid JSON format");
                 return;
             }
         } else {
@@ -218,14 +218,14 @@ export default function AdminScenarios() {
                 ? await api.updateScenario(editId, payload)
                 : await api.createScenario(payload);
             if (res && !res.error) {
-                alert("Збережено успішно!");
+                alert("Saved successfully!");
                 resetForms();
                 loadData();
             } else {
-                alert("Помилка: " + (res?.error || res?.message));
+                alert("Error: " + (res?.error || res?.message));
             }
         } catch (err) {
-            alert("Помилка збереження");
+            alert("Save error");
         }
     };
 
@@ -239,8 +239,8 @@ export default function AdminScenarios() {
         return (
             <div className="dr-admin-content-wrapper">
                 <div className="dr-admin-header-row">
-                    <h1>Тренажери</h1>
-                    <button className="dr-add-new-btn" onClick={() => setShowTypeSelector(true)}>+ Створити</button>
+                    <h1>Trainers</h1>
+                    <button className="dr-add-new-btn" onClick={() => setShowTypeSelector(true)}>+ Create</button>
                 </div>
                 <div className="dr-admin-list">
                     {scenarios.map((item) => (
@@ -257,13 +257,13 @@ export default function AdminScenarios() {
                                 </div>
                             </div>
                             <div className="dr-item-actions">
-                                <button className="dr-edit-btn" onClick={() => handleEditScenario(item)}>Редагувати</button>
+                                <button className="dr-edit-btn" onClick={() => handleEditScenario(item)}>Edit</button>
                                 <button className="dr-delete-btn" onClick={async () => {
-                                    if (window.confirm("Видалити?")) {
+                                    if (window.confirm("Delete?")) {
                                         await api.deleteScenario(item._id);
                                         loadData();
                                     }
-                                }}>Видалити</button>
+                                }}>Delete</button>
                             </div>
                         </div>
                     ))}
@@ -272,22 +272,22 @@ export default function AdminScenarios() {
                 {showTypeSelector && (
                     <div className="dr-type-selector-modal">
                         <div className="dr-type-selector-content">
-                            <h2>Виберіть тип сценарію</h2>
+                            <h2>Select scenario type</h2>
                             <div className="dr-type-options">
                                 <button className="dr-type-option" onClick={() => { setScenarioType("dialogue"); setShowTypeSelector(false); setViewMode("create"); }}>
                                     <div className="dr-type-icon">💬</div>
-                                    <h3>Діалог</h3>
+                                    <h3>Dialogue</h3>
                                 </button>
                                 <button className="dr-type-option" onClick={() => { setScenarioType("find-differences"); setShowTypeSelector(false); setViewMode("create"); }}>
                                     <div className="dr-type-icon">🔍</div>
-                                    <h3>Знайди відмінності</h3>
+                                    <h3>Find Differences</h3>
                                 </button>
                                 <button className="dr-type-option" onClick={() => { setScenarioType("sorting"); setShowTypeSelector(false); setViewMode("create"); }}>
                                     <div className="dr-type-icon">🎯</div>
-                                    <h3>Сортування</h3>
+                                    <h3>Sorting</h3>
                                 </button>
                             </div>
-                            <button className="dr-close-modal-btn" onClick={() => setShowTypeSelector(false)}>Скасувати</button>
+                            <button className="dr-close-modal-btn" onClick={() => setShowTypeSelector(false)}>Cancel</button>
                         </div>
                     </div>
                 )}
@@ -298,24 +298,24 @@ export default function AdminScenarios() {
     return (
         <div className="dr-admin-content-wrapper">
             <div className="dr-admin-header-row">
-                <h1>{editId ? "Редагування" : "Створення"} ({scenarioType})</h1>
-                <button className="dr-back-btn" onClick={resetForms}>Назад</button>
+                <h1>{editId ? "Editing" : "Creation"} ({scenarioType})</h1>
+                <button className="dr-back-btn" onClick={resetForms}>Back</button>
             </div>
 
             {scenarioType === "sorting" ? (
                 <div className="dr-sorting-builder">
                     <div className="dr-scenario-meta">
                         <div className="dr-input-group">
-                            <label>Назва сценарію</label>
+                            <label>Scenario Title</label>
                             <input type="text" value={scenarioTitle} onChange={(e) => setScenarioTitle(e.target.value)} />
                         </div>
                         <div className="dr-input-group">
-                            <label>Технічний ID</label>
+                            <label>Technical ID</label>
                             <input type="text" value={scenarioSlug} onChange={(e) => setScenarioSlug(e.target.value)} />
                         </div>
                     </div>
                     <div className="dr-builder-section">
-                        <h3>📦 Категорії</h3>
+                        <h3>📦 Categories</h3>
                         <div className="dr-boxes-list">
                             {boxes.map((box, bIdx) => (
                                 <div key={bIdx} className="dr-box-item">
@@ -332,11 +332,11 @@ export default function AdminScenarios() {
                                     <button onClick={() => setBoxes(boxes.filter((_, i) => i !== bIdx))}>✕</button>
                                 </div>
                             ))}
-                            <button className="dr-add-btn" onClick={() => setBoxes([...boxes, { id: boxes.length, name: "", color: "#ffffff" }])}>+ Додати категорію</button>
+                            <button className="dr-add-btn" onClick={() => setBoxes([...boxes, { id: boxes.length, name: "", color: "#ffffff" }])}>+ Add category</button>
                         </div>
                     </div>
                     <div className="dr-builder-section">
-                        <h3>🧩 Елементи для сортування</h3>
+                        <h3>🧩 Sorting Elements</h3>
                         <div className="dr-items-list">
                             {items.map((item, iIdx) => (
                                 <div key={iIdx} className="dr-item-edit-row">
@@ -355,20 +355,20 @@ export default function AdminScenarios() {
                                     <button onClick={() => setItems(items.filter((_, i) => i !== iIdx))}>✕</button>
                                 </div>
                             ))}
-                            <button className="dr-add-btn" onClick={() => setItems([...items, { text: "", categoryId: boxes[0]?.id || 0 }])}>+ Додати елемент</button>
+                            <button className="dr-add-btn" onClick={() => setItems([...items, { text: "", categoryId: boxes[0]?.id || 0 }])}>+ Add element</button>
                         </div>
                     </div>
-                    <button className="dr-save-btn" onClick={handleSaveScenario}>Зберегти сценарій</button>
+                    <button className="dr-save-btn" onClick={handleSaveScenario}>Save scenario</button>
                 </div>
             ) : scenarioType === "find-differences" ? (
                 <div className="dr-find-differences-builder">
                     <div className="dr-scenario-meta">
                         <div className="dr-input-group">
-                            <label>Назва</label>
+                            <label>Title</label>
                             <input type="text" value={scenarioTitle} onChange={(e) => setScenarioTitle(e.target.value)} />
                         </div>
                         <div className="dr-input-group">
-                            <label>Зображення</label>
+                            <label>Image</label>
                             <input type="text" value={findImage2} onChange={(e) => setFindImage2(e.target.value)} placeholder="/images/..." />
                         </div>
                     </div>
@@ -389,17 +389,17 @@ export default function AdminScenarios() {
                             </div>
                         </div>
                     )}
-                    <button className="dr-save-btn" onClick={handleSaveScenario}>Зберегти сценарій</button>
+                    <button className="dr-save-btn" onClick={handleSaveScenario}>Save scenario</button>
                 </div>
             ) : (
                 <div className="dr-scenario-builder">
                     <div className="dr-scenario-meta">
                         <div className="dr-input-group">
-                            <label>Назва</label>
+                            <label>Title</label>
                             <input type="text" value={scenarioTitle} onChange={(e) => setScenarioTitle(e.target.value)} />
                         </div>
                         <div className="dr-input-group">
-                            <label>Технічний ID</label>
+                            <label>Technical ID</label>
                             <input type="text" value={scenarioSlug} onChange={(e) => setScenarioSlug(e.target.value)} />
                         </div>
                     </div>
@@ -410,20 +410,20 @@ export default function AdminScenarios() {
                                     <input type="text" value={node.id} onChange={(e) => updateNode(nIdx, "id", e.target.value)} placeholder="Node ID" />
                                     <label className="dr-checkbox">
                                         <input type="checkbox" checked={node.isFinal} onChange={(e) => updateNode(nIdx, "isFinal", e.target.checked)} />
-                                        <span>Фінал</span>
+                                        <span>Final</span>
                                     </label>
                                 </div>
-                                <textarea value={node.text} onChange={(e) => updateNode(nIdx, "text", e.target.value)} placeholder="Текст бота..." />
+                                <textarea value={node.text} onChange={(e) => updateNode(nIdx, "text", e.target.value)} placeholder="Bot text..." />
                                 {!node.isFinal && (
                                     <div className="dr-options-area">
                                         {node.options.map((opt, oIdx) => (
                                             <div key={oIdx} className="dr-opt-row">
-                                                <input type="text" value={opt.text} placeholder="Варіант" onChange={(e) => {
+                                                <input type="text" value={opt.text} placeholder="Option" onChange={(e) => {
                                                     const n = [...nodes];
                                                     n[nIdx].options[oIdx].text = e.target.value;
                                                     setNodes(n);
                                                 }} />
-                                                <input type="text" value={opt.next} placeholder="Перехід до ID" onChange={(e) => {
+                                                <input type="text" value={opt.next} placeholder="Next ID" onChange={(e) => {
                                                     const n = [...nodes];
                                                     n[nIdx].options[oIdx].next = e.target.value;
                                                     setNodes(n);
@@ -434,14 +434,14 @@ export default function AdminScenarios() {
                                             const n = [...nodes];
                                             n[nIdx].options.push({ text: "", next: "", weight: 0 });
                                             setNodes(n);
-                                        }}>+ Варіант</button>
+                                        }}>+ Option</button>
                                     </div>
                                 )}
                             </div>
                         ))}
-                        <button className="dr-add-node-btn" onClick={() => setNodes([...nodes, { id: `node_${nodes.length}`, text: "", isFinal: false, options: [] }])}>+ Додати блок</button>
+                        <button className="dr-add-node-btn" onClick={() => setNodes([...nodes, { id: `node_${nodes.length}`, text: "", isFinal: false, options: [] }])}>+ Add block</button>
                     </div>
-                    <button className="dr-save-btn" onClick={handleSaveScenario}>Зберегти сценарій</button>
+                    <button className="dr-save-btn" onClick={handleSaveScenario}>Save scenario</button>
                 </div>
             )}
         </div>

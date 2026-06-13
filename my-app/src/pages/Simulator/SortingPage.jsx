@@ -47,7 +47,7 @@ export default function SortingPage({ isEmbedded = false, embeddedId = null, onB
     useEffect(() => {
         if (!id || id === 'chaos-unloading') {
             const chaosItems = generateItems();
-            setScenario({ name: 'Розвантаження хаосу', description: 'Перетягни квадрати у відповідні коробки або просто пересувай їх по полю' });
+            setScenario({ name: 'Unloading Chaos', description: 'Drag the squares into the matching boxes or just move them around the board' });
             setItems(chaosItems);
             setBoxes(generateBoxes());
             setTotalItems(chaosItems.length);
@@ -137,7 +137,7 @@ export default function SortingPage({ isEmbedded = false, embeddedId = null, onB
         }
     };
 
-    if (loading) return <div className="dr-new-layout dr-st-center"><h2>Завантаження...</h2></div>;
+    if (loading) return <div className="dr-new-layout dr-st-center"><h2>Loading...</h2></div>;
 
     return (
         <div className="dr-new-layout dr-sorting-page">
@@ -146,11 +146,11 @@ export default function SortingPage({ isEmbedded = false, embeddedId = null, onB
                     className="dr-show-all-btn dr-sorting-back"
                     onClick={() => (onBack ? onBack() : navigate("/quests"))}
                 >
-                    ← {onBack ? 'На дашборд' : 'Повернутися до квестів'}
+                    ← {onBack ? 'To Dashboard' : 'Return to quests'}
                 </button>
                 
                 <div className="dr-sorting-top-counter">
-                    Залишилось {items.length}
+                    Remaining {items.length}
                 </div>
             </div>
 
@@ -207,8 +207,8 @@ export default function SortingPage({ isEmbedded = false, embeddedId = null, onB
                 <div className="dr-completion-overlay">
                     <div className="dr-status-card dr-st-empty-card">
                         <div className="dr-card-emoji">🎉</div>
-                        <h2 className="dr-status-title">Відмінно!</h2>
-                        <button className="dr-trainer-btn" onClick={() => navigate("/exercises")}>Продовжити</button>
+                        <h2 className="dr-status-title">Excellent!</h2>
+                        <button className="dr-trainer-btn" onClick={() => navigate("/exercises")}>Continue</button>
                     </div>
                 </div>
             )}

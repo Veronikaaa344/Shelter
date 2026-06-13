@@ -103,7 +103,7 @@ const FlipSidebarItem = ({
           {isDashboard && (
             <>
               <ChevronLeft size={22} className="shrink-0" />
-              <span className="font-bold text-sm tracking-wide">{t('common.back')}</span>
+              <span className="font-bold text-sm tracking-wide">{t('common.back', 'Back')}</span>
             </>
           )}
         </div>

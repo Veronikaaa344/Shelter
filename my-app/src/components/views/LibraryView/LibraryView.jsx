@@ -28,10 +28,10 @@ const LibraryView = ({
     const { t } = useTranslation();
 
     const filterLabels = {
-        'Всі': t('library.all'),
-        'Аудіо': t('library.audio'),
-        'Відео': t('library.video'),
-        'Стаття': t('library.article')
+        'All': t('library.all'),
+        'Audio': t('library.audio'),
+        'Video': t('library.video'),
+        'Article': t('library.article')
     };
     const [activeNoise, setActiveNoise] = useState(null);
     const [isNoisePlaying, setIsNoisePlaying] = useState(false);
@@ -45,17 +45,17 @@ const LibraryView = ({
 
     const filteredMedia = mediaLibraryData.filter(item => {
       const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesFilter = libraryFilter === 'Всі' || item.type === libraryFilter;
+      const matchesFilter = libraryFilter === 'All' || item.type === libraryFilter;
       return matchesSearch && matchesFilter;
     }).sort((a, b) => {
         if (currentMood) {
             const getMoodScore = (m) => {
                 const title = m.title.toLowerCase();
-                if (currentMood === 'anxiety') return /дихан|заземлення|шок|панічн|вагус|птахів|голоси/.test(title) ? 1 : 0;
-                if (currentMood === 'stress') return /релаксац|йога|кортизол|трясіння|пляжі|хвиль/.test(title) ? 1 : 0;
-                if (currentMood === 'exhausted') return /дощу|дощ|сну|ліжка|аудіо|медитац|цвіркуни|ліс/.test(title) ? 1 : 0;
-                if (currentMood === 'calm') return /інтелект|стійкість|щоденник|прокрастинуємо|гігієна|багаття|райська|атмосфера/.test(title) ? 1 : 0;
-                if (currentMood === 'happy') return /зарядка|діагностика|інтелект|рефлекс|птахів|райська/.test(title) ? 1 : 0;
+                if (currentMood === 'anxiety') return /breath|grounding|shock|panic|vagus|birds|voices/.test(title) ? 1 : 0;
+                if (currentMood === 'stress') return /relax|yoga|cortisol|shaking|beaches|waves/.test(title) ? 1 : 0;
+                if (currentMood === 'exhausted') return /rain|rain|sleep|bed|audio|meditation|crickets|forest/.test(title) ? 1 : 0;
+                if (currentMood === 'calm') return /intellect|resilience|journal|procrastinate|hygiene|bonfire|paradise|atmosphere/.test(title) ? 1 : 0;
+                if (currentMood === 'happy') return /charge|diagnosis|intellect|reflex|birds|paradise/.test(title) ? 1 : 0;
                 return 0;
             };
             const scoreA = getMoodScore(a);
@@ -77,7 +77,7 @@ const LibraryView = ({
     });
 
     const checkIsShortArticle = (material) => {
-        if (material.type !== 'Стаття' && material.type !== 'text') return false;
+        if (material.type !== 'Article' && material.type !== 'text') return false;
         if (material.url && material.url.trim() !== '') return false;
         
         const content = material.content || '';
@@ -106,11 +106,11 @@ const LibraryView = ({
         const buffer = audioCtx.current.createBuffer(1, bufferSize, audioCtx.current.sampleRate);
         const output = buffer.getChannelData(0);
 
-        if (type === 'Білий') {
+        if (type === 'White') {
             for (let i = 0; i < bufferSize; i++) {
                 output[i] = Math.random() * 2 - 1;
             }
-        } else if (type === 'Рожевий') {
+        } else if (type === 'Pink') {
             let b0, b1, b2, b3, b4, b5, b6;
             b0 = b1 = b2 = b3 = b4 = b5 = b6 = 0.0;
             for (let i = 0; i < bufferSize; i++) {
@@ -125,7 +125,7 @@ const LibraryView = ({
                 output[i] *= 0.11; 
                 b6 = white * 0.115926;
             }
-        } else if (type === 'Коричневий') {
+        } else if (type === 'Brown') {
             let lastOut = 0.0;
             for (let i = 0; i < bufferSize; i++) {
                 const white = Math.random() * 2 - 1;
@@ -289,7 +289,7 @@ const LibraryView = ({
                         <div className="flex flex-col flex-1">
                             <div className="flex items-center gap-2 mb-1">
                                 <p className="text-[10px] font-black uppercase tracking-widest">{item.type}</p>
-                                {item.type === 'Стаття' && !item.url && (
+                                {item.type === 'Article' && !item.url && (
                                     <span className="text-[8px] font-black bg-slate-800 px-2 py-0.5 rounded-md uppercase tracking-wider">
                                         {checkIsShortArticle(item) ? t('common.quick_read') : t('common.expanded')}
                                     </span>
@@ -314,7 +314,7 @@ const LibraryView = ({
                         <div className="relative z-10 flex flex-col flex-1">
                             <div className="flex items-center gap-2 mb-1">
                                 <p className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">{item.type}</p>
-                                {item.type === 'Стаття' && !item.url && (
+                                {item.type === 'Article' && !item.url && (
                                     <span className="text-[8px] font-black bg-slate-800 text-slate-300 px-2 py-0.5 rounded-md uppercase tracking-wider">
                                         {checkIsShortArticle(item) ? t('common.quick_read') : t('common.expanded')}
                                     </span>
@@ -342,18 +342,18 @@ const LibraryView = ({
 
     return (
       <div className="p-8 space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-24">
-        {}
+        {/* Main header and filter buttons */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <h2 className="text-5xl font-black text-white italic uppercase tracking-tighter leading-none">{t('library.title')}</h2>
           <div className="flex gap-2 bg-slate-900/50 p-1.5 rounded-2xl border border-slate-800 ">
-            {['Всі', 'Аудіо', 'Відео', 'Стаття'].map((f) => (
+            {['All', 'Audio', 'Video', 'Article'].map((f) => (
               <button key={f} onClick={() => setLibraryFilter(f)} className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${libraryFilter === f ? 'bg-emerald-500 text-[#0b0f1a]' : 'text-slate-500 hover:text-white'}`}>{filterLabels[f] || f}</button>
             ))}
           </div>
         </div>
 
-        {}
-        {libraryFilter === 'Всі' && (
+        {/* Soundscapes section (only for 'All' filter) */}
+        {libraryFilter === 'All' && (
             <section className="space-y-8">
                 <div className="flex items-center gap-3">
                     <div className="w-2 h-8 bg-blue-500 rounded-full"></div>
@@ -374,9 +374,9 @@ const LibraryView = ({
                             <div className="flex flex-col xl:flex-row gap-10 items-center">
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 flex-1 w-full">
                                     {[
-                                        { name: 'Білий', label: t('library.white'), desc: t('library.white_desc'), color: 'bg-white/10', border: 'hover:border-white' },
-                                        { name: 'Рожевий', label: t('library.pink'), desc: t('library.pink_desc'), color: 'bg-rose-500/10', border: 'hover:border-rose-500' },
-                                        { name: 'Коричневий', label: t('library.brown'), desc: t('library.brown_desc'), color: 'bg-amber-900/20', border: 'hover:border-amber-700' }
+                                        { name: 'White', label: t('library.white'), desc: t('library.white_desc'), color: 'bg-white/10', border: 'hover:border-white' },
+                                        { name: 'Pink', label: t('library.pink'), desc: t('library.pink_desc'), color: 'bg-rose-500/10', border: 'hover:border-rose-500' },
+                                        { name: 'Brown', label: t('library.brown'), desc: t('library.brown_desc'), color: 'bg-amber-900/20', border: 'hover:border-amber-700' }
                                     ].map((noise) => (
                                         <button 
                                             key={noise.name} 
@@ -391,7 +391,7 @@ const LibraryView = ({
                                     ))}
                                 </div>
 
-                                {}
+                                {/* Volume slider */}
                                 <div className="relative flex flex-col items-center gap-4 py-2">
                                     <div 
                                         className="relative w-24 h-48 bg-[#0f172a] rounded-[44px] overflow-hidden cursor-pointer group shadow-[0_20px_40px_-10px_rgba(0,0,0,0.8),inset_0_2px_4px_rgba(255,255,255,0.05)] border-2 border-[#1e293b]"
@@ -476,7 +476,7 @@ const LibraryView = ({
                                     if (activeNoise) {
                                         toggleNoise(activeNoise);
                                     } else {
-                                        toggleNoise('Білий'); 
+                                        toggleNoise('White'); 
                                     }
                                 }}
                                 className={`w-full py-3 ${isNoisePlaying ? 'bg-rose-600' : 'bg-blue-600'} hover:opacity-90 text-white rounded-2xl font-black uppercase text-[10px] tracking-widest transition-all shadow-lg flex items-center justify-center gap-2`}
@@ -489,8 +489,8 @@ const LibraryView = ({
             </section>
         )}
 
-        {}
-        {libraryFilter === 'Всі' && (
+        {/* Photo grounding section (only for 'All' filter) */}
+        {libraryFilter === 'All' && (
             <section className="space-y-8">
                 <div className="flex items-center gap-3">
                     <div className="w-2 h-8 bg-emerald-500 rounded-full"></div>
@@ -502,7 +502,7 @@ const LibraryView = ({
             </section>
         )}
 
-        {}
+        {/* All materials section */}
         <section className="space-y-8">
             <div className="flex items-center gap-3">
                 <div className="w-2 h-8 bg-purple-500 rounded-full"></div>
@@ -517,4 +517,3 @@ const LibraryView = ({
 };
 
 export default LibraryView;
-
