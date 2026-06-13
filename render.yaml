@@ -22,7 +22,7 @@ services:
     name: shelter-frontend
     env: static
     rootDir: my-app
-    buildCommand: npm install && npm run build
+    buildCommand: npm install --legacy-peer-deps && npm run build
     staticPublishPath: build
     envVars:
       - key: REACT_APP_API_URL
