@@ -77,7 +77,7 @@ export default function MistakesAnalysis({ data, onBack }) {
                         <BookOpen className="text-amber-500 shrink-0" size={20} />
                         Advanced Analysis
                     </h2>
-                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold truncate">{scenario.name}</p>
+                    <p className="text-[10px] text-slate-400 uppercase tracking-widest font-bold line-clamp-2 leading-tight">{scenario.name}</p>
                 </div>
                 <div className="shrink-0 text-right">
                     <div className="text-2xl font-black text-white">{positiveRate}%</div>
@@ -152,8 +152,8 @@ export default function MistakesAnalysis({ data, onBack }) {
                                                     <div className={`text-[9px] uppercase font-black tracking-widest mb-1 ${severity.color}`}>
                                                         {severity.icon} {severity.label} · {mistake.chosenOption.weight} points
                                                     </div>
-                                                    <p className="text-slate-300 text-sm font-semibold truncate">"{mistake.chosenOption.text}"</p>
-                                                    <p className="text-slate-500 text-[10px] mt-1 truncate">Companion: "{botPhrase}"</p>
+                                                    <p className="text-slate-300 text-sm font-semibold">"{mistake.chosenOption.text}"</p>
+                                                    <p className="text-slate-500 text-[10px] mt-1 line-clamp-3">Companion: "{botPhrase}"</p>
                                                 </div>
                                                 <div className={`text-slate-400 transition-transform duration-300 shrink-0 ${isExpanded ? 'rotate-180' : ''}`}>
                                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
@@ -240,8 +240,8 @@ export default function MistakesAnalysis({ data, onBack }) {
                                                 <div className={`text-[9px] uppercase font-black tracking-widest mb-1 text-amber-500`}>
                                                     Hidden trap · {trap.badOption.weight} points
                                                 </div>
-                                                <p className="text-slate-300 text-sm font-semibold truncate">"{trap.badOption.text}"</p>
-                                                <p className="text-slate-500 text-[10px] mt-1 truncate">Companion: "{trap.botPhrase}"</p>
+                                                <p className="text-slate-300 text-sm font-semibold">"{trap.badOption.text}"</p>
+                                                <p className="text-slate-500 text-[10px] mt-1 line-clamp-3">Companion: "{trap.botPhrase}"</p>
                                             </div>
                                             <div className={`text-amber-500 transition-transform duration-300 shrink-0 ${isExpanded ? 'rotate-180' : ''}`}>
                                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>

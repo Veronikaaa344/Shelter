@@ -290,13 +290,13 @@ const HomeView = ({
           </div>
           
           <div className="flex w-full md:w-auto gap-3 md:gap-4 mt-2 md:mt-0">
-            <div className="flex-1 md:w-[140px] bg-slate-900/40 p-3 md:p-4 rounded-2xl md:rounded-3xl border border-slate-800  text-center shrink-0">
-                <p className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 truncate">{t('home.streak')}</p>
-                <p className="text-2xl md:text-3xl font-black text-white truncate">{streak} {getDaysWord(streak, t)}</p>
+            <div className="flex-1 md:min-w-[140px] bg-slate-900/40 p-3 md:p-4 rounded-2xl md:rounded-3xl border border-slate-800 text-center shrink-0 flex flex-col justify-center">
+                <p className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 leading-tight">{t('home.streak')}</p>
+                <p className="text-2xl md:text-3xl font-black text-white leading-none break-words">{streak} <span className="text-sm font-bold opacity-80">{getDaysWord(streak, t)}</span></p>
             </div>
-            <div className="flex-1 md:w-[140px] bg-emerald-500/10 p-3 md:p-4 rounded-2xl md:rounded-3xl border border-emerald-500/20  text-center shrink-0">
-                <p className="text-[9px] md:text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1 truncate">{t('home.resilience')}</p>
-                <p className="text-2xl md:text-3xl font-black text-emerald-400 truncate">{Math.round(resilience)}%</p>
+            <div className="flex-1 md:min-w-[140px] bg-emerald-500/10 p-3 md:p-4 rounded-2xl md:rounded-3xl border border-emerald-500/20 text-center shrink-0 flex flex-col justify-center">
+                <p className="text-[9px] md:text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-1 leading-tight">{t('home.resilience')}</p>
+                <p className="text-2xl md:text-3xl font-black text-emerald-400 leading-none">{Math.round(resilience)}%</p>
             </div>
           </div>
         </section>
