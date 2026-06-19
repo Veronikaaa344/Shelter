@@ -48,7 +48,7 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack, onC
                     data = await api.getScenarioById(id).catch(e => null);
                 }
 
-                setScenario(data && !data.message ? data : { name: t('sorting.fallback_title', "Сортування думок") });
+                setScenario(data && !data.message ? data : { name: t('sorting.fallback_title') });
                 
                 let dbBoxes = data && !data.message ? (data.content?.categories || data.categories || []) : [];
                 let dbItems = data && !data.message ? (data.content?.items || data.items || []) : [];
@@ -57,46 +57,46 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack, onC
                     console.log('Using hardcoded sorting data as fallback');
                     
                     if (id === 'hardcoded-sorting-2') {
-                        setScenario({ name: t('sorting.circle_control', "Коло контролю") });
+                        setScenario({ name: t('sorting.circle_control') });
                         dbBoxes = [
-                            { id: 'in_control', name: t('sorting.my_control', 'Мій контроль'), color: '#8b5cf6' },
-                            { id: 'out_control', name: t('sorting.out_control', 'Поза моїм контролем'), color: '#64748b' }
+                            { id: 'in_control', name: t('sorting.my_control'), color: '#8b5cf6' },
+                            { id: 'out_control', name: t('sorting.out_control'), color: '#64748b' }
                         ];
                         dbItems = [
-                            { id: 'i1', text: t('sorting.my_actions', 'Мої власні вчинки'), categoryId: 'in_control' },
-                            { id: 'i2', text: t('sorting.others_actions', 'Дії інших людей'), categoryId: 'out_control' },
-                            { id: 'i3', text: t('sorting.my_words', 'Мої слова та реакції'), categoryId: 'in_control' },
-                            { id: 'i4', text: t('sorting.weather', 'Погода на вулиці'), categoryId: 'out_control' },
-                            { id: 'i5', text: t('sorting.others_thoughts', 'Думки інших про мене'), categoryId: 'out_control' },
-                            { id: 'i6', text: t('sorting.my_goals', 'Мої життєві цілі'), categoryId: 'in_control' },
+                            { id: 'i1', text: t('sorting.my_actions'), categoryId: 'in_control' },
+                            { id: 'i2', text: t('sorting.others_actions'), categoryId: 'out_control' },
+                            { id: 'i3', text: t('sorting.my_words'), categoryId: 'in_control' },
+                            { id: 'i4', text: t('sorting.weather'), categoryId: 'out_control' },
+                            { id: 'i5', text: t('sorting.others_thoughts'), categoryId: 'out_control' },
+                            { id: 'i6', text: t('sorting.my_goals'), categoryId: 'in_control' },
                         ];
                     } else if (id === 'hardcoded-sorting-3') {
-                        setScenario({ name: t('sorting.habits', "Звички") });
+                        setScenario({ name: t('sorting.habits') });
                         dbBoxes = [
-                            { id: 'healthy', name: t('sorting.healthy_habits', 'Здорові звички'), color: '#10b981' },
-                            { id: 'toxic', name: t('sorting.toxic_patterns', 'Токсичні патерни'), color: '#f59e0b' }
+                            { id: 'healthy', name: t('sorting.healthy_habits'), color: '#10b981' },
+                            { id: 'toxic', name: t('sorting.toxic_patterns'), color: '#f59e0b' }
                         ];
                         dbItems = [
-                            { id: 'i1', text: t('sorting.regular_rest', 'Регулярний відпочинок'), categoryId: 'healthy' },
-                            { id: 'i2', text: t('sorting.comparing_others', 'Порівняння себе з іншими'), categoryId: 'toxic' },
-                            { id: 'i3', text: t('sorting.saying_no', 'Вміння казати «Ні»'), categoryId: 'healthy' },
-                            { id: 'i4', text: t('sorting.ignoring_emotions', 'Ігнорування власних емоцій'), categoryId: 'toxic' },
-                            { id: 'i5', text: t('sorting.perfectionism', 'Перфекціонізм у всьому'), categoryId: 'toxic' },
-                            { id: 'i6', text: t('sorting.physical_activity', 'Фізична активність'), categoryId: 'healthy' },
+                            { id: 'i1', text: t('sorting.regular_rest'), categoryId: 'healthy' },
+                            { id: 'i2', text: t('sorting.comparing_others'), categoryId: 'toxic' },
+                            { id: 'i3', text: t('sorting.saying_no'), categoryId: 'healthy' },
+                            { id: 'i4', text: t('sorting.ignoring_emotions'), categoryId: 'toxic' },
+                            { id: 'i5', text: t('sorting.perfectionism'), categoryId: 'toxic' },
+                            { id: 'i6', text: t('sorting.physical_activity'), categoryId: 'healthy' },
                         ];
                     } else {
-                        setScenario({ name: t('sorting.sorting_thoughts', "Сортування думок") });
+                        setScenario({ name: t('sorting.sorting_thoughts') });
                         dbBoxes = [
-                            { id: 'positive', name: t('sorting.useful_thoughts', 'Корисні думки'), color: '#10b981' },
-                            { id: 'negative', name: t('sorting.destructive_thoughts', 'Деструктивні думки'), color: '#f43f5e' }
+                            { id: 'positive', name: t('sorting.useful_thoughts'), color: '#10b981' },
+                            { id: 'negative', name: t('sorting.destructive_thoughts'), color: '#f43f5e' }
                         ];
                         dbItems = [
-                            { id: 'i1', text: t('sorting.overcome_this', 'Я зможу це подолати'), categoryId: 'positive' },
-                            { id: 'i2', text: t('sorting.everything_wrong', 'Все завжди йде не так'), categoryId: 'negative' },
-                            { id: 'i4', text: t('sorting.opportunity', 'Це гарна можливість для росту'), categoryId: 'positive' },
-                            { id: 'i5', text: t('sorting.never_learn', 'Я ніколи не навчуся'), categoryId: 'negative' },
-                            { id: 'i7', text: t('sorting.mistakes_help', 'Помилки допомагають мені вчитися'), categoryId: 'positive' },
-                            { id: 'i8', text: t('sorting.nobody_understands', 'Ніхто мене не розуміє'), categoryId: 'negative' },
+                            { id: 'i1', text: t('sorting.overcome_this'), categoryId: 'positive' },
+                            { id: 'i2', text: t('sorting.everything_wrong'), categoryId: 'negative' },
+                            { id: 'i4', text: t('sorting.opportunity'), categoryId: 'positive' },
+                            { id: 'i5', text: t('sorting.never_learn'), categoryId: 'negative' },
+                            { id: 'i7', text: t('sorting.mistakes_help'), categoryId: 'positive' },
+                            { id: 'i8', text: t('sorting.nobody_understands'), categoryId: 'negative' },
                         ];
                     }
                 }
@@ -242,10 +242,14 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack, onC
         <div className="dr-updated-sorting-layout">
             <header className="dr-sorting-header">
                 <div className="dr-header-content">
-                    {/* Back button removed as requested */}
+                    <button onClick={() => navigate('/exercises')} className="dr-back-btn">
+                        <ArrowLeft /> {t('sorting.back_to_exercises')}
+                    </button>
                     
-                    <h1 className="dr-scenario-title">{scenario?.name || "Сортування"}</h1>
+                    {scenario && <h2 className="dr-sorting-title">{scenario.name}</h2>}
                     
+
+
                     <div className="dr-header-stats">
                         <div className="dr-stat-item">
                             <Target size={16} />
@@ -286,7 +290,7 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack, onC
                     ))}
                     {items.length === 0 && sortedCount < totalItems && (
                         <div className="flex items-center justify-center h-full opacity-20 italic">
-                            Всі елементи на місцях...
+                            {t('sorting.all_items_placed')}
                         </div>
                     )}
                 </div>
@@ -322,23 +326,18 @@ export default function UpdatedSortingPage({ isEmbedded, embeddedId, onBack, onC
                 <div className="dr-completion-overlay">
                     <div className="dr-completion-card">
                         <div className="dr-completion-icon">🏆</div>
-                        <h2>Вправа завершена!</h2>
-                        <div className="dr-completion-stats">
+                        <h2>{t('sorting.success_message')}</h2>
+                        <div className="dr-stats-container">
                             <div className="dr-stat-row">
-                                <span>Рахунок:</span>
+                                <span>{t('sorting.score')}:</span>
                                 <span>{score}</span>
                             </div>
                         </div>
-                        <button className="dr-completion-btn primary" onClick={handleClose}>
-                            Завершити
-                        </button>
-                        <button className="dr-completion-btn secondary" onClick={() => window.location.reload()}>
-                            Ще раз
-                        </button>
+                        <button className="dr-btn-primary" onClick={() => window.location.reload()}>{t('sorting.try_again')}</button>
+                        <button className="dr-btn-secondary" onClick={() => navigate('/exercises')}>{t('sorting.close')}</button>
                     </div>
                 </div>
             )}
-
             {}
         </div>
     );

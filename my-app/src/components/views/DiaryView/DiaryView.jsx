@@ -89,7 +89,7 @@ const DiaryView = ({ userId, onAddEntry }) => {
 
     const formatDate = (dateStr) => {
         const date = new Date(dateStr);
-        return date.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'uk-UA', {
+        return date.toLocaleDateString(i18n.language === 'de' ? 'de-DE' : 'en-US', {
             day: 'numeric',
             month: 'long',
             hour: '2-digit',

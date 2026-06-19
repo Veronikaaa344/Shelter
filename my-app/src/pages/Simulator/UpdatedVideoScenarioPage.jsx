@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { api } from "../../infrastructure/api/api";
 import CharacterCompanion from "../../components/characterCompanion/CharacterCompanion";
 import { ArrowLeft, Play, Pause, Volume2, VolumeX, Maximize2, Minimize2, RotateCcw, FileText, Trophy, Clock } from 'lucide-react';
@@ -8,6 +9,7 @@ import "./updatedVideoScenarioPage.css";
 export default function UpdatedVideoScenarioPage() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const videoRef = useRef(null);
     const [scenario, setScenario] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -162,7 +164,7 @@ export default function UpdatedVideoScenarioPage() {
         <div className="dr-updated-video-layout">
             <div className="dr-loading-container">
                 <div className="dr-loading-spinner"></div>
-                <h2>Завантаження...</h2>
+                <h2>{t('video.loading')}</h2>
             </div>
         </div>
     );
@@ -174,13 +176,13 @@ export default function UpdatedVideoScenarioPage() {
                 <div className="dr-header-content">
                     <button className="dr-back-btn" onClick={() => navigate("/exercises")}>
                         <ArrowLeft size={20} />
-                        <span>До вправ</span>
+                        <span>{t('video.back_to_exercises')}</span>
                     </button>
                     
                     <div className="dr-header-info">
                         <h1 className="dr-scenario-title">{scenario?.name}</h1>
                         <div className="dr-video-meta">
-                            <span className="dr-video-category">{scenario?.category || 'Відео тренування'}</span>
+                            <span className="dr-video-category">{scenario?.category || t('video.video_practice')}</span>
                             <span className="dr-video-duration">
                                 <Clock size={14} />
                                 {scenario?.duration || formatTime(duration)}
@@ -228,7 +230,7 @@ export default function UpdatedVideoScenarioPage() {
                             {isCompleted && (
                                 <div className="dr-completed-overlay">
                                     <div className="dr-completed-icon">✓</div>
-                                    <span>Відео завершено</span>
+                                    <span>{t('video.video_completed')}</span>
                                 </div>
                             )}
                         </div>
@@ -279,7 +281,7 @@ export default function UpdatedVideoScenarioPage() {
                                 <button 
                                     className="dr-control-btn" 
                                     onClick={changePlaybackSpeed}
-                                    title={`Швидкість: ${playbackSpeed}x`}
+                                    title={`${t('video.speed')} ${playbackSpeed}x`}
                                 >
                                     {playbackSpeed}x
                                 </button>
@@ -300,9 +302,9 @@ export default function UpdatedVideoScenarioPage() {
                         <div className="dr-video-description">
                             <h3>
                                 <FileText size={18} />
-                                Опис сценарію
+                                {t('video.scenario_description')}
                             </h3>
-                            <p>{scenario?.description || "Перегляньте відео та дотримуйтесь інструкцій для ефективного тренування."}</p>
+                            <p>{scenario?.description || t('video.default_description')}</p>
                         </div>
 
                         <div className="dr-transcript-section">
@@ -311,18 +313,18 @@ export default function UpdatedVideoScenarioPage() {
                                 onClick={() => setShowTranscript(!showTranscript)}
                             >
                                 <FileText size={18} />
-                                {showTranscript ? "Приховати транскрипцію" : "Показати транскрипцію"}
+                                {showTranscript ? t('video.hide_transcript') : t('video.show_transcript')}
                             </button>
                             
                             {showTranscript && (
                                 <div className="dr-transcript-content">
                                     <h3>
                                         <FileText size={18} />
-                                        Транскрипція відео
+                                        {t('video.video_transcript')}
                                     </h3>
                                     <div 
                                         className="dr-transcript-text"
-                                        dangerouslySetInnerHTML={{ __html: scenario?.videoTranscript || 'Транскрипція недоступна для цього відео.' }}
+                                        dangerouslySetInnerHTML={{ __html: scenario?.videoTranscript || t('video.transcript_unavailable') }}
                                     />
                                 </div>
                             )}
@@ -340,16 +342,16 @@ export default function UpdatedVideoScenarioPage() {
                     <div className="dr-completion-card">
                         <div className="dr-completion-header">
                             <div className="dr-completion-icon">🎬</div>
-                            <h2>Відео завершено!</h2>
-                            <p>Дякуємо за перегляд. Оцініть ефективність тренування.</p>
+                            <h2>{t('video.video_completed')}</h2>
+                            <p>{t('video.thanks_for_watching')}</p>
                         </div>
                         <div className="dr-completion-stats">
                             <div className="dr-stat-row">
-                                <span>Час перегляду:</span>
+                                <span>{t('video.watch_time')}</span>
                                 <span>{formatTime(watchTime)}</span>
                             </div>
                             <div className="dr-stat-row">
-                                <span>Прогрес:</span>
+                                <span>{t('video.progress')}</span>
                                 <span>{score}%</span>
                             </div>
                         </div>
@@ -358,19 +360,19 @@ export default function UpdatedVideoScenarioPage() {
                                 className="dr-completion-btn excellent" 
                                 onClick={() => handleComplete(100)}
                             >
-                                😊 Дуже ефективно
+                                😊 {t('video.very_efficient')}
                             </button>
                             <button 
                                 className="dr-completion-btn good" 
                                 onClick={() => handleComplete(75)}
                             >
-                                😐 Середньо
+                                😐 {t('video.average')}
                             </button>
                             <button 
                                 className="dr-completion-btn poor" 
                                 onClick={() => handleComplete(50)}
                             >
-                                😔 Мало ефективно
+                                😔 {t('video.not_efficient')}
                             </button>
                         </div>
                     </div>

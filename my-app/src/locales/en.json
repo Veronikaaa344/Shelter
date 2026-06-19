@@ -43,7 +43,11 @@
         "search_title": "Search results",
         "support_title": "Need support?",
         "support_text": "Your resilience level is currently low. We recommend a short grounding practice to restore resources.",
-        "start_now": "Start now"
+        "start_now": "Start now",
+        "stabilized_msg": "You have stabilized your condition. The main page is available.",
+        "great_msg": "Great! The main page is available.",
+        "state_recorded": "Your state is recorded. This requires additional recovery efforts.",
+        "resilience_growing": "Great! Your resilience is growing."
     },
     "moods": {
         "calm": "Calm",
@@ -243,7 +247,19 @@
     },
     "sos": {
         "title": "SOS",
-        "hold_text": "Hold to activate"
+        "hold_text": "Hold to activate",
+        "find_5_items": "Find 5 items around you",
+        "touch_4_textures": "Touch 4 different textures",
+        "hear_3_sounds": "Hear 3 different sounds",
+        "feel_2_smells": "Feel 2 different smells",
+        "taste_1_thing": "Taste 1 thing",
+        "step_of": "Step {{step}} of {{total}} · 5-4-3-2-1 Grounding technique",
+        "done": "Done",
+        "stabilized": "State stabilized 🌱",
+        "exit": "Exit",
+        "to_breathing": "← To breathing",
+        "breathing_exercise": "Breathing exercise",
+        "grounding_technique": "Grounding technique (5-4-3-2-1)"
     },
     "material": {
         "back_to_app": "Back to app",
@@ -294,7 +310,14 @@
         "opportunity": "This is a good opportunity for growth",
         "never_learn": "I will never learn",
         "mistakes_help": "Mistakes help me learn",
-        "nobody_understands": "Nobody understands me"
+        "nobody_understands": "Nobody understands me",
+        "back_to_exercises": "Back to exercises",
+        "time_left": "Time left:",
+        "success_message": "Congratulations! You have successfully completed the exercise.",
+        "try_again": "Try again",
+        "close": "Close",
+        "score": "Score:",
+        "accuracy": "Accuracy:"
     },
     "chat": {
         "title": "Chat Simulators",
@@ -324,5 +347,33 @@
         "hint_library": "📚 Tip: review educational content about stress",
         "hint_sos": "🎯 Press SOS if you need quick help",
         "hint_breathing": "🧘 Breathing exercises will help you calm down"
+    },
+    "video": {
+        "loading": "Loading...",
+        "back_to_exercises": "Back to exercises",
+        "video_practice": "Video practice",
+        "scenario_description": "Scenario description",
+        "default_description": "Watch the video and follow the instructions for effective training.",
+        "show_transcript": "Show transcript",
+        "hide_transcript": "Hide transcript",
+        "video_transcript": "Video transcript",
+        "transcript_unavailable": "Transcript unavailable for this video.",
+        "video_completed": "Video completed!",
+        "thanks_for_watching": "Thank you for watching. Rate the efficiency of the training.",
+        "watch_time": "Watch time:",
+        "progress": "Progress:",
+        "very_efficient": "Very efficient",
+        "average": "Average",
+        "not_efficient": "Not very efficient",
+        "speed": "Speed:"
+    },
+    "hotlines": {
+        "title": "Hotlines",
+        "description": "These services are free and anonymous. Choose the required line:",
+        "lifeline": "Lifeline",
+        "veteran_hub": "Support Line",
+        "veteran_hub_desc": "Veteran Hub",
+        "all_ukrainian": "Helpline",
+        "all_ukrainian_desc": "General helpline"
     }
 }

@@ -1,0 +1,482 @@
+{
+    "materials": {
+        "6a00bc922944e5b1dd1cead1": {
+            "title": "Psychische Stabilität: wissenschaftliche Grundlagen",
+            "desc": "Ein ausführlicher Leitfaden zur Entwicklung psychischer Resilienz auf Basis der neuesten Forschungsergebnisse im Bereich der Neurobiologie.",
+            "content": "Psychische Resilienz ist die Fähigkeit, sich an Stress anzupassen und sich von Schwierigkeiten zu erholen. Sie entwickelt sich durch Übung."
+        },
+        "6a00bc922944e5b1dd1ceacd": {
+            "title": "Atmen für innere Ruhe",
+            "desc": "Erlernen Sie die 4-7-8-Technik zur sofortigen Entspannung und Angstreduktion. Diese einfache, aber wirkungsvolle Technik hilft, das parasympathische Nervensystem zu aktivieren.",
+            "content": "Atemtechnik 4-7-8: Atmen Sie 4 Takte lang ein, halten Sie 7 Takte lang an und atmen Sie 8 Takte lang aus. Hilft, schnell in einen Ruhezustand zurückzukehren."
+        },
+        "6a00bc922944e5b1dd1ceace": {
+            "title": "Progressive Entspannungstechnik",
+            "desc": "Eine Schritt-für-Schritt-Technik zum Abbau von Muskelverspannungen durch abwechselndes Anspannen und Entspannen verschiedener Muskelgruppen.",
+            "content": "Progressive Muskelentspannung: Spannen und entspannen Sie abwechselnd Muskelgruppen von den Füßen bis zum Gesicht."
+        },
+        "6a00bc922944e5b1dd1ceacf": {
+            "title": "Achtsamkeitsmeditation für Anfänger",
+            "desc": "Eine Einführung in die Achtsamkeitspraxis – Fokussierung auf den Atem und den gegenwärtigen Moment ohne Bewertung.",
+            "content": "Achtsamkeitsmeditation: Setzen Sie sich bequem hin, schließen Sie die Augen und konzentrieren Sie sich auf Ihre Atmung. Wenn Gedanken Sie ablenken, lenken Sie Ihre Aufmerksamkeit sanft zurück auf Ihren Atem."
+        },
+        "6a00bc922944e5b1dd1cead0": {
+            "title": "Diagnostik des psychischen Zustands",
+            "desc": "Umfassende Beurteilung Ihrer psychischen Gesundheit durch Analyse von Stress, Angst, Apathie und allgemeiner Lebenszufriedenheit.",
+            "content": "Die Diagnostik umfasst die Beurteilung von Stress, Angst, Apathie und allgemeinem Wohlbefinden. Sie hilft, Verbesserungsbereiche zu identifizieren."
+        },
+        "6a00bc922944e5b1dd1cead2": {
+            "title": "Ein Reflexionstagebuch führen",
+            "desc": "Ein Schritt-für-Schritt-Leitfaden für effektives Tagebuchschreiben zur Selbsterkenntnis, emotionalen Regulation und Verfolgung der persönlichen Entwicklung.",
+            "content": "Ein Reflexionstagebuch hilft, Selbstwahrnehmung zu entwickeln, die emotionale Regulation zu verbessern und Sinn in erlebten Erfahrungen zu finden."
+        },
+        "6a0388f9db5bdded60e069ec": {
+            "title": "Schlafhygiene bei Stress",
+            "desc": "Wie Sie für erholsame Ruhe sorgen, wenn das Gehirn nicht einschlafen will.",
+            "content": "<h2>Die Bedeutung von Schlaf bei Stress</h2>\n            <p>In Zeiten großer Belastung produziert unser Körper einen Überschuss an Cortisol, der das Einschlafen erschwert. Schlafhygiene wird zu Ihrem wichtigsten Erholungsinstrument.</p>\n            <h3>Grundlegende Tipps:</h3>\n            <ul>\n                <li><strong>Zeitplan:</strong> Gehen Sie jeden Tag zur gleichen Zeit ins Bett und stehen Sie zur gleichen Zeit auf.</li>\n                <li><strong>Digitale Entgiftung:</strong> Legen Sie Geräte 1 Stunde vor dem Schlafengehen weg. Blaues Licht unterdrückt Melatonin.</li>\n                <li><strong>Ritual:</strong> Nehmen Sie eine warme Dusche oder lesen Sie ein gedrucktes Buch.</li>\n            </ul>"
+        },
+        "6a0388fadb5bdded60e069ed": {
+            "title": "Emotionale Intelligenz",
+            "desc": "Das Verstehen der eigenen Emotionen als Schlüssel zur Stabilität.",
+            "content": "<h2>Was ist emotionale Intelligenz (EQ)?</h2>\n            <p>EQ ist die Fähigkeit, eigene Emotionen zu erkennen, zu verstehen und zu steuern sowie die Emotionen anderer Menschen zu beeinflussen.</p>\n            <h3>Warum ist das wichtig?</h3>\n            <p>Menschen mit hohem EQ bewältigen Stress besser, bauen stärkere Beziehungen auf und erholen sich schneller von Krisensituationen.</p>\n            <p><strong>Tipp:</strong> Wann immer Sie eine starke Emotion spüren, versuchen Sie, sie zu benennen. \"Ich fühle mich gerade ängstlich\" ist der erste Schritt zur Kontrolle.</p>"
+        },
+        "6a0388fadb5bdded60e069ee": {
+            "title": "Meditation für Anfänger",
+            "desc": "Einfache Schritte zur inneren Stille ohne übertriebene Mystik.",
+            "content": "<h2>Meditation ist einfach</h2>\n            <p>Sie müssen nicht stundenlang im Lotussitz sitzen. 5–10 Minuten pro Tag reichen aus, um erste Ergebnisse zu bemerken.</p>\n            <h3>Wo Sie anfangen können:</h3>\n            <ol>\n                <li>Finden Sie einen ruhigen Ort, an dem Sie nicht gestört werden.</li>\n                <li>Setzen Sie sich bequem hin und halten Sie den Rücken gerade.</li>\n                <li>Konzentrieren Sie sich auf Ihre Atmung. Spüren Sie, wie die Luft ein- und ausströmt.</li>\n                <li>Wenn Gedanken Sie ablenken, lenken Sie Ihre Aufmerksamkeit einfach sanft zurück auf Ihre Atmung.</li>\n            </ol>"
+        },
+        "6a0388fadb5bdded60e069ef": {
+            "title": "Wie Cortisol wirkt",
+            "desc": "Das Verständnis der Chemie des Stresses hilft Ihnen, ihn zu überwinden.",
+            "content": "<h2>Cortisol: das Stresshormon</h2>\n            <p>Cortisol wird von den Nebennieren als Reaktion auf eine Bedrohung produziert. Es bereitet den Körper auf die \"Kampf-oder-Flucht\"-Reaktion vor.</p>\n            <h3>Nebenwirkungen von Dauerstress:</h3>\n            <p>Wenn der Cortisolspiegel dauerhaft erhöht ist, führt dies zu Erschöpfung, Verdauungsproblemen und einer geschwächten Immunabwehr.</p>\n            <p><strong>Wie Sie ihn senken können:</strong> Körperliche Aktivität, Lachen und tiefes Atmen helfen, dem Gehirn zu signalisieren, dass die Bedrohung vorüber ist.</p>"
+        },
+        "6a0388fbdb5bdded60e069f1": {
+            "title": "Übung 4-7-8: Atemtechnik",
+            "desc": "Ein wirksamer Weg zur Entspannung durch Atemkontrolle.",
+            "content": "Diese Technik hilft, das Nervensystem schnell zu beruhigen. Nutzen Sie sie, wenn Sie plötzliche Angst verspüren oder nicht einschlafen können.",
+            "url": "https://www.youtube.com/watch?v=p8fjYPC-k2k"
+        },
+        "6a0388fcdb5bdded60e069f2": {
+            "title": "Yoga für Nacken und Schultern",
+            "desc": "Wir lösen Steifheit und Verspannungen nach einem Arbeitstag.",
+            "content": "Der meiste Stress sammelt sich in Nacken und Schultern an. Dieser kurze Übungskomplex hilft Ihnen, Erleichterung zu spüren.",
+            "url": "https://www.youtube.com/watch?v=X3-gKPNyrTA"
+        },
+        "6a0388fcdb5bdded60e069f3": {
+            "title": "Ruhiges Atmen: Meditation",
+            "desc": "3 Minuten tiefe Entspannung auf Ukrainisch.",
+            "content": "Eine kurze, aber sehr wirksame Meditation. Schließen Sie einfach die Augen und folgen Sie der Stimme.",
+            "url": "https://www.youtube.com/watch?v=ZToicYcHIOU"
+        },
+        "6a0388fcdb5bdded60e069f5": {
+            "title": "Vagus-Aktivierungstechnik",
+            "desc": "\"Reset\"-Übung für den Vagusnerv.",
+            "content": "Die Vagus-Aktivierung ist der schnellste physiologische Weg, um den Körper vom Kampf-oder-Flucht-Modus in den Ruhe-und-Verdauungsmodus umzuschalten.",
+            "url": "https://www.youtube.com/watch?v=L1HCG3BGK8I"
+        },
+        "6a0388fcdb5bdded60e069f6": {
+            "title": "Aktiver Morgen: Aufwärmübungen",
+            "desc": "Ein einfaches und effektives Aufwärmtraining für die ganze Familie.",
+            "content": "Schon 5 Minuten aktive Bewegung am Morgen geben Ihnen Energie für den ganzen Tag.",
+            "url": "https://www.youtube.com/watch?v=jWP1g1A2_cw"
+        },
+        "6a0388fcdb5bdded60e069f8": {
+            "title": "Regengeräusche",
+            "desc": "Natürliches Rosa Rauschen, das einen gemütlichen akustischen Vorhang erzeugt.",
+            "content": "Eine Stunde beruhigende Regengeräusche zum Schlafen oder Arbeiten."
+        },
+        "6a1f137c38a0d34868ecfc9b": {
+            "title": "Erdungstechnik 5-4-3-2-1",
+            "desc": "Ein schneller Weg, bei Panik oder starker Angst in die Realität zurückzukehren.",
+            "content": "<h2>Was ist die 5-4-3-2-1-Technik?</h2>\n        <p>Diese Übung hilft, den Strom ängstlicher Gedanken zu stoppen, indem Sie Ihre Aufmerksamkeit auf Ihre Sinne und Ihre Umgebung lenken.</p>\n        <h3>So führen Sie sie durch:</h3>\n        <ol>\n            <li><strong>5 Dinge</strong>, die Sie gerade sehen können (z. B. Stuhl, Fenster, Baum).</li>\n            <li><strong>4 Dinge</strong>, die Sie berühren können (fühlen Sie die Textur des Tisches, der Kleidung oder Ihrer Haare).</li>\n            <li><strong>3 Dinge</strong>, die Sie hören (Autogeräusche, Vogelgesang, Brummen des Kühlschranks).</li>\n            <li><strong>2 Dinge</strong>, die Sie riechen können (den Duft von Kaffee, Seife oder einfach frische Luft).</li>\n            <li><strong>1 Sache</strong>, die Sie schmecken können (nehmen Sie einen Schluck Wasser, essen Sie ein Bonbon).</li>\n        </ol>\n        <p><strong>Tipp:</strong> Sprechen Sie es laut aus. Das erzeugt zusätzliches sensorisches Feedback und eine noch bessere Erdung.</p>"
+        },
+        "6a1f14c10c46c3d837e9d9f1": {
+            "title": "Warum wir prokrastinieren und wie wir mit unserem Gehirn verhandeln",
+            "desc": "Ein leicht verständlicher Artikel darüber, dass Prokrastination keine Faulheit ist, sondern die Reaktion des Gehirns auf Stress. Enthält sanfte Techniken, um ins Handeln zu kommen.",
+            "content": "<h2>Prokrastination ist keine Faulheit</h2><p>Oft denken wir, dass wir Dinge aus Faulheit aufschieben. Aber die Wissenschaft sagt etwas anderes: Prokrastination ist die Reaktion unseres Gehirns auf Stress oder negative Emotionen, die mit einer Aufgabe verbunden sind.</p><h3>Wie gehen Sie damit um?</h3><ol><li><strong>Die Zwei-Minuten-Regel:</strong> Vereinbaren Sie mit sich selbst, die Aufgabe nur 2 Minuten lang zu erledigen. Das beseitigt den Widerstand des Gehirns gegen eine ‚große' Aufgabe.</li><li><strong>Vergeben Sie sich selbst:</strong> Studien zeigen, dass Menschen, die sich für das Prokrastinieren vergeben, in Zukunft weniger prokrastinieren.</li><li><strong>Teile und herrsche:</strong> Zerlegen Sie eine einschüchternde Aufgabe in Mikroschritte, die keine Panik auslösen.</li></ol>"
+        },
+        "6a1f14c10c46c3d837e9d9f4": {
+            "title": "Was ist \"digitale Hygiene\" und wie überlebt man im Informationsrauschen",
+            "desc": "Praktische Tipps, wie Sie aufhören, alle 5 Minuten auf Ihr Handy zu schauen, und den Informationsraum für sich anpassen.",
+            "content": "<h2>Ihr Handy ist ein Werkzeug, kein Herrscher</h2><p>Der ständige Strom von Nachrichten und Benachrichtigungen erschöpft unser Nervensystem. So gewinnen Sie die Kontrolle zurück:</p><h3>Praktische Schritte:</h3><ul><li><strong>Schwarz-Weiß-Bildschirm:</strong> Stellen Sie Ihr Handy auf den Schwarz-Weiß-Modus um. Das Gehirn verliert das Interesse an \"grauen\" Symbolen, und die in sozialen Netzwerken verbrachte Zeit nimmt ab.</li><li><strong>Unnötiges abschalten:</strong> Lassen Sie Benachrichtigungen nur von Personen aktiviert. Keine Push-Nachrichten von Spielen oder Shops.</li><li><strong>Eine Stunde ohne Bildschirme:</strong> Versuchen Sie, Ihr Handy eine Stunde vor dem Schlafengehen wegzulegen. Das verbessert die Erholungsqualität erheblich.</li></ul>"
+        },
+        "6a1f16100c46c3d837e9db2f": {
+            "title": "Was tun bei einer Panikattacke",
+            "desc": "Klare Schritt-für-Schritt-Anleitung bei akuten Angstanfällen. Wie Sie sich selbst oder Ihren Angehörigen helfen, wenn Sie das Gefühl haben, die Kontrolle zu verlieren.",
+            "content": "<h2>Es ist beängstigend, aber es geht vorbei</h2><p>Eine Panikattacke ist ein Fehlalarm Ihres Körpers. Sie erreicht ihren Höhepunkt nach 10 Minuten und klingt dann zwangsläufig ab. Sie werden weder verrückt noch sterben Sie.</p><h3>Erste Hilfe:</h3><ol><li><strong>In die zusammengelegten Hände atmen:</strong> Das hilft, den Sauerstoff- und Kohlendioxidgehalt im Blut auszugleichen, was den Schwindel stoppt.</li><li><strong>Auf die Umgebung konzentrieren:</strong> Finden Sie 5 blaue Gegenstände in Ihrer Umgebung.</li><li><strong>Kaltes Wasser:</strong> Waschen Sie Ihr Gesicht mit eiskaltem Wasser oder halten Sie einen Eiswürfel in den Händen. Kälte aktiviert das parasympathische Nervensystem.</li></ol>"
+        },
+        "6a1f16100c46c3d837e9db31": {
+            "title": "Wenn die Kraft fehlt, aus dem Bett aufzustehen",
+            "desc": "Material für die schwersten Tage. Was tun, wenn der Körper schwer ist und jede Handlung unmöglich erscheint.",
+            "content": "<h2>Erlauben Sie sich innezuhalten</h2><p>Wenn Sie nicht aufstehen können, machen Sie sich keine Vorwürfe. Ihr Körper hat seine Ressourcen vollständig erschöpft. Ihre einzige Aufgabe ist jetzt, einfach zu sein.</p><h3>Die Strategie der ‚Mikroschritte':</h3><ul><li><strong>Denken Sie nicht an den ganzen Tag:</strong> Denken Sie nur an die nächsten 5 Minuten.</li><li><strong>Das absolute Minimum:</strong> Wenn Sie keine Energie zum Duschen haben, waschen Sie einfach Ihr Gesicht oder wischen Sie es mit einem feuchten Handtuch ab. Können Sie nicht kochen? Essen Sie einen Apfel oder ein Stück Brot.</li><li><strong>Position wechseln:</strong> Versuchen Sie einfach, vom Bett auf den Boden oder einen Stuhl zu wechseln. Ein Wechsel der körperlichen Position gibt dem Gehirn manchmal einen Impuls.</li></ul><p><em>Wenn dieser Zustand länger als zwei Wochen anhält, suchen Sie unbedingt einen Spezialisten auf.</em></p>"
+        },
+        "6a285e37459593276a50adb2": {
+            "title": "Tagwald: Grillen und Vögel",
+            "desc": "Die lebendige Atmosphäre des nachmittäglichen Waldes mit dem Zirpen der Grillen. Perfekt für Meditation oder als Hintergrund beim Arbeiten.",
+            "content": "Die Geräusche des Tagwaldes helfen, die Konzentration wiederherzustellen und den Stresspegel zu senken. Lassen Sie sich für ein paar Minuten an einen warmen Sommertag versetzen."
+        },
+        "6a285e37459593276a50adb3": {
+            "title": "Tiefe Meereswellen",
+            "desc": "Beruhigende Klänge echter Meereswellen für tiefe Entspannung und Stressabbau.",
+            "content": "Das Meeresrauschen hat eine nachgewiesene therapeutische Wirkung. Rhythmische Wellenbewegungen helfen, die Atmung zu normalisieren, den Herzschlag zu verlangsamen und sich auf die Ruhe vorzubereiten."
+        },
+        "6a285e37459593276a50adb4": {
+            "title": "Stimmen des Wildwaldes",
+            "desc": "Tiefes Eintauchen in die Natur: der satte Gesang der Waldvögel, der Anspannung löst.",
+            "content": "Vogelgesang ist evolutionär mit Sicherheit verbunden. Diese Audioaufnahme hilft Ihnen, Ruhe zu empfinden, Angst loszulassen und sich mit natürlicher Energie aufzuladen."
+        },
+        "6a285e37459593276a50adb5": {
+            "title": "Sommerregen mit Gewitter",
+            "desc": "Das beruhigende Geräusch des auf das Dach prasselnden Regens mit fernem Donnergrollen.",
+            "content": "Das Regengeräusch erzeugt ein Gefühl von Sicherheit und Geborgenheit. Es ist der perfekte Hintergrund zum Lesen, Nachdenken oder Einschlafen."
+        },
+        "6a285e37459593276a50adb6": {
+            "title": "Lagerfeuergeräusche im Wald",
+            "desc": "Atmosphärisches Geräusch von knisterndem Holz und Ästen im Feuer. Wärmt und beruhigt.",
+            "content": "Stellen Sie sich vor, dass Sie neben einem großen Lagerfeuer im Wald sitzen. Hören Sie das Knacken der Äste, spüren Sie die vorgestellte Wärme des Feuers. Das ist eine ideale Erdungsübung."
+        },
+        "6a2867f1459593276a50b36a": {
+            "title": "Paradiesische Atmosphäre",
+            "desc": "Sanfte und entspannende Klänge, die ein Gefühl absoluter Ruhe und Harmonie erzeugen.",
+            "content": "Dieser leichte Audio-Hintergrund ist speziell dafür entwickelt, psychische Anspannung zu lösen. Gönnen Sie Ihrem Geist eine Pause vom Informationsrauschen."
+        }
+    },
+    "scenarios": {
+        "6a0c946cdb5bdded60f083d2": {
+            "name": "Widerstandsfähigkeit gegen Burnout",
+            "description": "Ein Simulator zur Erkennung von Anzeichen beruflicher Erschöpfung und zum Aufbau gesunder Grenzen im Arbeitsprozess."
+        },
+        "6a0c946cdb5bdded60f083d3": {
+            "name": "Hochstapler-Syndrom",
+            "description": "Ein Trainer zur Bekämpfung von Selbstzweifeln vor einer wichtigen Präsentation."
+        },
+        "6a10771a00169fc597155c7a": {
+            "name": "Konfliktlösung",
+            "description": "Ein Simulator zum Üben der Reaktion auf komplexe Emotionen des Gesprächspartners. Lernen Sie, einen empathischen Weg statt eines konflikthaften zu wählen."
+        },
+        "6a1f36970c46c3d837e9f7a0": {
+            "name": "Burnout-Symptome",
+            "description": "Abschnitt Burnout-Symptome und Erholungsmaßnahmen",
+            "categories": [
+                {
+                    "id": 0,
+                    "name": "Symptome",
+                    "color": "#ef4444",
+                    "_id": "6a2b09e58e70cd812c446d6b"
+                },
+                {
+                    "id": 1,
+                    "name": "Erholungsmaßnahmen",
+                    "color": "#10b981",
+                    "_id": "6a2b09e58e70cd812c446d6c"
+                }
+            ],
+            "items": [
+                {
+                    "text": "Ständige Müdigkeit",
+                    "categoryId": 0,
+                    "_id": "6a2b09e58e70cd812c446d6d"
+                },
+                {
+                    "text": "Zynismus gegenüber der Arbeit",
+                    "categoryId": 0,
+                    "_id": "6a2b09e58e70cd812c446d6e"
+                },
+                {
+                    "text": "Verminderte Produktivität",
+                    "categoryId": 0,
+                    "_id": "6a2b09e58e70cd812c446d6f"
+                },
+                {
+                    "text": "Schlechter Schlaf",
+                    "categoryId": 0,
+                    "_id": "6a2b09e58e70cd812c446d70"
+                },
+                {
+                    "text": "Urlaub ohne Geräte",
+                    "categoryId": 1,
+                    "_id": "6a2b09e58e70cd812c446d71"
+                },
+                {
+                    "text": "Zeitliche Grenzen setzen",
+                    "categoryId": 1,
+                    "_id": "6a2b09e58e70cd812c446d72"
+                },
+                {
+                    "text": "Körperliche Übungen",
+                    "categoryId": 1,
+                    "_id": "6a2b09e58e70cd812c446d73"
+                },
+                {
+                    "text": "Austausch mit nahestehenden Personen",
+                    "categoryId": 1,
+                    "_id": "6a2b09e58e70cd812c446d74"
+                }
+            ]
+        },
+        "6a1f36970c46c3d837e9f7a1": {
+            "name": "Gedanken eines Hochstaplers",
+            "description": "Trennen Sie schädliche Gedanken von rationalen",
+            "categories": [
+                {
+                    "id": 0,
+                    "name": "Gedanken eines Hochstaplers",
+                    "color": "#ef4444",
+                    "_id": "6a2b09e58e70cd812c446d84"
+                },
+                {
+                    "id": 1,
+                    "name": "Rationale Gedanken",
+                    "color": "#3b82f6",
+                    "_id": "6a2b09e58e70cd812c446d85"
+                }
+            ],
+            "items": [
+                {
+                    "text": "Ich hatte einfach nur Glück",
+                    "categoryId": 0,
+                    "_id": "6a2b09e58e70cd812c446d86"
+                },
+                {
+                    "text": "Bald werden alle erfahren, dass ich nichts kann",
+                    "categoryId": 0,
+                    "_id": "6a2b09e58e70cd812c446d87"
+                },
+                {
+                    "text": "Ich verdiene diesen Erfolg nicht",
+                    "categoryId": 0,
+                    "_id": "6a2b09e58e70cd812c446d88"
+                },
+                {
+                    "text": "Ich habe mich für das Ergebnis angestrengt",
+                    "categoryId": 1,
+                    "_id": "6a2b09e58e70cd812c446d89"
+                },
+                {
+                    "text": "Fehler sind ein Teil des Lernens",
+                    "categoryId": 1,
+                    "_id": "6a2b09e58e70cd812c446d8a"
+                },
+                {
+                    "text": "Meine Fähigkeiten sind wertvoll",
+                    "categoryId": 1,
+                    "_id": "6a2b09e58e70cd812c446d8b"
+                },
+                {
+                    "text": "Ich habe das Recht, etwas nicht zu wissen",
+                    "categoryId": 1,
+                    "_id": "6a2b09e58e70cd812c446d8c"
+                }
+            ]
+        },
+        "6a1f36970c46c3d837e9f7a2": {
+            "name": "Fokus und Konzentration",
+            "description": "Ordnen Sie zu, was Sie ablenkt und was Ihnen hilft, sich zu konzentrieren",
+            "categories": [
+                {
+                    "id": 0,
+                    "name": "Lenkt ab",
+                    "color": "#f59e0b",
+                    "_id": "6a2b09e58e70cd812c446d99"
+                },
+                {
+                    "id": 1,
+                    "name": "Hilft",
+                    "color": "#8b5cf6",
+                    "_id": "6a2b09e58e70cd812c446d9a"
+                }
+            ],
+            "items": [
+                {
+                    "text": "Ständige Benachrichtigungen",
+                    "categoryId": 0,
+                    "_id": "6a2b09e58e70cd812c446d9b"
+                },
+                {
+                    "text": "Multitasking",
+                    "categoryId": 0,
+                    "_id": "6a2b09e58e70cd812c446d9c"
+                },
+                {
+                    "text": "Unordnung auf dem Tisch",
+                    "categoryId": 0,
+                    "_id": "6a2b09e58e70cd812c446d9d"
+                },
+                {
+                    "text": "Pomodoro-Technik",
+                    "categoryId": 1,
+                    "_id": "6a2b09e58e70cd812c446d9e"
+                },
+                {
+                    "text": "Ein klarer Tagesplan",
+                    "categoryId": 1,
+                    "_id": "6a2b09e58e70cd812c446d9f"
+                },
+                {
+                    "text": "Sanfte Hintergrundmusik",
+                    "categoryId": 1,
+                    "_id": "6a2b09e58e70cd812c446da0"
+                },
+                {
+                    "text": "Regelmäßige Pausen",
+                    "categoryId": 1,
+                    "_id": "6a2b09e58e70cd812c446da1"
+                }
+            ]
+        }
+    },
+    "diagnostics": {
+        "6a038c2689ecfbd18ed22951": {
+            "text": "Wie oft haben Sie sich in der letzten Woche angespannt gefühlt?",
+            "options": [
+                "Nie",
+                "Selten",
+                "Oft",
+                "Ständig"
+            ]
+        },
+        "6a038c2689ecfbd18ed22952": {
+            "text": "Wie oft haben Sie das Gefühl, dass Sie die aktuellen Aufgaben nicht bewältigen können?",
+            "options": [
+                "Nie",
+                "Manchmal",
+                "Meistens",
+                "Immer"
+            ]
+        },
+        "6a038c2689ecfbd18ed22953": {
+            "text": "Wie schwer fällt es Ihnen, sich nach einem langen Arbeitstag zu entspannen?",
+            "options": [
+                "Sehr leicht",
+                "Etwas schwierig",
+                "Schwer",
+                "Unmöglich"
+            ]
+        },
+        "6a038c2689ecfbd18ed22954": {
+            "text": "Wie leicht gelingt es Ihnen, sich zu konzentrieren?",
+            "options": [
+                "Sehr leicht",
+                "Zufriedenstellend",
+                "Schwer",
+                "Nahezu unmöglich"
+            ]
+        },
+        "6a038c2689ecfbd18ed22955": {
+            "text": "Wie oft haben Sie in letzter Zeit Flüchtigkeitsfehler gemacht?",
+            "options": [
+                "Selten",
+                "Wie üblich",
+                "Häufiger",
+                "Ständig"
+            ]
+        },
+        "6a038c2689ecfbd18ed22956": {
+            "text": "Fällt es Ihnen schwer, alltägliche Entscheidungen zu treffen?",
+            "options": [
+                "Überhaupt nicht",
+                "Manchmal",
+                "Oft",
+                "Sehr schwer"
+            ]
+        },
+        "6a038c2689ecfbd18ed22957": {
+            "text": "Wie würden Sie die Qualität Ihres Schlafs bewerten?",
+            "options": [
+                "Ausgezeichnet",
+                "Zufriedenstellend",
+                "Schlecht",
+                "Sehr schlecht"
+            ]
+        },
+        "6a038c2689ecfbd18ed22958": {
+            "text": "Wie oft wachen Sie müde auf?",
+            "options": [
+                "Nie",
+                "Selten",
+                "Oft",
+                "Jeden Morgen"
+            ]
+        },
+        "6a038c2689ecfbd18ed22959": {
+            "text": "Haben Sie Veränderungen in Ihrem Appetit bemerkt?",
+            "options": [
+                "Nein, alles ist stabil",
+                "Geringfügig",
+                "Ja, deutliche Veränderungen",
+                "Vollständiger Verlust/Überessen"
+            ]
+        },
+        "6a038c2689ecfbd18ed2295a": {
+            "text": "Fühlen Sie sich von nahestehenden Personen unterstützt?",
+            "options": [
+                "Vollständig",
+                "Teilweise",
+                "Minimal",
+                "Überhaupt nicht"
+            ]
+        },
+        "6a038c2689ecfbd18ed2295b": {
+            "text": "Wie oft verspüren Sie grundlose Angst?",
+            "options": [
+                "Nie",
+                "Selten",
+                "Oft",
+                "Ständig"
+            ]
+        },
+        "6a038c2689ecfbd18ed2295c": {
+            "text": "Können Sie Freude an alltäglichen Dingen empfinden?",
+            "options": [
+                "Ja, vollkommen",
+                "Teilweise",
+                "Selten",
+                "Überhaupt nicht"
+            ]
+        },
+        "6a038c2689ecfbd18ed2295d": {
+            "text": "Wie stehen Sie zu Ihren täglichen Pflichten?",
+            "options": [
+                "Mit Begeisterung",
+                "Neutral",
+                "Widerwillig",
+                "Mit Abscheu"
+            ]
+        },
+        "6a038c2689ecfbd18ed2295e": {
+            "text": "Haben Sie das Gefühl, dass Ihre Bemühungen vergeblich sind?",
+            "options": [
+                "Nie",
+                "Manchmal",
+                "Oft",
+                "Immer"
+            ]
+        },
+        "6a038c2689ecfbd18ed2295f": {
+            "text": "Wie schnell erholen Sie sich am Wochenende?",
+            "options": [
+                "Vollständig",
+                "Teilweise",
+                "Sehr langsam",
+                "Ich erhole mich überhaupt nicht"
+            ]
+        }
+    },
+    "advice": {
+        "6a1f4e1a0c46c3d837ea0934": {
+            "title": "Die Zwei-Minuten-Regel in Zeiten starker Angst"
+        },
+        "6a1f4e1a0c46c3d837ea0935": {
+            "title": "Technik der verzögerten Beunruhigung"
+        },
+        "6a1f4e1a0c46c3d837ea0936": {
+            "title": "Dekatastrophisieren von Gedanken: Fragen an sich selbst"
+        },
+        "6a1f4e1a0c46c3d837ea0937": {
+            "title": "Emotionales Surfen"
+        },
+        "6a1f4e1a0c46c3d837ea0938": {
+            "title": "Radikale Akzeptanz der Erschöpfung"
+        }
+    }
+}

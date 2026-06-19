@@ -1,15 +1,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import BreathingExercise from '../../../components/BreathingExercise/BreathingExercise';
+import { useTranslation } from 'react-i18next';
 import { api } from '../../../infrastructure/api/api';
 
 export default function SosView({ answers }) {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const handleFinishSession = async (mins, cycles) => {
         const userId = localStorage.getItem("userId");
         if (userId) {
-            await api.updateResilience(userId, "sos", {}, "Техніка дихання (SOS)");
+            await api.updateResilience(userId, "sos", {}, t('sos.breathing_exercise'));
         }
         navigate("/main", { state: { fromSOS: true, helped: true } });
     };
@@ -22,7 +24,7 @@ export default function SosView({ answers }) {
                 requireCycles={3}
                 onFinishSession={handleFinishSession}
                 onExit={() => navigate('/main')}
-                title="Екстрена допомога"
+                title={t('sos.title')}
             />
         </div>
     );

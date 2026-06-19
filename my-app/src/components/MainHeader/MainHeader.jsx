@@ -31,7 +31,7 @@ const MainHeader = React.memo(({
 
     const toggleLanguage = () => {
         const currentLang = i18n.language || 'en';
-        const newLang = currentLang.startsWith('ua') ? 'en' : 'ua';
+        const newLang = currentLang.startsWith('de') ? 'en' : 'de';
         i18n.changeLanguage(newLang);
     };
 

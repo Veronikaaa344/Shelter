@@ -5,18 +5,7 @@ import { getDiagnosticConfig } from "../../../infrastructure/utils/diagnosticLog
 import { Check, Lock, Play, MapPin, Grid3X3, Trophy, Sparkles } from 'lucide-react';
 import "./QuestsView.css";
 
-const thoughts = [
-    "Кожна велика подорож починається з одного вдиху.",
-    "Коли світ хитається, шукай опору під ногами.",
-    "Емоції — це хвилі. Ти не можеш їх зупинити, але можеш навчитися серфити.",
-    "Фокусуйся лише на тому, що можеш контролювати.",
-    "Навіть у найтемніші дні є місце для світла.",
-    "Ти сильніший, ніж думаєш.",
-    "Кожен крок, навіть маленький, — це прогрес.",
-    "Дозволь собі бути неідеальним.",
-    "Сьогоднішні зусилля — це завтрашній результат.",
-    "Ти не самотній у цій подорожі."
-];
+const thoughts = [];
 
 const QuestsView = ({ 
     navigateTo, 
@@ -59,9 +48,9 @@ const QuestsView = ({
         };
 
         const allScenarios = [
-            { scenarioId: 'hardcoded-sorting-1', type: 'sorting', title: 'Сортування думок', duration: 3 },
-            { scenarioId: 'hardcoded-sorting-2', type: 'sorting', title: 'Коло контролю', duration: 3 },
-            { scenarioId: 'hardcoded-sorting-3', type: 'sorting', title: 'Звички', duration: 3 },
+            { scenarioId: 'hardcoded-sorting-1', type: 'sorting', title: t('sorting.sorting_thoughts'), duration: 3 },
+            { scenarioId: 'hardcoded-sorting-2', type: 'sorting', title: t('sorting.circle_control'), duration: 3 },
+            { scenarioId: 'hardcoded-sorting-3', type: 'sorting', title: t('sorting.habits'), duration: 3 },
             ...scenarios.filter(s => s.type !== 'sorting' || !s.scenarioId?.startsWith('hardcoded-sorting'))
         ];
 

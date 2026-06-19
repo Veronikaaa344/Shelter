@@ -103,7 +103,7 @@ const ShelterAppComplete = () => {
   const initialUserId = (rawUserId === "null" || rawUserId === "undefined") ? null : rawUserId;
   const [userId, setUserId] = useState(initialUserId);
 
-  const initialUsername = localStorage.getItem("username") || "Гість";
+  const initialUsername = localStorage.getItem("username") || "Guest";
   const [completedScenariosCount, setCompletedScenariosCount] = useState(0);
   const [completedMaterialsCount, setCompletedMaterialsCount] = useState(0);
   const [username, setUsername] = useState(initialUsername);
@@ -152,7 +152,7 @@ const ShelterAppComplete = () => {
   useEffect(() => {
     const handleStorageChange = () => {
       setUserId(localStorage.getItem("userId"));
-      setUsername(localStorage.getItem("username") || "Гість");
+      setUsername(localStorage.getItem("username") || "Guest");
     };
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
@@ -432,8 +432,8 @@ const ShelterAppComplete = () => {
     
     
     const message = moodId === 'anxiety' || moodId === 'stress' 
-      ? "Ваш стан зафіксовано. Це вимагає додаткових зусиль для відновлення." 
-      : "Чудово! Ваша стійкість зростає.";
+      ? t('home.state_recorded') 
+      : t('home.resilience_growing');
     
   };
 
@@ -806,31 +806,31 @@ const ShelterAppComplete = () => {
                         <button onClick={() => setShowSOSPhones(false)} className="text-slate-500 hover:text-white transition-colors -ml-2 p-2">
                             <ChevronLeft size={28} />
                         </button>
-                        <h2 className="text-3xl font-black text-white uppercase tracking-tight">Гарячі лінії</h2>
+                        <h2 className="text-3xl font-black text-white uppercase tracking-tight">{t('hotlines.title')}</h2>
                     </div>
                     <p className="text-slate-400 mb-8 text-[15px] leading-relaxed font-medium">
-                        Ці служби працюють безкоштовно та анонімно. Оберіть потрібну лінію:
+                        {t('hotlines.description')}
                     </p>
                     
                     <div className="flex flex-col gap-3">
                         <a href="tel:7333" className="w-full bg-[#1b2336] border border-slate-800 text-white p-5 rounded-[20px] hover:bg-[#252f48] transition-all flex justify-between items-center group">
                             <div>
                                 <p className="font-bold text-[17px] mb-1">Lifeline Ukraine</p>
-                                <p className="text-slate-400 text-sm">Психологічна підтримка</p>
+                                <p className="text-slate-400 text-sm">{t('hotlines.lifeline')}</p>
                             </div>
                             <span className="bg-emerald-500/10 text-emerald-500 font-black px-4 py-2 rounded-xl group-hover:bg-emerald-500 group-hover:text-white transition-colors">7333</span>
                         </a>
                         <a href="tel:1558" className="w-full bg-[#1b2336] border border-slate-800 text-white p-5 rounded-[20px] hover:bg-[#252f48] transition-all flex justify-between items-center group">
                             <div>
-                                <p className="font-bold text-[17px] mb-1">Лінія підтримки</p>
-                                <p className="text-slate-400 text-sm">Ветеран Хаб</p>
+                                <p className="font-bold text-[17px] mb-1">{t('hotlines.veteran_hub')}</p>
+                                <p className="text-slate-400 text-sm">{t('hotlines.veteran_hub_desc')}</p>
                             </div>
                             <span className="bg-emerald-500/10 text-emerald-500 font-black px-4 py-2 rounded-xl group-hover:bg-emerald-500 group-hover:text-white transition-colors">1558</span>
                         </a>
                         <a href="tel:0800501701" className="w-full bg-[#1b2336] border border-slate-800 text-white p-5 rounded-[20px] hover:bg-[#252f48] transition-all flex justify-between items-center group">
                             <div>
-                                <p className="font-bold text-[17px] mb-1">Телефон довіри</p>
-                                <p className="text-slate-400 text-sm">Всеукраїнська лінія</p>
+                                <p className="font-bold text-[17px] mb-1">{t('hotlines.all_ukrainian')}</p>
+                                <p className="text-slate-400 text-sm">{t('hotlines.all_ukrainian_desc')}</p>
                             </div>
                             <span className="bg-emerald-500/10 text-emerald-500 font-black px-4 py-2 rounded-xl group-hover:bg-emerald-500 group-hover:text-white transition-colors">0 800 501 701</span>
                         </a>

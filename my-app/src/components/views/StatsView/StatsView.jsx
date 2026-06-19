@@ -27,7 +27,9 @@ const StatsView = ({ userId, userStats, resilience = 50, resilienceMultiplier = 
             'breathing': t('stats.breathing_practice'),
             'material_view': t('stats.materials_review'),
             'diary': t('stats.diary_entry_activity'),
-            'sos': t('stats.emergency_help')
+            'sos': t('stats.emergency_help'),
+            'mood tracker': t('stats.mood_tracker'),
+            'перегляд матеріалу': t('stats.materials_review')
         };
         for (const [key, label] of Object.entries(activityLabels)) {
             if (raw.includes(key) || raw.includes(key.replace('_', ' '))) return label;
@@ -155,7 +157,7 @@ const StatsView = ({ userId, userStats, resilience = 50, resilienceMultiplier = 
                                     tickFormatter={(str) => {
                                         try {
                                             const d = new Date(str);
-                                            return isNaN(d.getTime()) ? '?' : d.toLocaleDateString('uk-UA', { day: 'numeric', month: 'short' });
+                                            return isNaN(d.getTime()) ? '?' : d.toLocaleDateString(i18n.language === 'de' ? 'de-DE' : 'en-US', { day: 'numeric', month: 'short' });
                                         } catch (e) {
                                             return '?';
                                         }
@@ -182,8 +184,8 @@ const StatsView = ({ userId, userStats, resilience = 50, resilienceMultiplier = 
                                         try {
                                             const d = new Date(label);
                                             if (isNaN(d.getTime())) return label;
-                                            const time = d.toLocaleTimeString(i18n.language === 'en' ? 'en-US' : 'uk-UA', { hour: '2-digit', minute: '2-digit' });
-                                            const date = d.toLocaleDateString(i18n.language === 'en' ? 'en-US' : 'uk-UA', { day: 'numeric', month: 'short' });
+                                            const time = d.toLocaleTimeString(i18n.language === 'de' ? 'de-DE' : 'en-US', { hour: '2-digit', minute: '2-digit' });
+                                            const date = d.toLocaleDateString(i18n.language === 'de' ? 'de-DE' : 'en-US', { day: 'numeric', month: 'short' });
                                             return `${time} ${date}`;
                                         } catch (e) {
                                             return label;
@@ -230,7 +232,7 @@ const StatsView = ({ userId, userStats, resilience = 50, resilienceMultiplier = 
                                 <div>
                                     <p className="text-sm font-black text-white uppercase tracking-tight">{translateActivity(act.type || act.activityType, act.name || act.activityName)}</p>
                                     <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest">
-                                        {new Date(act.date || act.createdAt || Date.now()).toLocaleString('uk-UA', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                        {new Date(act.date || act.createdAt || Date.now()).toLocaleString(i18n.language === 'de' ? 'de-DE' : 'en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                                     </p>
                                 </div>
                             </div>

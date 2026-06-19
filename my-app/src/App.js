@@ -45,7 +45,7 @@ function App() {
 					const data = await api.getProfile();
 					if (data && data.id) {
 						localStorage.setItem("userId", data.id);
-						localStorage.setItem("username", data.username || "Гість");
+						localStorage.setItem("username", data.username || "Guest");
 					}
 				} catch (e) {
 					console.error("❌ [DEBUG] Failed to restore guest session:", e);
@@ -62,7 +62,7 @@ function App() {
 					if (guestUser.id) {
 						localStorage.setItem("dr_token", "guest_mode");
 						localStorage.setItem("userId", guestUser.id);
-						localStorage.setItem("username", guestUser.username || "Гість");
+						localStorage.setItem("username", guestUser.username || "Guest");
 					}
 				} catch (e) {
 					console.error(e);

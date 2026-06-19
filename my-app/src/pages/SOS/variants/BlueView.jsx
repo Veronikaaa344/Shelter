@@ -2,43 +2,45 @@ import { ArrowRight, ChevronLeft } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../../infrastructure/api/api";
-
-const TASKS = [
-	{
-		text: "Знайдіть 5 предметів навколо",
-		icon: "👁️",
-		color: "from-blue-500/20 to-indigo-500/20",
-		border: "border-blue-500/30",
-	},
-	{
-		text: "Торкніться 4 різних текстур",
-		icon: "🤲",
-		color: "from-purple-500/20 to-pink-500/20",
-		border: "border-purple-500/30",
-	},
-	{
-		text: "Почуйте 3 різні звуки",
-		icon: "👂",
-		color: "from-emerald-500/20 to-teal-500/20",
-		border: "border-emerald-500/30",
-	},
-	{
-		text: "Відчуйте 2 різні запахи",
-		icon: "🌿",
-		color: "from-amber-500/20 to-orange-500/20",
-		border: "border-amber-500/30",
-	},
-	{
-		text: "Відчуйте 1 смак",
-		icon: "✨",
-		color: "from-rose-500/20 to-red-500/20",
-		border: "border-rose-500/30",
-	},
-];
+import { useTranslation } from "react-i18next";
 
 export default function BlueView({ answers }) {
+	const { t } = useTranslation();
 	const [step, setStep] = useState(0);
 	const navigate = useNavigate();
+
+	const TASKS = [
+		{
+			text: t('sos.find_5_items'),
+			icon: "👁️",
+			color: "from-blue-500/20 to-indigo-500/20",
+			border: "border-blue-500/30",
+		},
+		{
+			text: t('sos.touch_4_textures'),
+			icon: "🤲",
+			color: "from-purple-500/20 to-pink-500/20",
+			border: "border-purple-500/30",
+		},
+		{
+			text: t('sos.hear_3_sounds'),
+			icon: "👂",
+			color: "from-emerald-500/20 to-teal-500/20",
+			border: "border-emerald-500/30",
+		},
+		{
+			text: t('sos.feel_2_smells'),
+			icon: "🌿",
+			color: "from-amber-500/20 to-orange-500/20",
+			border: "border-amber-500/30",
+		},
+		{
+			text: t('sos.taste_1_thing'),
+			icon: "✨",
+			color: "from-rose-500/20 to-red-500/20",
+			border: "border-rose-500/30",
+		},
+	];
 
 	const task = TASKS[step];
 	const isLast = step === TASKS.length - 1;
@@ -51,7 +53,7 @@ export default function BlueView({ answers }) {
 				userId,
 				"sos",
 				{},
-				"Стабілізація (Заземлення)",
+				t('sos.grounding_technique'),
 			);
 		navigate("/main");
 	};
@@ -69,13 +71,13 @@ export default function BlueView({ answers }) {
 					onClick={() => navigate("/main")}
 					className="flex items-center gap-2 text-slate-600 hover:text-slate-300 font-bold uppercase text-xs tracking-widest transition-all"
 				>
-					<ChevronLeft size={18} /> Вийти
+					<ChevronLeft size={18} /> {t('sos.exit')}
 				</button>
 				<button
 					onClick={() => navigate("/sos")}
 					className="text-slate-600 hover:text-slate-400 font-bold text-xs uppercase tracking-widest transition-all"
 				>
-					← До дихання
+					{t('sos.to_breathing')}
 				</button>
 			</div>
 
@@ -113,7 +115,7 @@ export default function BlueView({ answers }) {
 						{task.text}
 					</h2>
 					<p className="text-slate-500 text-sm">
-						Крок {step + 1} з {TASKS.length} · Техніка заземлення 5-4-3-2-1
+						{t('sos.step_of', { step: step + 1, total: TASKS.length })}
 					</p>
 				</div>
 
@@ -123,14 +125,14 @@ export default function BlueView({ answers }) {
 						onClick={() => setStep((s) => s + 1)}
 						className="flex items-center gap-3 bg-white text-[#0b0f1a] px-10 py-5 rounded-2xl font-black uppercase text-sm tracking-widest shadow-2xl hover:scale-105 transition-all"
 					>
-						Виконано <ArrowRight size={20} />
+						{t('sos.done')} <ArrowRight size={20} />
 					</button>
 				) : (
 					<button
 						onClick={handleFinish}
 						className="flex items-center gap-3 bg-emerald-500 hover:bg-emerald-400 text-[#0b0f1a] px-10 py-5 rounded-2xl font-black uppercase text-sm tracking-widest shadow-2xl shadow-emerald-500/20 hover:scale-105 transition-all"
 					>
-						Стан стабілізовано 🌱
+						{t('sos.stabilized')}
 					</button>
 				)}
 			</div>

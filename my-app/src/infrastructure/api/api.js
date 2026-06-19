@@ -1,5 +1,6 @@
 import i18n from '../i18n';
 import dbEn from '../../locales/db_en.json';
+import dbDe from '../../locales/db_de.json';
 
 const getBaseUrl = () => {
 	const host = window.location.hostname;
@@ -10,6 +11,11 @@ const getBaseUrl = () => {
 	return "https://shelter-jsv0.onrender.com/api";
 };
 
+const getDbTranslations = () => {
+    if (i18n.language === 'de') return dbDe;
+    return dbEn;
+};
+
 const translateObj = (obj, translations) => {
     if (!obj || typeof obj !== 'object' || !translations) return obj;
     const trans = translations[obj._id] || translations[obj.id];
@@ -18,15 +24,15 @@ const translateObj = (obj, translations) => {
 };
 
 const translateArray = (arr, type) => {
-    if (i18n.language !== 'en') return arr;
-    const translations = dbEn[type];
+    const db = getDbTranslations();
+    const translations = db[type];
     if (!translations) return arr;
     return arr.map(item => translateObj(item, translations));
 };
 
 const translateSingle = (item, type) => {
-    if (i18n.language !== 'en') return item;
-    const translations = dbEn[type];
+    const db = getDbTranslations();
+    const translations = db[type];
     if (!translations) return item;
     return translateObj(item, translations);
 };
@@ -88,7 +94,7 @@ const guestService = {
 		if (!data) {
 			data = {
 				id: "guest_" + Math.random().toString(36).substr(2, 9),
-				username: "Гість",
+				username: "Guest",
 				isGuest: true,
 				diagnostic: { answers: [], completedAt: null },
 				stats: { resilience: 50, stabilityDays: 0 },
